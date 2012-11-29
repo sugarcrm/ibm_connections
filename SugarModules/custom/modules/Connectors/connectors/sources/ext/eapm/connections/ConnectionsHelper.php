@@ -426,10 +426,6 @@ class ConnectionsHelper {
 		global $beanList, $current_user;
 		if(empty($this->community_id)) $this->community_id = $this->getCommunityId();
 
-		//var_dump($this);
-		//die("YAY");
-
-
 		$tabName = $this->tab_name;
 		$recordOwner = false;
 		if(!empty($this->parent_type) && !empty($this->parent_id)) {
@@ -438,9 +434,6 @@ class ConnectionsHelper {
 
 			$recordOwner = $bean->isOwner($current_user->id);
 		}
-//var_dump($bean->isOwner($current_user->id));
-		//$isAdmin = $current_user->isAdmin();
-	 	$GLOBALS['log']->info("Community: '" . $this->community_id . "' Owner: '" . $recordOwner . "'");
 
 		$buttons = "";
 		for($i=0; $i<count($this->tabs_meta[$tabName]['buttons']); $i++) {
