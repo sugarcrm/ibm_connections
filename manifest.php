@@ -259,7 +259,7 @@ $installdefs = array (
 	array (
 	  'from' => '<basepath>/SugarModules/language/application/fr_FRhe_IL.lang.php',
 	  'to_module' => 'application',
-	  'language' => 'fr_FRhe_IL',
+	  'language' => 'fr_FR',
 	),
 	10 =>
 	array (
@@ -356,6 +356,12 @@ $installdefs = array (
 	  'from' => '<basepath>/SugarModules/language/application/zh_CN.lang.php',
 	  'to_module' => 'application',
 	  'language' => 'zh_CN',
+	),
+	26 =>
+	array (
+	  'from' => '<basepath>/SugarModules/language/applications/he_IL.lang.php',
+	  'to_module' => 'application',
+	  'language' => 'he_IL',
 	),
   ),
 );
