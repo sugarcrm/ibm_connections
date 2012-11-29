@@ -1,0 +1,1 @@
+{$language.LBL_SEARCH}: <input type="text" size="35" name="{$searchboxname}" id="{$searchboxname}" value="{$search_text}" /> <input type="button" value="{$language.LBL_SUBMIT_BUTTON}" onclick="searchListings('{$tab_name}',1);" />

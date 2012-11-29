@@ -1,0 +1,93 @@
+#profile_dialog .profileTabs {
+    font-size: 14px;
+    white-space: normal;
+}
+
+#profile_dialog .profileTabs tr {
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+
+#profile_dialog .profileTabs tr td {
+    display: inline;
+}
+
+#profile_dialog .profileTabs tr td a {
+    float: left;
+    padding: 3px 11px;
+    font-size: 14px;
+}
+
+#profile_dialog .profileTabs thead:first-child tr:first-child th,
+#profile_dialog .profileTabs tbody:first-child tr:first-child th,
+#profile_dialog .profileTabs tbody:first-child tr:first-child td {
+  border-top: 0;
+}
+
+
+#profile_dialog .profileTabs {
+  min-height: 4px;
+  line-height:1.75em;
+}
+
+#profile_dialog .profileTabs a {
+  text-decoration: none;
+}
+
+#profile_dialog tbody tr td img {
+    border:5px solid #fff  !important;
+    box-shadow:0px 0px 2px #777;
+    -moz-box-shadow:0px 0px 2px #777;
+    -webkit-box-shadow:0px 0px 2px #777;
+}
+
+#profile_dialog #memberProfile table:not(.profileTabs) {
+    display:inline-block;
+    width:120px;
+    float:left;
+}
+
+#profile_dialog, #profile_dialog > .bd {
+float:left;
+}
+
+#profile_dialog > .container-close {
+margin: .5em 0 0;
+width: 18px;
+}
+
+
+#profile_dialog .profileTabs tr td a {
+  background-color: #f5f5f5;
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e5);
+  background-image: -ms-linear-gradient(top, #ffffff, #e6e6e5);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e5));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e5);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e5);
+  background-image: linear-gradient(top, #ffffff, #e6e6e5);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e5', GradientType=0);
+  border:1px solid #dddddd;
+}
+
+#profile_dialog .profileTabs tr td a:hover {
+  background-color: #f5f5f5;
+  background-image: -moz-linear-gradient(top, #eee, #e6e6e5);
+  background-image: -ms-linear-gradient(top, #eee, #e6e6e5);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(#e6e6e5));
+  background-image: -webkit-linear-gradient(top, #eee, #e6e6e5);
+  background-image: -o-linear-gradient(top, #eee, #e6e6e5);
+  background-image: linear-gradient(top, #eee, #e6e6e5);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eee', endColorstr='#e6e6e5', GradientType=0);
+}
+
+#profile_dialog .profileTabs tr td a {
+margin-left:-1px;
+}
+
+.memberName {
+    font-size: 18px;
+    font-weight: bold;
+}
