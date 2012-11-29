@@ -65,14 +65,12 @@ $connector_strings = array (
 	'LBL_IS_PUBLIC' => 'Public?',
 	'LBL_MEMBERS' => 'Members',
 	'LBL_DESCRIPTION' => 'Description',
-
 	'LBL_PLEASE_SELECT_COMMUNITY' => 'Please select the community to associate with this object',
 	'LBL_SHARE_FILE_WITH_COMMUNITY' => 'Share a file with the community',
 	'LBL_FILE_NAME' => 'File Name',
 	'LBL_CAN_USERS_SHARE' => 'Can users share file?',
 	'LBL_ONLY_OWNER_CAN_ASSOCIATE' => 'There is no community associated with this record.  Only the record owner can associate this record with a community',
 	'LBL_CONFIRM_DELETE' => 'Are you sure you want to delete this association?',
-
 	'LBL_MEMBER_BLOGS' => 'Blogs',
 	'LBL_MEMBER_FORUMS' => 'Forums',
 	'LBL_MEMBER_WIKIS' => 'Wikis',
