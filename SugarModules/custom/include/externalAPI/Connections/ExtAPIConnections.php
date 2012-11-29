@@ -210,7 +210,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         if ( $this->getVersion() == 1 ) {
             $url .= "!{$this->api_data['subscriberId']}";
         }
-        $GLOBALS['log']->debug("LOTUS REQUEST: $url");
+        $GLOBALS['log']->debug("Connections REQUEST: $url");
         $rawResponse = $client->setUri($url)
             ->setRawData(file_get_contents($fileToUpload), $mimeType)
             ->setHeaders("slug", $docName)
@@ -281,7 +281,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         global $db, $current_user;
 
         create_cache_directory('/include/externalAPI/');
-        $cacheFileBase = 'cache/include/externalAPI/docCache_'.$current_user->id.'_LotusLiveDirect';
+        $cacheFileBase = 'cache/include/externalAPI/docCache_'.$current_user->id.'_ConnectionsDirect';
         if ( !$forceReload && file_exists($cacheFileBase.'.php') ) {
             // File exists
             include_once($cacheFileBase.'.php');
@@ -508,7 +508,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
                 $version = 2;
                 break;
             default:
-                $GLOBALS['log']->error('Lotus Live API version could not be detected, the version label returned was: '.$versionLabel);
+                $GLOBALS['log']->error('API version could not be detected, the version label returned was: '.$versionLabel);
                 $version = 2;
                 break;
         }
