@@ -304,13 +304,13 @@ var saveNewFileHandler = {
         loadListings('Files',1,'');
     },
     success: function(data) {
-console.log('success');
-console.log(data);
+		//console.log('success');
+		//console.log(data);
 
     },
     failure: function(data) {
-console.log('fail');
-console.log(data);
+		//console.log('fail');
+		//console.log(data);
     }
 }
 
