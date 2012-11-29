@@ -35,6 +35,7 @@ $manifest = array (
     array (
       0 => '6\.4\.*',
       1 => '6\.5\.*',
+	  2 => '6\.6\.*'
     ),
   ),
   1 => 
@@ -49,14 +50,14 @@ $manifest = array (
   ),
   'readme' => '',
   'key' => 'ibm',
-  'author' => 'bkilgore',
+  'author' => 'sugarcrm',
   'description' => '',
   'icon' => '',
   'is_uninstallable' => true,
   'name' => 'IBM Connections',
-  'published_date' => '2012-06-07 8:00:00',
+  'published_date' => '2012-11-28 11:00:00',
   'type' => 'module',
-  'version' => 1.0,
+  'version' => '1.1',
   'remove_tables' => 'prompt',
 );
 
@@ -139,8 +140,8 @@ $installdefs = array (
     ),
     11 => 
     array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/language/en_us.lang.php',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/language/en_us.lang.php',
+      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/language',
+      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/language',
     ),
     //12 => 
     //array (

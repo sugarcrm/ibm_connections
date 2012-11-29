@@ -68,8 +68,9 @@ class ConnectionsLogicHook {
 	    require_once('custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php');
 	    $eapm = ConnectionsHelper::getEAPM();
 	    $connector = ConnectorUtils::getConnector('ext_eapm_connections');
-
-	    if ( $GLOBALS['app']->controller->action == 'DetailView' && $connector['enabled'] && $eapm->eapmBean->validated ) {
+	   // var_dump($connector);
+		//if (!is_object($eapm) || !is_array($connector)) return;
+	    if ( $GLOBALS['app']->controller->action == 'DetailView' && $connector['enabled'] && is_object($eapm) && $eapm->eapmBean->validated) {
 		    $tplName = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Connections.tpl';
 	    }
 	    else {

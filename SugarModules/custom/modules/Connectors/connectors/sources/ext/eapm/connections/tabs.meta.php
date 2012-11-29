@@ -58,8 +58,8 @@ $tabs_meta = array(
 		"tabView" => "communitiesTabView",
 		"method" => "createNewCommunity",
 		"label" => "LBL_CREATE_COMMUNITY",
-		"order" => 3,
-		"onload" => true,
+		"order" => -1,
+		"onload" => false,
 		"buttons" => array()
 	),
 	"CreateFile" => array(
@@ -79,5 +79,16 @@ $tabs_meta = array(
 		"order" => -1,
 		"onload" => false,
 		"buttons" => array()
+	),
+	"MyAccount" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "myAccount",
+		"label" => "LBL_MY_ACCOUNT_TAB",
+		"order" => 0,
+		"active" => false,
+		"onload" => true,
+		"buttons" => array(
+			//"myaccount"
+		)
 	),
 );

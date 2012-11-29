@@ -27,9 +27,12 @@ class ConnectionsHelper {
 		$this->community_id = $this->getCommunityId();
 
 		foreach($_REQUEST as $key => $value) {
-			if(!empty($value)) safe_map($key,$this);
+			
+			if(!empty($value)) 
+			{
+				@safe_map($key, $this, true);
+			}
 		}
-
 		$this->apiClass = self::getEAPM();
 	}
 
@@ -49,6 +52,29 @@ class ConnectionsHelper {
 
 	static function isConnectionsLoaded() {
 
+	}
+	
+	function getMembersListForAutocomplete($response) {
+		$entries = $response->entry;
+		$community_id = $this->getCommunityId();
+		$res = array();
+		if(!empty($entries)) {
+			foreach($entries as $entry) {
+				$member_name = (string) $entry->contributor->name;
+				$member_id = (string) $entry->contributor->children('http://www.ibm.com/xmlns/prod/sn')->userid;
+				$res [] = array('member_id' => $member_id, 'member_name' =>$member_name, 'community_id' => $community_id);
+			}
+		}
+		return $res;
+	}
+
+	
+	function sourceForAutoCompleteMember() {
+		$search_text = $this->search_text;
+		$reply = $this->apiClass->getMembers("", $search_text);
+		$response = new SimpleXMLElement($reply['rawResponse']);
+		$member_list = $this->getMembersListForAutocomplete($response);
+		echo json_encode($member_list);
 	}
 
 	function loadConnectionsCommunities() {
@@ -169,7 +195,7 @@ class ConnectionsHelper {
 
 				$response = new SimpleXMLElement($reply['rawResponse']);
 				$opensearch = $response->children('http://a9.com/-/spec/opensearch/1.1/');
-
+				
 				$pagination_data = array(
 					'totalResults' => 0,
 					'itemsPerPage' => 10,
@@ -186,6 +212,8 @@ class ConnectionsHelper {
 				$member_list = $this->getMembersList($response, true);
 			}
 			else {
+				$pagination = "";
+				$member_list = "";
 				echo "{$this->language['LBL_ENTER_SEARCH_PARAMETER']}<br/><br/>";
 			}
 
@@ -211,11 +239,22 @@ class ConnectionsHelper {
 		$fileToUpload = $_FILES['new_file']['tmp_name'];
 		$docName = $_FILES['new_file']['name'];
 		$mimeType = $_FILES['new_file']['type'];
-
-		$reply = $this->apiClass->uploadFile($fileToUpload, $docName, $mimeType);
+		$fileShared = false;
+		$comm_info  = $this->apiClass->getCommunityInfo($this->getCommunityId());
+		$response_info = new SimpleXMLElement($comm_info['rawResponse']);
+		$comm_type = (string)$response_info->children("http://www.ibm.com/xmlns/prod/sn")->communityType;
+		if ($comm_type != "public" && $comm_type != "private") $comm_type = "private";
+		$reply = $this->apiClass->uploadFile($fileToUpload, $docName, $mimeType,$comm_type);
 		$response = new SimpleXMLElement($reply['rawResponse']);
 		$document_id = $response->children('urn:ibm.com/td')->uuid;
-
+		
+		if (empty($document_id) || false)
+		{
+			$reply = $this->apiClass->updateFile($fileToUpload, $docName, $mimeType, $comm_type);
+			$response = new SimpleXMLElement($reply['rawResponse']);
+			$document_id = $response->children('urn:ibm.com/td')->uuid;
+		}
+		
 		if(!empty($document_id)) {
 			$xml = new SimpleXMLElement($this->apiClass->upload_document_xml);
 			$xml->entry->addChild('itemId',$this->getCommunityId(),'urn:ibm.com/td');
@@ -231,7 +270,7 @@ class ConnectionsHelper {
 				$count++;
 			}
 		}
-		//print_r($doc_reply);
+
 		if($fileShared) echo $this->language['LBL_FILE_UPLOADED_SHARED'];
 		else echo $this->language['LBL_FILE_UPLOADED_NOT_SHARED'];
 	}
@@ -249,7 +288,8 @@ class ConnectionsHelper {
 		$connections->parent_id = $this->parent_id;
 		$connections->community_id = $this->community_id;
 		$connections->date_modified = $GLOBALS['timedate']->nowDb();
-		$connections->deleted = 0;
+		if (empty($this->community_id)) $connections->deleted = 1;
+		else $connections->deleted = 0;
 		$connections->save();
 
 		echo $this->language['LBL_COMMUNITY_SELECTION_SAVED'];
@@ -293,22 +333,38 @@ class ConnectionsHelper {
 
 		if(!empty($data['totalResults']))
 			$totalResults = $data['totalResults'];
+		else $totalResults = 0;
 		if(!empty($data['itemsPerPage']))
 			$itemsPerPage = $data['itemsPerPage'];
+		else $itemsPerPage = 10;
 		if(!empty($data['startIndex']))
 			$startIndex = $data['startIndex'];
+		else $startIndex = 1;
 
 		$totalPages = ceil($totalResults / $itemsPerPage);
-
+		
+		$start_button_onclick = "";
+		$prev_button_onclick = "";
+		$next_button_onclick = "";
+		$end_button_onclick = "";
+		
+		$start_button_disabled = "";
+		$prev_button_disabled = "";
+		$next_button_disabled = "";
+		$end_button_disabled = "";
+		
 		if($totalPages == 0)
 			$current_page = 0;
 		elseif($totalPages > 1)
 			$current_page = ceil($startIndex / $itemsPerPage);
 		else
 			$current_page = 1;
-
-		$pageCount = "<span class='pageNumbers'>(Page {$current_page} of {$totalPages})</span>";
-
+		$endIndex = $startIndex + $itemsPerPage - 1;
+		if ($endIndex > $totalResults) $endIndex = $totalResults;
+		if ($endIndex < 0) $endIndex = 0;
+		if ($totalResults == 0) $startIndex = $totalResults;
+		//$pageCount = "<span class='pageNumbers'>(Page {$current_page} of {$totalPages})</span>";
+		$pageCount = "<span class='pageNumbers'>({$startIndex} - {$endIndex} of {$totalResults})</span>";
 		if($current_page > 1) {
 			$start_button_src = SugarThemeRegistry::current()->getImageURL('start.png');
 			$start_page = 1;
@@ -354,17 +410,25 @@ class ConnectionsHelper {
 		$next_button = "<button type='button' name='listViewNextButton' title='Next' class='button' {$next_button_disabled} {$next_button_onclick}><img src='{$next_button_src}' align='absmiddle' /></button>";
 		$end_button = "<button type='button' name='listViewEndButton' title='End' class='button' {$end_button_disabled} {$end_button_onclick}><img src='{$end_button_src}' align='absmiddle' /></button>";
 
-		$pagination = "<table cellpadding='0' cellspacing='0' width='100%' border='0' class='pagination'>";
-		$pagination .= "<tr><td align='left'>".$this->getTabButtons()."</td>";
-		$pagination .= "<td align='right'>{$start_button} {$previous_button} {$pageCount} {$next_button} {$end_button}</td></tr>";
+		$pagination = "<table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>";
+		$tab_butt = $this->getTabButtons();
+		$buttons = (empty($tab_butt)) ? "": "<table border='0' cellpadding='0' cellspacing='0' width='100%'><tbody><tr><td>".$tab_butt."</td></tr></tbody></table>";
+		$pagination .= "<tr class='pagination'><td align='left'>{$buttons}</td>";
+		$pagination .= "<td align='right'><table border='0' cellpadding='0' cellspacing='0' width='100%'><tbody><tr><td align='right'>{$start_button} {$previous_button} {$pageCount} {$next_button} {$end_button}</td></tr></tbody></table></td></tr>";
 		$pagination .= "</table>";
 
 		return $pagination;
+		
+	
 	}
 
 	function getTabButtons() {
 		global $beanList, $current_user;
 		if(empty($this->community_id)) $this->community_id = $this->getCommunityId();
+
+		//var_dump($this);
+		//die("YAY");
+
 
 		$tabName = $this->tab_name;
 		$recordOwner = false;
@@ -374,8 +438,9 @@ class ConnectionsHelper {
 
 			$recordOwner = $bean->isOwner($current_user->id);
 		}
-
+//var_dump($bean->isOwner($current_user->id));
 		//$isAdmin = $current_user->isAdmin();
+	 	$GLOBALS['log']->info("Community: '" . $this->community_id . "' Owner: '" . $recordOwner . "'");
 
 		$buttons = "";
 		for($i=0; $i<count($this->tabs_meta[$tabName]['buttons']); $i++) {
@@ -399,8 +464,9 @@ class ConnectionsHelper {
 				$button_label = $this->language['LBL_NEW_FILE_BUTTON'];
 				$buttons .= "<input id='create_new_file' type='button' class='button' value='{$button_label}' onclick='createNewConnectionsObject(\"CreateFile\");' {$disabled} />";
 			}
+			
 		}
-
+		if (empty($this->community_id) && !$recordOwner) $buttons .= "<br>".$this->language['LBL_ONLY_OWNER_CAN_ASSOCIATE'];
 		return $buttons;
 	}
 
@@ -416,8 +482,6 @@ class ConnectionsHelper {
 
 				$checked = "";
 				if($entry_id == $community_id) $checked = "checked";
-
-				//echo $entry_id."<br/>";
 				$last_updated = date($GLOBALS['timedate']->get_date_time_format(),strtotime($entry->updated));
 				$reply .= "<tr><td style='padding-left: 15px;'><br/>";
 				$reply .= "<input type='radio' name='community' value='{$entry->title}' onchange='selectCommunity(\"{$entry_id}\");' {$checked}> <b>{$entry->title}</b></input><br/>";
@@ -444,16 +508,16 @@ class ConnectionsHelper {
 	}
 
 	function loadFilesList() {
+		global $beanList, $current_user;
 		$community_id = $this->getCommunityId();
-
 		if(empty($community_id)) {
 			$pagination = "<table cellpadding='0' cellspacing='0' width='100%' border='0' class='pagination'>";
 			$pagination .= "<tr><td align='left'>".$this->getTabButtons()."</td></tr>";
 			$pagination .= "</table>";
 			echo $pagination;
+			
 			return;
 		}
-
 		$page_number = $this->page_number;
 
 		try {
@@ -480,8 +544,15 @@ class ConnectionsHelper {
 			$file_list = $this->getFilesList($response);
 
 			echo $pagination;
+			//isOwner
+				$recordOwner = false;
+				$bean = new $beanList[$this->parent_type];
+				$bean->retrieve($this->parent_id);
+				$recordOwner = $bean->isOwner($current_user->id);
+			$button_X = ($recordOwner) ? "<button class='button' value='X' onclick='selectCommunity(\"\");'>X</button>" : ""; 	
+			echo "<h5>{$button_X}<a href='".urldecode((string) $response->link[2]->attributes()->href)."' target='_blank'>".$response->title."</a></h5>";
 			echo $file_list;
-			//var_dump($response);
+			
 		}
 		catch(Exception $e) {
 
@@ -494,18 +565,27 @@ class ConnectionsHelper {
 			echo $message;
 		}
 	}
-
+	
+	function myAccount() {
+			$pagination = "<table cellpadding='0' cellspacing='0' width='100%' border='0' class='pagination'>";
+			$pagination .= "<tr><td align='left'><a href='".$this->apiClass->url."/profiles/html/myProfileView.do' target='_blank'>".$this->language['LBL_MY_ACCOUNT']."</a></td></tr>";
+			$pagination .="</table>";
+			echo $pagination;
+	}
+	
 	function loadMembersList() {
+		global $beanList,$current_user;
 		$community_id = $this->getCommunityId();
 
 		if(empty($community_id)) {
+			
 			$pagination = "<table cellpadding='0' cellspacing='0' width='100%' border='0' class='pagination'>";
 			$pagination .= "<tr><td align='left'>".$this->getTabButtons()."</td></tr>";
 			$pagination .= "</table>";
 			echo $pagination;
 			return;
 		}
-
+		
 		$page_number = $this->page_number;
 
 		try {
@@ -530,10 +610,15 @@ class ConnectionsHelper {
 			$member_list = $this->getMembersList($response);
 
 			echo $pagination;
+			$url = rtrim($this->apiClass->url,"/")."/communities/service/html/communityview?communityUuid=".$this->community_id;
+							$recordOwner = false;
+				$bean = new $beanList[$this->parent_type];
+				$bean->retrieve($this->parent_id);
+				$recordOwner = $bean->isOwner($current_user->id);
+			$button_X = ($recordOwner) ? "<button class='button' value='X' onclick='selectCommunity(\"\");'>X</button>" : ""; 	
+			echo "<h5>{$button_X}<a href='".urldecode((string) $url)."' target='_blank'>".$response->title."</a></h5>";
 			echo $member_list;
 
-			//foreach($response->entry as $entry)
-			//var_dump($entry);
 		}
 		catch(Exception $e) {
 
@@ -568,7 +653,7 @@ class ConnectionsHelper {
 				$reply .= "<tr><td style='padding-left: 15px;'><br/>";
 				$reply .= "<b><span><a href='{$download_link}' target='_new'>{$entry->title}</a></span></b><br/>";
 				$reply .= "{$entry->author->name} | {$this->language['LBL_LAST_UPDATED']} {$last_updated}";
-				$reply .= "<br/><br/></td></tr>";
+				$reply .= "<br/></td></tr>";
 			}
 		}
 		else {
@@ -583,14 +668,14 @@ class ConnectionsHelper {
 	function getMembersList($response, $add_member=false) {
 		$entries = $response->entry;
 		$community_id = $this->getCommunityId();
-
+		
 		$reply = "<br/><table cellspacing='0' cellpadding='0' border='0' width='100%' id='memberProfile' style='background: rgb(255, 255, 255); background: rgba(255, 255, 255, 0.7);' class='list view'>";
 
 		if(!empty($entries)) {
 			foreach($entries as $entry) {
 				$member_name = $entry->contributor->name;
 				$member_id = $entry->contributor->children('http://www.ibm.com/xmlns/prod/sn')->userid;
-				$member_state = $entry->contributor->children('http://www.ibm.com/xmlns/prod/sn')->userState;
+				//$member_state = $entry->contributor->children('http://www.ibm.com/xmlns/prod/sn')->userState;
 				$member_role = $entry->children('http://www.ibm.com/xmlns/prod/sn')->role;
 
 				$last_updated = date($GLOBALS['timedate']->get_date_time_format(),strtotime($entry->updated));
@@ -605,14 +690,14 @@ class ConnectionsHelper {
 					//echo $add_member_image;
 					//var_dump($GLOBALS);
 
-					$reply .= "{$add_member_image} <span id='{$member_id}' style='cursor: pointer; color: #0000ff;' onclick=showMemberProfile('{$member_id}');><b>{$member_name}</b></span><br/>";
+					$reply .= "{$add_member_image} <span id='{$member_id}' style='cursor: pointer; color: #1970B0;' onclick=showMemberProfile('{$member_id}');><b>{$member_name}</b></span><br/>";
 					$reply .= "{$this->language['LBL_LAST_UPDATED']} {$last_updated}";
 				}
 				else {
-					$reply .= "<span id='{$member_id}' style='cursor: pointer; color: #0000ff;' onclick=showMemberProfile('{$member_id}');><b>{$member_name}</b></span> ({$member_role})<br/>";
+					$reply .= "<span id='{$member_id}' style='cursor: pointer; color: #1970B0;' onclick=showMemberProfile('{$member_id}');><b>{$member_name}</b></span> ({$member_role})<br/>";
 					$reply .= "{$this->language['LBL_LAST_UPDATED']} {$last_updated}";
 				}
-				$reply .= "<br/><br/></td></tr>";
+				$reply .= "<br/></td></tr>";
 			}
 		}
 		else {
@@ -684,4 +769,6 @@ class ConnectionsHelper {
 		@ob_flush();
 
 	}
+	
+	
 }

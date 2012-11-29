@@ -37,6 +37,7 @@ class ext_eapm_connections extends ext_eapm {
 		$this->_enable_in_wizard = false;
 		$this->_enable_in_hover = false;
 		$this->_has_testing_enabled = false;
+		$this->_enable_in_admin_mapping  = false;
 	}
 
 	/*

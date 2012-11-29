@@ -549,7 +549,14 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
 		return $reply;
 	}
-
+///communities/service/atom
+//communities/service/atom/community/instance?communityUuid=d2fdec09-0221-47fe-a27b-2e55497caa22
+	public function getCommunityInfo($community_id) {
+		$reply = $this->makeRequest("communities/service/atom/community/instance?communityUuid={$community_id}");
+		return $reply;
+	}
+	
+	
 	public function searchMembers($search_text, $page=1) {
 		$search_text = str_ireplace(" ","+",$search_text);
 
@@ -594,8 +601,9 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
 		$member_xml = new SimpleXMLElement($this->community_member_xml);
 		$member_xml->contributor->addChild('snx:userid',$member_id,'http://www.ibm.com/xmlns/prod/sn');
+		//$role = $member_xml->addChild('snx:role','owner','http://www.ibm.com/xmlns/prod/sn');
+		//$role->addAttribute('component','http://www.ibm.com/xmlns/prod/sn/communities');
 		$data = $member_xml->asXML();
-
 		$client->setRawData($data,'application/atom+xml');
 		$client->setUri($url);
 		$client->setAuth($this->account_name,$this->account_password);
@@ -617,39 +625,40 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 			//$profile_info['sn'] = print_r($servicedoc_response->workspace->children('http://www.w3.org/2005/Atom'),true);
 			foreach($profile_response->entry->children('http://www.w3.org/2005/Atom')->link as $link) {
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/blogs")
-					$profile_info['member_blogs'] = (string) $link->attributes()->href;
+					$profile_info['member_blogs'] = urldecode((string) $link->attributes()->href);
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/forums")
-					$profile_info['member_forums'] = (string) $link->attributes()->href;
+					$profile_info['member_forums'] = urldecode((string) $link->attributes()->href);
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/wikis")
-					$profile_info['member_wikis'] = (string) $link->attributes()->href;
+					$profile_info['member_wikis'] = urldecode((string) $link->attributes()->href);
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/files")
-					$profile_info['member_files'] = (string) $link->attributes()->href;
+					$profile_info['member_files'] = urldecode((string) $link->attributes()->href);
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/communities")
-					$profile_info['member_communities'] = (string) $link->attributes()->href;
+					$profile_info['member_communities'] = urldecode((string) $link->attributes()->href);
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/dogear")
-					$profile_info['member_bookmarks'] = (string) $link->attributes()->href;
+					$profile_info['member_bookmarks'] = urldecode((string) $link->attributes()->href);
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/profiles")
-					$profile_info['member_profiles'] = (string) $link->attributes()->href;
+					$profile_info['member_profiles'] = urldecode((string) $link->attributes()->href);
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/activities")
-					$profile_info['member_activities'] = (string) $link->attributes()->href;
+					$profile_info['member_activities'] = urldecode((string) $link->attributes()->href);
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/image")
 					//$profile_info['profile_image_url'] = substr((string) $link->attributes()->href,0,-1);
-					$profile_info['profile_image_url'] = (string) $link->attributes()->href;
+					$profile_info['profile_image_url'] = urldecode((string) $link->attributes()->href);
 			}
 		}
 
 		return $profile_info;
 	}
 
-	public function uploadFile($fileToUpload, $docName, $mimeType) {
+	public function uploadFile($fileToUpload, $docName, $mimeType, $comm_type) {
         // Let's see if this is not on the whitelist of mimeTypes
         if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhitelist) ) {
             // It's not whitelisted
             $mimeType = 'application/octet-stream';
         }
 
-		$urlReq = "files/basic/api/myuserlibrary/feed";
-		//$urlReq = "files/basic/api/community/cc54823d-b505-454b-a731-830fb8872f4a/libraries/feed";
+		//$urlReq = "files/basic/api/myuserlibrary/feed?visibility=public";
+		$urlReq = "files/basic/api/myuserlibrary/feed?visibility=".$comm_type;
+		//$urlReq = "files/basic/api/community/a139f3b0-4cf7-40b6-af28-6cad51292aa9/libraries/feed";
 
         $client = $this->getClient();
 	    $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
@@ -659,11 +668,16 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		//$client->setFileUpload($fileToUpload, $docName);
 		$client->setRawData(file_get_contents($fileToUpload), $mimeType);
 		$client->setHeaders("slug", $docName);
+		//$client->setParameterPost("visibility", "public");
 		$client->setUri($url);
 		$client->setAuth($this->account_name,$this->account_password);
 		$rawResponse = $client->request("POST");
-
-        $reply = array('rawResponse' => $rawResponse->getBody());
+		//print_r($rawResponse);
+		$rawResponseBody = $rawResponse->getBody();
+        $reply = array('rawResponse' => $rawResponseBody);
+       // $reply['errorMessage'] = $rawResponse->getMessage();
+       
+        
 //        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
 //        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
         /*if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
@@ -676,6 +690,21 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         return $reply;
     }
 
+
+public function updateFile($fileToUpload, $docName, $mimeType,$comm_type) {
+        // Let's see if this is not on the whitelist of mimeTypes
+        if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhitelist) ) {
+            // It's not whitelisted
+            $mimeType = 'application/octet-stream';
+        }
+		$urlReq = "files/basic/api/myuserlibrary/document/{$docName}/entry?identifier=label";
+        $client = $this->getClient();
+	    $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
+		$client->setAuth($this->account_name,$this->account_password);
+		$rawResponse = $client->setUri($url)->request("DELETE");
+        $reply = $this->uploadFile($fileToUpload, $docName, $mimeType,$comm_type);
+        return $reply;
+    }
 	public function shareMyFileWithCommunity($document_id,$community_xml) {
 		$client = $this->getClient();
 

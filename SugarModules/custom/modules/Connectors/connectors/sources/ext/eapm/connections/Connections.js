@@ -105,8 +105,48 @@ function createNewConnectionsObject(object_name) {
 
     var tabCount = tabView.get('tabs').length;
     YAHOO.connections.tabs_meta[object_name].order = tabCount-1;
+    
 }
 
+function addMemberAutocomplete()
+{
+if( typeof(window.$) !== "undefined")
+	$('#search_AddMember').autocomplete({
+		source: function(request,response) {
+				  $.ajax({
+					url: createURL('method=sourceForAutoCompleteMember&search_text='+request.term),
+					dataType: "json",
+					minChars: 2,
+					success: function(data) {
+					  response($.map(data, function(item) {
+						return {
+						  label: item.member_name,
+						  value: item.member_name,
+						  member_id:  item.member_id,
+						  community_id: item.community_id,
+						}
+					  }));
+					},
+				  });
+				},
+    select: function(event, ui) {
+      
+      addMember(ui.item.member_id, ui.item.community_id);
+      document.getElementById('search_AddMember').value = ui.item.value;
+      //getTabView('Members');
+      searchListings('AddMember',1);
+          var defaultTab = "Members";
+          loadListings(defaultTab,1,'');
+    var tabNum = YAHOO.connections.tabs_meta[defaultTab].order;
+    var tabView = getTabView(defaultTab);
+    tabView.selectTab(tabNum);
+      //loadListings(defaultTab,1,'');
+      
+      
+    }
+		
+		});
+}
 function showCommunities() {
     //console.log(YAHOO.connections.communitiesTabView);
     if(typeof(YAHOO.connections.communitiesTabView) == 'undefined')
@@ -179,6 +219,11 @@ function loadListings(tab_name, page_number, search_string) {
 }
 
 function selectCommunity(community_id) {
+    if (community_id == '') 
+    {
+    	var text = getLabel('LBL_CONFIRM_DELETE');
+    	if (!confirm(text)) return;
+    }
     SUGAR.ajaxStatusClass.prototype.showStatus('Saving');
 
     var url = createURL('method=saveCommunitySelection&community_id='+community_id);
@@ -259,10 +304,13 @@ var saveNewFileHandler = {
         loadListings('Files',1,'');
     },
     success: function(data) {
+console.log('success');
+console.log(data);
 
     },
     failure: function(data) {
-
+console.log('fail');
+console.log(data);
     }
 }
 
@@ -277,6 +325,7 @@ function addMember(member_id, community_id) {
 var selectMemberHandler = {
     success: function(data) {
         //console.log(data.responseText);
+        // window.setTimeout('ajaxStatus.hideStatus()', 1000);
         SUGAR.ajaxStatusClass.prototype.hideStatus();
         //loadListings('Files',0,'');
     },

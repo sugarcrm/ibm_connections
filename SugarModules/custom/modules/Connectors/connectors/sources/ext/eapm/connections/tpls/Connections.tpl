@@ -62,15 +62,16 @@ document.getElementById('show_link_connections').style.display='';
     <table width="100%" cellpadding="0" cellspacing="0" border="0" class="formHeader h3Row">
         <tbody>
         <tr>
-            <td nowrap="">
+<td nowrap="" >
                 <h3>
-                    <span style="color:#000;">IBM Connections</span>
+                    IBM Connections
                 </h3>
             </td>
-            <td>
+                        <td>
                 <img height="1" width="1" src="{sugar_getimagepath file='blank.gif'}" alt="">
             </td>
-            <td width="100%" valign="middle" nowrap="">
+
+            <td  valign="middle" nowrap="" width="100%">
                 <a name="connections"> </a>
                 <span id="show_link_connections" style="display: none">
                     <a href="#" onclick="current_child_field = 'connections';showSubPanel('connections',null,null,'connections');document.getElementById('show_link_connections').style.display='none';document.getElementById('hide_link_connections').style.display='';return false;"><img src="{sugar_getimagepath file='advanced_search.gif'}" border="0"></a>
@@ -79,6 +80,7 @@ document.getElementById('show_link_connections').style.display='';
                     <a href="#" onclick="hideSubPanel('connections');document.getElementById('hide_link_connections').style.display='none';document.getElementById('show_link_connections').style.display='';return false;"><img src="{sugar_getimagepath file='basic_search.gif'}" border="0"></a>
                 </span>
             </td>
+            
         </tr>
         </tbody>
     </table>
