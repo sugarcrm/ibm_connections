@@ -27,14 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/*********************************************************************************
-
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 require_once('include/Dashlets/DashletGeneric.php');
 require_once('modules/ibm_connections/ibm_connections.php');
 
