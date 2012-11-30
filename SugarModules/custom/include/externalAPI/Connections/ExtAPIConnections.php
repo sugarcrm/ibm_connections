@@ -1,8 +1,9 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -23,7 +24,7 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
@@ -196,7 +197,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         return $client;
     }
 
-    public function uploadDoc($bean, $fileToUpload, $docName, $mimeType)
+    public function uploadDoc($bean, $fileToUploadContents, $docName, $mimeType)
     {
         // Let's see if this is not on the whitelist of mimeTypes
         if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhiteList) ) {
@@ -212,7 +213,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         }
         $GLOBALS['log']->debug("Connections REQUEST: $url");
         $rawResponse = $client->setUri($url)
-            ->setRawData(file_get_contents($fileToUpload), $mimeType)
+            ->setRawData($fileToUploadContents, $mimeType)
             ->setHeaders("slug", $docName)
             ->request("POST");
         $reply = array('rawResponse' => $rawResponse->getBody());
@@ -220,8 +221,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 //        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
         if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
             $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.$rawResponse->getMessage();
             return;
         }
 
@@ -231,8 +231,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $xml->loadXML($reply['rawResponse']);
         if ( !is_object($xml) ) {
             $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.print_r(libxml_get_errors(),true);
             return;
         }
 
@@ -243,8 +242,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
         if ( !is_object($url) || !is_object($directUrl) || !is_object($id) ) {
             $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server';
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'];
             return;
         }
         $bean->doc_url = $url->item(0)->getAttribute("href");
@@ -280,16 +278,11 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     public function loadDocCache($forceReload = false) {
         global $db, $current_user;
 
-        create_cache_directory('/include/externalAPI/');
-        $cacheFileBase = 'cache/include/externalAPI/docCache_'.$current_user->id.'_ConnectionsDirect';
-        if ( !$forceReload && file_exists($cacheFileBase.'.php') ) {
-            // File exists
-            include_once($cacheFileBase.'.php');
-            if ( abs(time()-$docCache['loadTime']) < 3600 ) {
-                // And was last updated an hour or less ago
-                return $docCache['results'];
-            }
+        $key = 'docCache_'.$current_user->id.'_ConnectionsDirect';
+        if ( isset(SugarCache::instance()->$key) ) {
+            return SugarCache::instance()->$key;
         }
+        
         $requestUrl = '/files/basic/cmis/repository/p!'.$this->api_data['subscriberId'].'/folderc/snx:files';
         if ( $this->getVersion() == 1 ) {
             $requestUrl .= '!'.$this->api_data['subscriberId'];
@@ -303,8 +296,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $xml->loadXML($reply['rawResponse']);
         if ( !is_object($xml) ) {
             $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.print_r(libxml_get_errors(),true);
             return;
         }
 
@@ -331,14 +323,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
             $results[] = $result;
         }
 
-
-        $docCache['loadTime'] = time();
-        $docCache['results'] = $results;
-        $fd = fopen($cacheFileBase.'_tmp.php','w');
-        fwrite($fd,'<'."?php\n// This file was auto generated by '.__FILE__.' do not overwrite.\n\n".'$docCache = '.var_export($docCache,true).";\n");
-        fclose($fd);
-        rename($cacheFileBase.'_tmp.php',$cacheFileBase.'.php');
-
+        SugarCache::instance()->$key = $results;
+        
         return $results;
     }
     public function searchDoc($keywords,$flushDocCache=false){
@@ -389,8 +375,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
 		if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
 			$reply['success'] = false;
-			// FIXME: Translate
-			$reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
+			$reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.$rawResponse->getMessage();
 			return $reply;
 		} else {
 			$reply['success'] = true;
@@ -408,8 +393,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
             $GLOBALS['log']->debug("RESPONSE-JSON: ".var_export($response, true));
             if ( empty($rawResponse) || !is_array($response) ) {
                 $reply['success'] = FALSE;
-                // FIXME: Translate
-                $reply['errorMessage'] = 'Bad response from the server';
+                $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'];
             } else {
                 $reply['responseJSON'] = $response;
                 $reply['success'] = TRUE;
@@ -649,7 +633,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		return $profile_info;
 	}
 
-	public function uploadFile($fileToUpload, $docName, $mimeType, $comm_type) {
+	public function uploadFile($fileToUploadContents, $docName, $mimeType, $comm_type) {
         // Let's see if this is not on the whitelist of mimeTypes
         if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhitelist) ) {
             // It's not whitelisted
@@ -666,7 +650,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		//$xml = new SimpleXMLElement($this->upload_document_xml);
 		//$data = $xml->asXML();
 		//$client->setFileUpload($fileToUpload, $docName);
-		$client->setRawData(file_get_contents($fileToUpload), $mimeType);
+		$client->setRawData($fileToUploadContents, $mimeType);
 		$client->setHeaders("slug", $docName);
 		//$client->setParameterPost("visibility", "public");
 		$client->setUri($url);
@@ -682,8 +666,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 //        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
         /*if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
             $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
+            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.$rawResponse->getMessage();
             return;
         }*/
 
@@ -691,7 +674,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     }
 
 
-public function updateFile($fileToUpload, $docName, $mimeType,$comm_type) {
+public function updateFile($fileToUploadContents, $docName, $mimeType,$comm_type) {
         // Let's see if this is not on the whitelist of mimeTypes
         if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhitelist) ) {
             // It's not whitelisted
@@ -702,7 +685,7 @@ public function updateFile($fileToUpload, $docName, $mimeType,$comm_type) {
 	    $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
 		$client->setAuth($this->account_name,$this->account_password);
 		$rawResponse = $client->setUri($url)->request("DELETE");
-        $reply = $this->uploadFile($fileToUpload, $docName, $mimeType,$comm_type);
+        $reply = $this->uploadFile($fileToUploadContents, $docName, $mimeType,$comm_type);
         return $reply;
     }
 	public function shareMyFileWithCommunity($document_id,$community_xml) {
