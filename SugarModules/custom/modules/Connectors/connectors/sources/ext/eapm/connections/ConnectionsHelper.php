@@ -1,24 +1,45 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: bkilgore
- * Date: 3/22/12
- * Time: 4:44 PM
- * To change this template use File | Settings | File Templates.
- */
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 
-class ConnectionsHelper {
-	var $apiClass;
-	var $community;
-	var $community_id;
-	var $tab_name;
-	var $page_number;
-	var $method;
-	var $search_text;
-	var $tabs_meta;
-	var $language;
+class ConnectionsHelper 
+{
+	protected $apiClass;
+	protected $community;
+	protected $community_id;
+	protected $tab_name;
+	protected $page_number;
+	protected $method;
+	protected $search_text;
+	protected $tabs_meta;
+	protected $language;
 
-	function __construct() {
+	public function __construct() {
 		require_once('include/connectors/utils/ConnectorUtils.php');
 		require_once('custom/modules/Connectors/connectors/sources/ext/eapm/connections/tabs.meta.php');
 		$this->tabs_meta = $tabs_meta;
@@ -36,7 +57,54 @@ class ConnectionsHelper {
 		$this->apiClass = self::getEAPM();
 	}
 
-	static function getEAPM() {
+	/**
+	 * Exists to validate the passed in method to make sure it exists, along with getting around an annoying quirk of
+	 * ModuleScanner that does allow variable functions.
+	 *
+	 * @param string $methodName
+	 */
+	public static function handleMethod($methodName) {
+	    if ( $methodName == 'uploadNewFile' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'downloadFile' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'saveNewCommunity' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'sourceForAutoCompleteMember' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'loadConnectionsCommunities' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'loadFilesList' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'loadMembersList' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'createNewCommunity' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'createNewFile' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'addCommunityMember' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'myAccount' ) {
+	        return $this->uploadNewFile();
+	    }
+	    if ( $methodName == 'saveCommunitySelection' ) {
+	        return $this->uploadNewFile();
+	    }
+	    
+	    throw new Exception("Method passed '$methodName' does not exist");        
+	}
+	
+	public static function getEAPM() {
 		require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
 		$api_class = new ExtAPIConnections();
 		$eapmBean = EAPM::getLoginInfo('Connections');
@@ -50,11 +118,7 @@ class ConnectionsHelper {
 
 	}
 
-	static function isConnectionsLoaded() {
-
-	}
-	
-	function getMembersListForAutocomplete($response) {
+	private function getMembersListForAutocomplete($response) {
 		$entries = $response->entry;
 		$community_id = $this->getCommunityId();
 		$res = array();
@@ -69,7 +133,7 @@ class ConnectionsHelper {
 	}
 
 	
-	function sourceForAutoCompleteMember() {
+	protected function sourceForAutoCompleteMember() {
 		$search_text = $this->search_text;
 		$reply = $this->apiClass->getMembers("", $search_text);
 		$response = new SimpleXMLElement($reply['rawResponse']);
@@ -77,7 +141,7 @@ class ConnectionsHelper {
 		echo json_encode($member_list);
 	}
 
-	function loadConnectionsCommunities() {
+	protected function loadConnectionsCommunities() {
 		$this->community = $this->tab_name;
 
 		$search_text = $this->search_text;
@@ -120,7 +184,7 @@ class ConnectionsHelper {
 		}
 	}
 
-	function getSearch($tab_name,$search_string) {
+	private function getSearch($tab_name,$search_string) {
 		$searchboxname = "search_".$tab_name;
 		$tplName = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Search.tpl';
 		$smarty = new Sugar_Smarty();
@@ -134,7 +198,7 @@ class ConnectionsHelper {
 	}
 
 	// returns a list of all Connections members registered in Sugar instance
-	function getSugarMembers() {
+	private function getSugarMembers() {
 		global $current_user;
 		$eapm = new EAPM();
 
@@ -151,7 +215,7 @@ class ConnectionsHelper {
 	}
 
 	//TODO: Combine into one funtion with createNewFile
-	function createNewCommunity() {
+	protected function createNewCommunity() {
 		$members_list = $this->getSugarMembers();
 		$members = array();
 		$user = new User();
@@ -173,7 +237,7 @@ class ConnectionsHelper {
 		echo $smarty->fetch($tplName);
 	}
 
-	function createNewFile() {
+	protected function createNewFile() {
 
 		$tplName = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/CreateFile.tpl';
 		$smarty = new Sugar_Smarty();
@@ -184,7 +248,7 @@ class ConnectionsHelper {
 		echo $smarty->fetch($tplName);
 	}
 
-	function addCommunityMember() {
+	protected function addCommunityMember() {
 		$this->community = $this->tab_name;
 		$search_text = $this->search_text;
 		$page_number = $this->page_number;
@@ -235,16 +299,21 @@ class ConnectionsHelper {
 		}
 	}
 
-	function uploadNewFile() {
-		$fileToUpload = $_FILES['new_file']['tmp_name'];
-		$docName = $_FILES['new_file']['name'];
-		$mimeType = $_FILES['new_file']['type'];
+	protected function uploadNewFile() {
+	    $uploadFile = new UploadFile('userfile');
+	    if ( !$uploadFile->confirm_upload() ) {
+	        echo $this->language['LBL_FILE_UPLOADED_NOT_SHARED'];
+	        return;
+	    }
+		$fileToUploadContents = $uploadFile->get_file_contents();
+		$docName = $uploadFile->get_uploaded_file_name();
+		$mimeType = $uploadFile->get_mime_type();
 		$fileShared = false;
 		$comm_info  = $this->apiClass->getCommunityInfo($this->getCommunityId());
 		$response_info = new SimpleXMLElement($comm_info['rawResponse']);
 		$comm_type = (string)$response_info->children("http://www.ibm.com/xmlns/prod/sn")->communityType;
 		if ($comm_type != "public" && $comm_type != "private") $comm_type = "private";
-		$reply = $this->apiClass->uploadFile($fileToUpload, $docName, $mimeType,$comm_type);
+		$reply = $this->apiClass->uploadFile($fileToUploadContents, $docName, $mimeType,$comm_type);
 		$response = new SimpleXMLElement($reply['rawResponse']);
 		$document_id = $response->children('urn:ibm.com/td')->uuid;
 		
@@ -275,11 +344,11 @@ class ConnectionsHelper {
 		else echo $this->language['LBL_FILE_UPLOADED_NOT_SHARED'];
 	}
 
-	function addMember() {
+	private function addMember() {
 		$this->apiClass->addMemberToCommunity($this->member_id, $this->community_id);
 	}
 
-	function saveCommunitySelection() {
+	protected function saveCommunitySelection() {
 		$connections = new ibm_connections();
 
 		$connections->retrieve_by_string_fields(array('parent_id' => $this->parent_id));
@@ -295,7 +364,7 @@ class ConnectionsHelper {
 		echo $this->language['LBL_COMMUNITY_SELECTION_SAVED'];
 	}
 
-	function saveNewCommunity() {
+	protected function saveNewCommunity() {
 		global $current_user;
 		//echo "Save new community";
 		$community_xml = new SimpleXMLElement($this->apiClass->create_community_xml);
@@ -327,7 +396,7 @@ class ConnectionsHelper {
 		}
 	}
 
-	function getPagination($data,$search_text='') {
+	private function getPagination($data,$search_text='') {
 		$tab_name = $this->tab_name;
 		$search_text = str_ireplace(" ","+",$search_text);
 
@@ -422,7 +491,7 @@ class ConnectionsHelper {
 	
 	}
 
-	function getTabButtons() {
+	private function getTabButtons() {
 		global $beanList, $current_user;
 		if(empty($this->community_id)) $this->community_id = $this->getCommunityId();
 
@@ -463,7 +532,7 @@ class ConnectionsHelper {
 		return $buttons;
 	}
 
-	function getCommunityList($response) {
+	private function getCommunityList($response) {
 		$entries = $response->entry;
 		$reply = "<br/><table cellspacing='0' cellpadding='0' border='0' width='100%' style='background: rgb(255, 255, 255); background: rgba(255, 255, 255, 0.7);' class='list view'>";
 
@@ -491,7 +560,7 @@ class ConnectionsHelper {
 		return $reply;
 	}
 
-	function getCommunityId() {
+	private function getCommunityId() {
 		if(isset($this->parent_id) && !empty($this->parent_id)) {
 			$connections = new ibm_connections();
 			$connections->retrieve_by_string_fields(array('parent_id' => $this->parent_id));
@@ -500,7 +569,7 @@ class ConnectionsHelper {
 		}
 	}
 
-	function loadFilesList() {
+	protected function loadFilesList() {
 		global $beanList, $current_user;
 		$community_id = $this->getCommunityId();
 		if(empty($community_id)) {
@@ -559,14 +628,14 @@ class ConnectionsHelper {
 		}
 	}
 	
-	function myAccount() {
+	protected function myAccount() {
 			$pagination = "<table cellpadding='0' cellspacing='0' width='100%' border='0' class='pagination'>";
 			$pagination .= "<tr><td align='left'><a href='".$this->apiClass->url."/profiles/html/myProfileView.do' target='_blank'>".$this->language['LBL_MY_ACCOUNT']."</a></td></tr>";
 			$pagination .="</table>";
 			echo $pagination;
 	}
 	
-	function loadMembersList() {
+	protected function loadMembersList() {
 		global $beanList,$current_user;
 		$community_id = $this->getCommunityId();
 
@@ -625,7 +694,7 @@ class ConnectionsHelper {
 		}
 	}
 
-	function getFilesList($response) {
+	protected function getFilesList($response) {
 		$entries = $response->entry;
 
 		$reply = "<br/><table cellspacing='0' cellpadding='0' border='0' width='100%' style='background: rgb(255, 255, 255); background: rgba(255, 255, 255, 0.7);' class='list view'>";
@@ -658,7 +727,7 @@ class ConnectionsHelper {
 		return $reply;
 	}
 
-	function getMembersList($response, $add_member=false) {
+	protected function getMembersList($response, $add_member=false) {
 		$entries = $response->entry;
 		$community_id = $this->getCommunityId();
 		
@@ -702,7 +771,7 @@ class ConnectionsHelper {
 		return $reply;
 	}
 
-	public function loadMemberProfileCard() {
+	protected function loadMemberProfileCard() {
 		$body = "";
 		$member_id = $this->member_id;
 		$member_profile_response = $this->apiClass->getMemberProfileInfo($member_id);
@@ -729,7 +798,7 @@ class ConnectionsHelper {
 		echo json_encode($member_profile);
 	}
 
-	function downloadFile() {
+	protected function downloadFile() {
 		$document_id = $this->documentId;
 		$document_name = $this->documentName;
 		//$document_info = $this->apiClass->getFileDetails($document_id);
@@ -756,12 +825,8 @@ class ConnectionsHelper {
 		header("Expires: 0");
 		set_time_limit(0);
 
-		@ob_end_clean();
-		ob_start();
-			echo $document['rawResponse'];
+		@ob_clean();
+		echo $document['rawResponse'];
 		@ob_flush();
-
 	}
-	
-	
 }
