@@ -1,0 +1,31 @@
+{
+  "postedTime": "2012-12-15T15:04:55Z",
+  "actor": {
+    "url": "http://connections.example.com/max",
+    "objectType" : "person",
+    "id": "tag:example.com,2011:max",
+    "image": {
+      "url": "http://connections.example.com/max/image",
+      "width": 250,
+      "height": 250
+    },
+    "displayName": "Max Jensen"
+  }
+  "verb": "post",
+  "object" : {
+    "url": "http://www.youtube.com/v/9gW2YVBrNVA",
+    "id": "tag:youtube.com,2011:9gW2YVBrNVA"
+  },
+  "target" : {
+    "url": "http://example.org/favorites/",
+    "objectType": "favoriteslist",
+    "id": "tag:youtube.com,2011:9gW2YVBrNVA",
+    "displayName": "John's Favorites"
+  }
+  "openSocial" : {
+    "embed" : {
+      "gadget": "http://example.com/YouTube_EE.xml",
+      "context": "9gW2YVBrNVA"
+    }
+  }
+}
