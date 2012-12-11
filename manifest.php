@@ -35,7 +35,7 @@ $manifest = array (
     array (
       0 => '6\.4\.*',
       1 => '6\.5\.*',
-	  2 => '6\.6\.*'
+	    2 => '6\.6\.*'
     ),
   ),
   1 => 
@@ -55,9 +55,9 @@ $manifest = array (
   'icon' => '',
   'is_uninstallable' => true,
   'name' => 'IBM Connections',
-  'published_date' => '2012-11-28 11:00:00',
+  'published_date' => '2012-12-10 11:00:00',
   'type' => 'module',
-  'version' => '1.1',
+  'version' => '1.2',
   'remove_tables' => 'prompt',
 );
 
@@ -197,6 +197,11 @@ $installdefs = array (
     array (
       'from' => '<basepath>/SugarModules/custom/modules/Connectors/metadata/display_config.php',
       'to' => 'custom/modules/Connectors/metadata/display_config.php',
+    ),
+    23 =>
+    array (
+      'from' => '<basepath>/SugarModules/modules/OpenSocial',
+      'to'   => 'modules/OpenSocial'
     ),
   ),
   'language' => 
