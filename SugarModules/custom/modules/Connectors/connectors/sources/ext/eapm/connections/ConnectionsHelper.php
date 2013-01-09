@@ -64,41 +64,43 @@ class ConnectionsHelper
 	 * @param string $methodName
 	 */
 	public static function handleMethod($methodName) {
+		// TODO: This seems to be breaking things..
+		$helper = new ConnectionsHelper;
 	    if ( $methodName == 'uploadNewFile' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'downloadFile' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'saveNewCommunity' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'sourceForAutoCompleteMember' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'loadConnectionsCommunities' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'loadFilesList' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'loadMembersList' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'createNewCommunity' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'createNewFile' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'addCommunityMember' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'myAccount' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'saveCommunitySelection' ) {
-	        return $this->uploadNewFile();
+	        return $helper->uploadNewFile();
 	    }
 	    
 	    throw new Exception("Method passed '$methodName' does not exist");        
@@ -143,7 +145,6 @@ class ConnectionsHelper
 
 	protected function loadConnectionsCommunities() {
 		$this->community = $this->tab_name;
-
 		$search_text = $this->search_text;
 		$page_number = $this->page_number;
 
@@ -225,7 +226,6 @@ class ConnectionsHelper
 			$userName = $user->full_name;
 			$members[$connectionsId] = $userName;
 		}
-		//var_dump($members_list);
 
 		$tplName = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/CreateCommunity.tpl';
 		$smarty = new Sugar_Smarty();
@@ -487,8 +487,6 @@ class ConnectionsHelper
 		$pagination .= "</table>";
 
 		return $pagination;
-		
-	
 	}
 
 	private function getTabButtons() {

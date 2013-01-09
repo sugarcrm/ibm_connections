@@ -203,6 +203,16 @@ $installdefs = array (
       'from' => '<basepath>/SugarModules/modules/OpenSocial',
       'to'   => 'modules/OpenSocial'
     ),
+    24 => 
+    array (
+      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsActivityStreamEntry.php',
+      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsActivityStreamEntry.php',
+    ),
+    25 => 
+    array (
+      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsActivityStreamPublisherJob.php',
+      'to' => 'custom/include/SugarQueue/jobs/ConnectionsActivityStreamPublisherJob.php',
+    ),
   ),
   'language' => 
   array (

@@ -39,21 +39,6 @@ class ext_eapm_connections extends ext_eapm {
 		$this->_enable_in_admin_mapping  = false;
 	}
 
-	/*
-	public function filterAllowedModules( $moduleList ) {
-		// Connections currently has no ability to talk to modules other than these four
-		$outModuleList = array();
-		foreach ( $moduleList as $module ) {
-			if ( !in_array($module,$this->allowedModuleList) ) {
-				continue;
-			} else {
-				$outModuleList[$module] = $module;
-			}
-		}
-		return $outModuleList;
-	}
-	*/
-
 	public function saveMappingHook($mapping) {
 
      $removeList = array();

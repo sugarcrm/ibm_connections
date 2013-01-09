@@ -71,16 +71,6 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         'application/onenote',
         );
 
-    //Not needed?  Just for LotusLive meetings?
-    //public $authMethod = 'oauth';
-    //public $supportMeetingPassword = false;
-    //public $canInvite = false;
-    //public $sendsInvites = false;
-    //public $needsUrl = true;
-    //public $sharingOptions = array('private'=>'LBL_SHARE_PRIVATE','company'=>'LBL_SHARE_COMPANY','public'=>'LBL_SHARE_PUBLIC');
-    //public $hostURL;
-    //protected $dateFormat = 'm/d/Y H:i:s';
-
     public $connector = "ext_eapm_connections";
     public $supportedModules = array();
     public $authMethod = 'password';
@@ -102,21 +92,11 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		$this->create_community_xml = $create_community_xml;
 	    $this->upload_document_xml = $upload_document_xml;
 	    $this->community_member_xml = $community_member_xml;
-
-
-	///Not needed?  Just for LotusLive meetings?
-        //if ( isset($GLOBALS['sugar_config']['ll_base_url']) ) {
-            //$this->url = $GLOBALS['sugar_config']['ll_base_url'];
-        //}
     }
 
     public function loadEAPM($eapmBean)
     {
         parent::loadEAPM($eapmBean);
-
-        //if($eapmBean->url) {
-        //    $this->url = $eapmBean->url;
-        //}
 
         if ( !empty($eapmBean->api_data) ) {
             $this->api_data = json_decode(base64_decode($eapmBean->api_data), true);
@@ -153,12 +133,10 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     {
         $reply = parent::checkLogin($eapmBean);
         if ( $reply['success'] != true ) {
-            // $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Bad reply: '.print_r($reply,true));
             return $reply;
         }
         try {
 	        $reply = $this->makeRequest('profiles/atom/profileService.do','GET',false);
-            //$reply = $this->makeRequest('files/basic/cmis/my/servicedoc','GET',false);
             if ( $reply['success'] !== true ) {
                 $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Bad reply: '.print_r($reply,true));
                 return $reply;
@@ -179,8 +157,6 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         }
 
         $this->eapmBean->api_data = base64_encode(json_encode($this->api_data));
-
-        // $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Good reply: '.print_r($reply,true));
         return $reply;
     }
 
@@ -217,8 +193,6 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
             ->setHeaders("slug", $docName)
             ->request("POST");
         $reply = array('rawResponse' => $rawResponse->getBody());
-//        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
-//        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
         if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
             $reply['success'] = false;
             $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.$rawResponse->getMessage();
@@ -368,11 +342,6 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $reply = array('rawResponse' => $rawResponse->getBody());
         $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
 
-	    //$ns = $xml->attributes();
-		//$xml->preserveWhiteSpace = false;
-		//$xml->strictErrorChecking = false;
-		//$xml->loadXML($reply['rawResponse']);
-
 		if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
 			$reply['success'] = false;
 			$reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.$rawResponse->getMessage();
@@ -381,26 +350,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 			$reply['success'] = true;
 			$cookie_array = $rawResponse->getHeader('Set-cookie');
 			$expires = strtotime($rawResponse->getHeader('Expires'));
-
-			//$this->processLTPACookies($cookie_array, $expires);
-			//var_dump($_COOKIE); die();
 		}
-
-		//$xp = new DOMXPath($xml);
-
-        /*if($json) {
-            $response = json_decode($reply['rawResponse'],true);
-            $GLOBALS['log']->debug("RESPONSE-JSON: ".var_export($response, true));
-            if ( empty($rawResponse) || !is_array($response) ) {
-                $reply['success'] = FALSE;
-                $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'];
-            } else {
-                $reply['responseJSON'] = $response;
-                $reply['success'] = TRUE;
-            }
-        } else {
-            $reply['success'] = true;
-        }*/
 
         return $reply;
     }
@@ -426,25 +376,12 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 					$cookie_domain = explode("=", $cookie_parts[2], 2);
 
 				$cookie = $cookie_array[$i];
-				//$test = $this->client->setHeaders("Set-Cookie",$cookie);
-				//var_dump($test);
-				//echo $cookie;
-				//header("Set-Cookie: {$cookie}");
-				//echo $cookie_array[$i];
-				//var_dump($cookie_token); die();
 				$cookie_name = $cookie_token[0];
 				$cookie_value = $cookie_token[1];
-				//header("Set-Cookie: {$cookie_name}={$cookie_value}; Domain={$cookie_domain}; Max-Age=0; Path={$cookie_path}");
-				//echo "setcookie('{$cookie_name}','{$cookie_value}',{$expires},'{$cookie_path[1]}','{$cookie_domain[1]}')<br/>";
-//die();
-				//$cookie_status = setcookie('LtpaToken','w9sx2rFYg/Ez/lJrUfeBJ0QAnXYBWRDE9++hn2Cq5YDPKpNzUBlB8FZX6PpWsvV6BQsjHco5zMvFoQX/h/lS6ortCsmUlJpkXEf9vFS7VB5C0vL6niBkLLuuE8ACyuNGiwxyVySU+hCpm3vbUvhZKFZkrmcUWGawU1Y1DZOj3VDwNcjbdZ/MxAih9SdFhPNFdDhhFxOItTQ+ykrfx/JqV9Rc1NifOROkAts9E65Hec9UmZGZQzx4Zt1BC0ND1vnlzGlAANhGATePlMLgTOokGX9We3gr18jyMsXp9TVDlWC54FV4edNCYXl04GAO8F3fPypAFURX4psQIsStrmGeAqirgQqhOmx5YSVzDtzl16cHCwQSLsWCz7hmc/UdK0Ip35K+srZHguW4mMk6tTLg9w==',786297600,'/','.lotus.com');
 				$cookie_status = setcookie($cookie_name,$cookie_value,0,$cookie_path[1],$cookie_domain[1]);
-				//setcookie("TestCookie", "Test!", 0, "/", ".example.com", 1);
-				//echo $cookie_name. " Status: ".$cookie_status."<br/>";
 			}
 		}
 		ob_flush();
-		//die();
 	}
 
     /**
@@ -477,13 +414,9 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         }
 
         $xp = new DOMXPath($xml);
-
         $results = array();
-
         $versionNodes = $xp->query('//cmisra:repositoryInfo/cmis:productName');
-
         $versionLabel = $versionNodes->item(0)->textContent;
-
         switch ( $versionLabel ) {
             case 'LotusLive Files':
                 $version = 1;
@@ -524,7 +457,6 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 	public function getMembers($community_id="", $search_text="", $page=1) {
 		if(!empty($search_text)) {
 			$search_text = str_ireplace(" ","+",$search_text);
-
 			$reply = $this->makeRequest("profiles/atom/search.do?search={$search_text}&page={$page}&ps=5");
 		}
 		if(!empty($community_id)) {
@@ -533,8 +465,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
 		return $reply;
 	}
-///communities/service/atom
-//communities/service/atom/community/instance?communityUuid=d2fdec09-0221-47fe-a27b-2e55497caa22
+
 	public function getCommunityInfo($community_id) {
 		$reply = $this->makeRequest("communities/service/atom/community/instance?communityUuid={$community_id}");
 		return $reply;
@@ -560,10 +491,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
 	public function createCommunity($data) {
 		$client = $this->getClient();
-
 		$urlReq = "communities/service/atom/communities/my";
 		$url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
-
 		$client->setRawData($data,'application/atom+xml');
 		$client->setUri($url);
 		$client->setAuth($this->account_name,$this->account_password);
@@ -571,22 +500,15 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		parse_str(parse_url($reply->getHeader('Location'),PHP_URL_QUERY));
 		$community_id = $communityUuid;
 
-		//print_r($community_id);
-
 		return $community_id;
-
 	}
 
 	public function addMemberToCommunity($member_id, $community_id) {
 		$client = $this->getClient();
-
 		$urlReq = "communities/service/atom/community/members?communityUuid={$community_id}";
 		$url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
-
 		$member_xml = new SimpleXMLElement($this->community_member_xml);
 		$member_xml->contributor->addChild('snx:userid',$member_id,'http://www.ibm.com/xmlns/prod/sn');
-		//$role = $member_xml->addChild('snx:role','owner','http://www.ibm.com/xmlns/prod/sn');
-		//$role->addAttribute('component','http://www.ibm.com/xmlns/prod/sn/communities');
 		$data = $member_xml->asXML();
 		$client->setRawData($data,'application/atom+xml');
 		$client->setUri($url);
@@ -602,11 +524,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		$profile_reply = $this->makeRequest("profiles/atom/profile.do?userid={$member_id}&format=full");
 		if($profile_reply['success']) {
 			$profile_response = new SimpleXMLElement($profile_reply['rawResponse']);
-			//$profile_info['rawResponse'] = print_r($profile_response,true);
-
 			$profile_info['member_name'] = (string) $profile_response->entry->contributor->name;
-
-			//$profile_info['sn'] = print_r($servicedoc_response->workspace->children('http://www.w3.org/2005/Atom'),true);
 			foreach($profile_response->entry->children('http://www.w3.org/2005/Atom')->link as $link) {
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/blogs")
 					$profile_info['member_blogs'] = urldecode((string) $link->attributes()->href);
@@ -625,7 +543,6 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/activities")
 					$profile_info['member_activities'] = urldecode((string) $link->attributes()->href);
 				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/image")
-					//$profile_info['profile_image_url'] = substr((string) $link->attributes()->href,0,-1);
 					$profile_info['profile_image_url'] = urldecode((string) $link->attributes()->href);
 			}
 		}
@@ -640,36 +557,16 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
             $mimeType = 'application/octet-stream';
         }
 
-		//$urlReq = "files/basic/api/myuserlibrary/feed?visibility=public";
 		$urlReq = "files/basic/api/myuserlibrary/feed?visibility=".$comm_type;
-		//$urlReq = "files/basic/api/community/a139f3b0-4cf7-40b6-af28-6cad51292aa9/libraries/feed";
-
         $client = $this->getClient();
 	    $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
-
-		//$xml = new SimpleXMLElement($this->upload_document_xml);
-		//$data = $xml->asXML();
-		//$client->setFileUpload($fileToUpload, $docName);
 		$client->setRawData($fileToUploadContents, $mimeType);
 		$client->setHeaders("slug", $docName);
-		//$client->setParameterPost("visibility", "public");
 		$client->setUri($url);
 		$client->setAuth($this->account_name,$this->account_password);
 		$rawResponse = $client->request("POST");
-		//print_r($rawResponse);
 		$rawResponseBody = $rawResponse->getBody();
         $reply = array('rawResponse' => $rawResponseBody);
-       // $reply['errorMessage'] = $rawResponse->getMessage();
-       
-        
-//        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
-//        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
-        /*if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
-            $reply['success'] = false;
-            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.$rawResponse->getMessage();
-            return;
-        }*/
-
         return $reply;
     }
 
