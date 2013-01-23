@@ -167,7 +167,7 @@ class ConnectionsActivityStreamEntry {
 	private function timestamp() {
 		// Gives us a timestamp in a format that Connections will use
 		$time = time();
-		date("Y-m-d", $time) . 'T' . date("H:i:s", $time) .'.000Z';
+		return date("Y-m-d", $time) . 'T' . date("H:i:s", $time) .'.000Z';
 	}
 	
 	private function gadgetUrl() {
@@ -176,14 +176,28 @@ class ConnectionsActivityStreamEntry {
 	}
 	
 	private function gadgetContext() {
-		return array("id" => "12345");
+		return array( "opportunity" => array(
+			"id" 		=> $this->bean->id,
+			"url"		=> $this->object["url"],
+			"name"		=> $this->bean->name,
+			"amount"	=> $this->bean->amount,
+			"date_closed" => $this->bean->date_closed,
+			"probability" => $this->bean->probability,
+			"sales_stage" => $this->bean->sales_stage,
+			"next_step"	=> $this->bean->next_step,
+			"account" 	=> array(
+				"id"	=> $this->bean->account_id,
+				"url"	=> $this->target["url"],
+				"name"	=> $this->bean->account_name,
+			),
+		));
 	}
 	
 	private function populateJsonEntry() {
 		global $sugar_config; 
 		$this->jsonEntry = array(
 			"generator" => array(
-				"image" => array("url" => 'http://www.sugarcrm.com/sites/default/files/favicon_0.ico'),
+				"image" => array("url" => 'https://www.sugarcrm.com/sites/default/files/favicon_0.ico'),
 				"id"	=> "sugarcrm",
 				"url"	=> $this->siteUrl(),
 				"displayName" => "SugarCRM",

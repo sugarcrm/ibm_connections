@@ -213,6 +213,12 @@ $installdefs = array (
       'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsActivityStreamPublisherJob.php',
       'to' => 'custom/include/SugarQueue/jobs/ConnectionsActivityStreamPublisherJob.php',
     ),
+    26 => 
+    array (
+      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsUtils.php',
+      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsUtils.php',
+    ),
+
   ),
   'language' => 
   array (

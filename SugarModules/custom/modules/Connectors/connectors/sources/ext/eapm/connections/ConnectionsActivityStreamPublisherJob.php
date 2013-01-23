@@ -60,6 +60,8 @@ class ConnectionsActivityStreamPublisherJob implements RunnableSchedulerJob {
 		} 
 		$this->toggleStatus();
 		$this->job->resolution = SchedulersJob::JOB_SUCCESS;
+		$this->job->message    = "Server reply was: " . $this->response->getStatus() .
+	       " " . $this->response->getMessage() . "\n";
 		return true;
 	}
 }
