@@ -82,40 +82,30 @@ fixMenu();
 <script type="text/javascript" src="{$connections_url}/profiles/ibm_semanticTagServlet/javascript/semanticTagService.js?loadCssFiles=false"></script>
 
 <div id="communities_dialog" class="yui-pe-content" style="visibility:hidden;">
-<div class="hd">{$language.LBL_PLEASE_SELECT_COMMUNITY}{$object_type}</div>
-<div class="bd">
+  <div class="hd">{$language.LBL_PLEASE_SELECT_COMMUNITY}{$object_type}</div>
+  <div class="bd">
     <div id='connections_communities' style='width:100%' class="yui-navset detailview_tabs yui-navset-top"></div>
-</form>
+  </div>
 </div>
-</div>
-
 
 <div id='connectionsDiv' style='width:100%' class="doNotPrint">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" class="formHeader h3Row">
-        <tbody>
+      <tbody>
         <tr>
-<td nowrap="" >
-                <h3>
-                    {$language.LBL_SUBPANEL_NAME}
-                </h3>
-            </td>
-                        <td>
-                <img height="1" width="1" src="{sugar_getimagepath file='blank.gif'}" alt="">
-            </td>
-
-            <td  valign="middle" nowrap="" width="100%">
-                <a name="connections"> </a>
-                <span id="show_link_connections" style="display: none">
-                    <a href="#" onclick="current_child_field = 'connections';showSubPanel('connections',null,null,'connections');document.getElementById('show_link_connections').style.display='none';document.getElementById('hide_link_connections').style.display='';return false;"><img src="{sugar_getimagepath file='advanced_search.gif'}" border="0"></a>
-                </span>
-                <span id="hide_link_connections" style="display: ">
-                    <a href="#" onclick="hideSubPanel('connections');document.getElementById('hide_link_connections').style.display='none';document.getElementById('show_link_connections').style.display='';return false;"><img src="{sugar_getimagepath file='basic_search.gif'}" border="0"></a>
-                </span>
-
-            </td>
-            
+          <td nowrap="" >
+            <h3>
+              <span id="show_link_connections" style="display: none">
+                <a href="#" onclick="current_child_field = 'connections';showSubPanel('connections',null,null,'connections');document.getElementById('show_link_connections').style.display='none';document.getElementById('hide_link_connections').style.display='';return false;"><img src="{sugar_getimagepath file='advanced_search.gif'}" border="0"></a>
+              </span>
+              <span id="hide_link_connections" style="display: ">
+                <a href="#" onclick="hideSubPanel('connections');document.getElementById('hide_link_connections').style.display='none';document.getElementById('show_link_connections').style.display='';return false;"><img src="{sugar_getimagepath file='basic_search.gif'}" border="0"></a>
+              </span>
+              &nbsp;{$language.LBL_SUBPANEL_NAME}
+            </h3>
+          </td>
+          <td with="100%"><img height="1" width="1" src="{sugar_getimagepath file='blank.gif'}" alt=""></td>
         </tr>
-        </tbody>
+      </tbody>
     </table>
     <div id='subpanel_connections' style='width:100%' class="yui-navset detailview_tabs yui-navset-top">
     {include file="$contentTpl"}
