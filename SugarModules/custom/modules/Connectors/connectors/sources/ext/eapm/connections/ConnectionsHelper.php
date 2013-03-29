@@ -96,21 +96,25 @@ class ConnectionsHelper
 	public function getCommunityNavigation($communityId, $recordOwner)
 	{
 		$visibility = 'private';
-		if (empty($communityId)){
+		// New Community
+		if (empty($communityId)) {
 			$head = ($recordOwner) ? $this->view->navWrapStart() . $this->view->selectCommunityMenu() . $this->view->navWrapEnd() : false;
 		}
+		// Associated Community
 		else {
 			$community = $this->apiClass->getCommunity($communityId);
+			// Not Visible
 			if (empty($community)) {
-				return array('head' => "<div id='community_name'>{$this->language['LBL_PRIVATE_COMMUNITY']}</div>", 'visibility' => $visibility, 'members' => array());
+				return array('head' => "<li id='community_name'>{$this->language['LBL_PRIVATE_COMMUNITY']}</li>", 'visibility' => $visibility, 'members' => array());
 			}
+			// Normal Community
 			$navigation = ($recordOwner) ? $this->view->navWrapStart()."	<li>{$this->view->actionsEditCommunity($communityId)}</li>". $this->view->selectCommunityMenu() .$this->view->navWrapEnd() :"";
-			$head = "<div id='community_logo'>
+			$head = "<li id='community_logo'>
 							<img src='{$community->getLogoLink()}'/>
-					</div>
-					<div id='community_name'> 
+					</li>
+					<li id='community_name'> 
 						<a href='".urldecode((string) $community->getLink())."' target='_blank'>".$community->getTitle()."</a>
-					</div>
+					</li>
 					{$navigation}";
 			
 			$visibility = $community->getCommunityType();

@@ -31,7 +31,9 @@
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='edit view'>
 	<tr><td>
 		<div class='connections-header'>
-			<div id='ibm_community_navigation'>{$ibm_header}</div>
+		  <nav>
+		    <ul id='ibm_community_navigation'>{$ibm_header}</ul>
+		  </nav>
 			<div id='ibm_tabs'>
 			<div class="ibm-header-tabs">
 				<div class='before-nav'>

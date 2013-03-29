@@ -28,7 +28,7 @@ class ConnectionsViewer
 	
 	public function navWrapStart()
 	{
-		return "<div id='ibm_navigator'>
+		return "<li id='ibm_navigator'>
 					<nav class='ibm-actions-nav'>
 						<ul>
 							<li>
@@ -39,7 +39,7 @@ class ConnectionsViewer
 	
 	public function navWrapEnd()
 	{
-		 return "</ul></li></ul></nav></div>";
+		 return "</ul></li></ul></nav></li>";
 	}
 	function wiki($arr)
 	{
