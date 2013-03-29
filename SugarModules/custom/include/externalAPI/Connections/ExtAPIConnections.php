@@ -1,9 +1,8 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -24,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
@@ -71,6 +70,16 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         'application/onenote',
         );
 
+    //Not needed?  Just for LotusLive meetings?
+    //public $authMethod = 'oauth';
+    //public $supportMeetingPassword = false;
+    //public $canInvite = false;
+    //public $sendsInvites = false;
+    //public $needsUrl = true;
+    //public $sharingOptions = array('private'=>'LBL_SHARE_PRIVATE','company'=>'LBL_SHARE_COMPANY','public'=>'LBL_SHARE_PUBLIC');
+    //public $hostURL;
+    //protected $dateFormat = 'm/d/Y H:i:s';
+
     public $connector = "ext_eapm_connections";
     public $supportedModules = array();
     public $authMethod = 'password';
@@ -82,22 +91,19 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 	public $client;
 	public $url;
 	public $userId;
-
+	public $api;
 
     function __construct() {
-		require('custom/include/externalAPI/Connections/ConnectionsXML.php');
 		require('custom/modules/Connectors/connectors/sources/ext/eapm/connections/config.php');
+		require_once 'custom/include/IBMConnections/Api/ConnectionsAPI.php';
 
 	    $this->url = $config['properties']['company_url'];
-		$this->create_community_xml = $create_community_xml;
-	    $this->upload_document_xml = $upload_document_xml;
-	    $this->community_member_xml = $community_member_xml;
+		$this->api = new ConnectionsAPI();
     }
 
     public function loadEAPM($eapmBean)
     {
         parent::loadEAPM($eapmBean);
-
         if ( !empty($eapmBean->api_data) ) {
             $this->api_data = json_decode(base64_decode($eapmBean->api_data), true);
             if ( isset($this->api_data['subscriberID']) ) {
@@ -133,10 +139,12 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     {
         $reply = parent::checkLogin($eapmBean);
         if ( $reply['success'] != true ) {
+            // $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Bad reply: '.print_r($reply,true));
             return $reply;
         }
         try {
 	        $reply = $this->makeRequest('profiles/atom/profileService.do','GET',false);
+            //$reply = $this->makeRequest('files/basic/cmis/my/servicedoc','GET',false);
             if ( $reply['success'] !== true ) {
                 $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Bad reply: '.print_r($reply,true));
                 return $reply;
@@ -157,6 +165,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         }
 
         $this->eapmBean->api_data = base64_encode(json_encode($this->api_data));
+
+        // $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Good reply: '.print_r($reply,true));
         return $reply;
     }
 
@@ -173,7 +183,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         return $client;
     }
 
-    public function uploadDoc($bean, $fileToUploadContents, $docName, $mimeType)
+    public function uploadDoc($bean, $fileToUpload, $docName, $mimeType)
     {
         // Let's see if this is not on the whitelist of mimeTypes
         if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhiteList) ) {
@@ -187,15 +197,18 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         if ( $this->getVersion() == 1 ) {
             $url .= "!{$this->api_data['subscriberId']}";
         }
-        $GLOBALS['log']->debug("Connections REQUEST: $url");
+        $GLOBALS['log']->debug("LOTUS REQUEST: $url");
         $rawResponse = $client->setUri($url)
-            ->setRawData($fileToUploadContents, $mimeType)
+            ->setRawData(file_get_contents($fileToUpload), $mimeType)
             ->setHeaders("slug", $docName)
             ->request("POST");
         $reply = array('rawResponse' => $rawResponse->getBody());
+//        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
+//        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
         if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
             $reply['success'] = false;
-            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.$rawResponse->getMessage();
+            // FIXME: Translate
+            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
             return;
         }
 
@@ -205,7 +218,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $xml->loadXML($reply['rawResponse']);
         if ( !is_object($xml) ) {
             $reply['success'] = false;
-            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.print_r(libxml_get_errors(),true);
+            // FIXME: Translate
+            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
             return;
         }
 
@@ -216,7 +230,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
         if ( !is_object($url) || !is_object($directUrl) || !is_object($id) ) {
             $reply['success'] = false;
-            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'];
+            // FIXME: Translate
+            $reply['errorMessage'] = 'Bad response from the server';
             return;
         }
         $bean->doc_url = $url->item(0)->getAttribute("href");
@@ -229,9 +244,10 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         return array('success'=>TRUE);
     }
 
-    public function deleteDoc($document)
+    public function deleteFile($document_id)
     {
-        $client = $this->getClient();
+      	return $this->api->getFilesAPI()->deleteDoc($document_id);
+       /* $client = $this->getClient();
         $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/object/snx:file!{$document->doc_id}";
         $GLOBALS['log']->debug("CONNECTIONS REQUEST: $url");
         $rawResponse = $client->setUri($url)
@@ -244,7 +260,28 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $this->loadDocCache(true);
 
         return array('success'=>TRUE);
+        */
     }
+    
+     public function deleteDoc($document_id)
+    {
+      	return $this->api->getFilesAPI()->deleteDoc($document_id);
+       /* $client = $this->getClient();
+        $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/object/snx:file!{$document->doc_id}";
+        $GLOBALS['log']->debug("CONNECTIONS REQUEST: $url");
+        $rawResponse = $client->setUri($url)
+            ->request("DELETE");
+        $reply = array('rawResponse' => $rawResponse->getBody());
+        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
+        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
+
+        // Refresh the document cache
+        $this->loadDocCache(true);
+
+        return array('success'=>TRUE);
+        */
+    }
+
 
     public function downloadDoc($documentId, $documentFormat){}
     public function shareDoc($documentId, $emails){}
@@ -252,11 +289,16 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     public function loadDocCache($forceReload = false) {
         global $db, $current_user;
 
-        $key = 'docCache_'.$current_user->id.'_ConnectionsDirect';
-        if ( isset(SugarCache::instance()->$key) ) {
-            return SugarCache::instance()->$key;
+        create_cache_directory('/include/externalAPI/');
+        $cacheFileBase = 'cache/include/externalAPI/docCache_'.$current_user->id.'_LotusLiveDirect';
+        if ( !$forceReload && file_exists($cacheFileBase.'.php') ) {
+            // File exists
+            include_once($cacheFileBase.'.php');
+            if ( abs(time()-$docCache['loadTime']) < 3600 ) {
+                // And was last updated an hour or less ago
+                return $docCache['results'];
+            }
         }
-        
         $requestUrl = '/files/basic/cmis/repository/p!'.$this->api_data['subscriberId'].'/folderc/snx:files';
         if ( $this->getVersion() == 1 ) {
             $requestUrl .= '!'.$this->api_data['subscriberId'];
@@ -270,7 +312,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $xml->loadXML($reply['rawResponse']);
         if ( !is_object($xml) ) {
             $reply['success'] = false;
-            $reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.print_r(libxml_get_errors(),true);
+            // FIXME: Translate
+            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
             return;
         }
 
@@ -297,8 +340,14 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
             $results[] = $result;
         }
 
-        SugarCache::instance()->$key = $results;
-        
+
+        $docCache['loadTime'] = time();
+        $docCache['results'] = $results;
+        $fd = fopen($cacheFileBase.'_tmp.php','w');
+        fwrite($fd,'<'."?php\n// This file was auto generated by '.__FILE__.' do not overwrite.\n\n".'$docCache = '.var_export($docCache,true).";\n");
+        fclose($fd);
+        rename($cacheFileBase.'_tmp.php',$cacheFileBase.'.php');
+
         return $results;
     }
     public function searchDoc($keywords,$flushDocCache=false){
@@ -334,23 +383,48 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $client = $this->getClient();
         $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
         $GLOBALS['log']->debug("REQUEST: $url");
-
         $client->setUri($url);
 	    $client->setAuth($this->account_name,$this->account_password);
 	    $rawResponse = $client->request();
-
+//echo $url;
         $reply = array('rawResponse' => $rawResponse->getBody());
         $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
 
+	    //$ns = $xml->attributes();
+		//$xml->preserveWhiteSpace = false;
+		//$xml->strictErrorChecking = false;
+		//$xml->loadXML($reply['rawResponse']);
+
 		if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
 			$reply['success'] = false;
-			$reply['errorMessage'] = $GLOBALS['app_strings']['ERR_BAD_RESPONSE_FROM_SERVER'].': '.$rawResponse->getMessage();
+			// FIXME: Translate
+			$reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
 			return $reply;
 		} else {
 			$reply['success'] = true;
 			$cookie_array = $rawResponse->getHeader('Set-cookie');
 			$expires = strtotime($rawResponse->getHeader('Expires'));
+
+			//$this->processLTPACookies($cookie_array, $expires);
+			//var_dump($_COOKIE); die();
 		}
+
+		//$xp = new DOMXPath($xml);
+
+        /*if($json) {
+            $response = json_decode($reply['rawResponse'],true);
+            $GLOBALS['log']->debug("RESPONSE-JSON: ".var_export($response, true));
+            if ( empty($rawResponse) || !is_array($response) ) {
+                $reply['success'] = FALSE;
+                // FIXME: Translate
+                $reply['errorMessage'] = 'Bad response from the server';
+            } else {
+                $reply['responseJSON'] = $response;
+                $reply['success'] = TRUE;
+            }
+        } else {
+            $reply['success'] = true;
+        }*/
 
         return $reply;
     }
@@ -376,12 +450,25 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 					$cookie_domain = explode("=", $cookie_parts[2], 2);
 
 				$cookie = $cookie_array[$i];
+				//$test = $this->client->setHeaders("Set-Cookie",$cookie);
+				//var_dump($test);
+				//echo $cookie;
+				//header("Set-Cookie: {$cookie}");
+				//echo $cookie_array[$i];
+				//var_dump($cookie_token); die();
 				$cookie_name = $cookie_token[0];
 				$cookie_value = $cookie_token[1];
+				//header("Set-Cookie: {$cookie_name}={$cookie_value}; Domain={$cookie_domain}; Max-Age=0; Path={$cookie_path}");
+				//echo "setcookie('{$cookie_name}','{$cookie_value}',{$expires},'{$cookie_path[1]}','{$cookie_domain[1]}')<br/>";
+//die();
+				//$cookie_status = setcookie('LtpaToken','w9sx2rFYg/Ez/lJrUfeBJ0QAnXYBWRDE9++hn2Cq5YDPKpNzUBlB8FZX6PpWsvV6BQsjHco5zMvFoQX/h/lS6ortCsmUlJpkXEf9vFS7VB5C0vL6niBkLLuuE8ACyuNGiwxyVySU+hCpm3vbUvhZKFZkrmcUWGawU1Y1DZOj3VDwNcjbdZ/MxAih9SdFhPNFdDhhFxOItTQ+ykrfx/JqV9Rc1NifOROkAts9E65Hec9UmZGZQzx4Zt1BC0ND1vnlzGlAANhGATePlMLgTOokGX9We3gr18jyMsXp9TVDlWC54FV4edNCYXl04GAO8F3fPypAFURX4psQIsStrmGeAqirgQqhOmx5YSVzDtzl16cHCwQSLsWCz7hmc/UdK0Ip35K+srZHguW4mMk6tTLg9w==',786297600,'/','.lotus.com');
 				$cookie_status = setcookie($cookie_name,$cookie_value,0,$cookie_path[1],$cookie_domain[1]);
+				//setcookie("TestCookie", "Test!", 0, "/", ".example.com", 1);
+				//echo $cookie_name. " Status: ".$cookie_status."<br/>";
 			}
 		}
 		ob_flush();
+		//die();
 	}
 
     /**
@@ -414,9 +501,13 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         }
 
         $xp = new DOMXPath($xml);
+
         $results = array();
+
         $versionNodes = $xp->query('//cmisra:repositoryInfo/cmis:productName');
+
         $versionLabel = $versionNodes->item(0)->textContent;
+
         switch ( $versionLabel ) {
             case 'LotusLive Files':
                 $version = 1;
@@ -425,7 +516,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
                 $version = 2;
                 break;
             default:
-                $GLOBALS['log']->error('API version could not be detected, the version label returned was: '.$versionLabel);
+                $GLOBALS['log']->error('Lotus Live API version could not be detected, the version label returned was: '.$versionLabel);
                 $version = 2;
                 break;
         }
@@ -434,147 +525,234 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         return $version;
     }
 
-	public function getCommunities($type, $page=1, $search_text='') {
-		$search_text = str_ireplace(" ","+",$search_text);
-
+	public function getCommunities($type, $page = 1, $searchText = null) {
+		$searchText = str_ireplace(" ","+",$searchText);
+		$api = $this->api->getCommunitiesAPI();
 		if($type == 'MyCommunities') {
-			$reply = $this->makeRequest("communities/service/atom/communities/my?page={$page}&search={$search_text}&ps=5");
+			$reply = $api->listMyCommunities($searchText, null, null, null, 5, $page);
 		}
 
 		if($type == 'PublicCommunities') {
-			$reply = $this->makeRequest("communities/service/atom/communities/all?page={$page}&search={$search_text}&ps=5");
+			$reply = $api->listAllCommunities($searchText, null, null, null, 5, $page);
 		}
-
+		//var_dump($api->getLastResultMetadata());
 		return $reply;
 
 	}
-
-	public function getFiles($community_id, $page=1) {
-		$reply = $this->makeRequest("files/basic/api/communitycollection/{$community_id}/feed?page={$page}&ps=5");
-		return $reply;
+	
+	public function getActivitiesList($communityId, $page, $searchText)
+	{
+		$searchText = str_ireplace(" ","+",$searchText);
+		return $this->api->getActivitiesAPI()->listCommunityActivities($communityId, $searchText, $page);
+	}
+	
+	public function editCommunity($communityId, $title, $content, $type, $tags)
+	{
+		$this->api->getCommunitiesAPI()->editCommunity($communityId, $title, $content, $type, $tags);
+	}
+	
+	public function markToDoCompeted($entryId)
+	{
+		return $this->api->getActivitiesAPI()->markToDoCompleted($entryId);
+	}
+	
+	public function getActivity($activityId)
+	{
+		return $this->api->getActivitiesAPI()->getActivity($activityId);
+	}
+	public function getActivityNodes($activityId)
+	{
+		return $this->api->getActivitiesAPI()->listActivityNodes($activityId);
+	}
+	
+	public function getNode($activityId, $nodeId)
+	{
+		return $this->api->getActivitiesAPI()->getNode($activityId, $nodeId);
 	}
 
-	public function getMembers($community_id="", $search_text="", $page=1) {
-		if(!empty($search_text)) {
-			$search_text = str_ireplace(" ","+",$search_text);
-			$reply = $this->makeRequest("profiles/atom/search.do?search={$search_text}&page={$page}&ps=5");
-		}
-		if(!empty($community_id)) {
-			$reply = $this->makeRequest("communities/service/atom/community/members?communityUuid={$community_id}&page={$page}");
-		}
-
-		return $reply;
+	
+	public function createActivity($communityId, $activityName, $description, $tag, $due_date)     
+	{
+		return $this->api->getActivitiesAPI()->createCommunityActivity($communityId, $activityName, $description, $tag, $due_date);
+	}
+	
+	public function postNote($communityId, $content)     
+	{
+		$this->api->getUpdatesAPI()->postNote($communityId, $content);
+	}
+	
+	public function createActivitySection($activityId, $name)     
+	{
+		$this->api->getActivitiesAPI()->createSection($activityId, $name);
+	}
+	public function createSectionToDo($activityId, $sectionId, $title, $description, $due_date,$tags,$assigned)     
+	{
+		$this->api->getActivitiesAPI()->createSectionToDo($activityId, $sectionId, $title, $description,$due_date, $tags,$assigned);
+	}
+	public function createSectionEntry($activityId, $sectionId, $title, $description, $tags)     
+	{
+		$this->api->getActivitiesAPI()->createSectionEntry($activityId, $sectionId, $title, $description, $tags);
+	}
+	public function createActivityToDo($activityId, $title, $description, $due_date,$tags,$assigned)     
+	{
+		$this->api->getActivitiesAPI()->createToDo($activityId, $title, $description,$due_date, $tags,$assigned);
+	}
+	
+	public function createActivityEntry($activityId, $title, $description, $tags)     
+	{
+		$this->api->getActivitiesAPI()->createEntry($activityId, $title, $description, $tags);
 	}
 
-	public function getCommunityInfo($community_id) {
-		$reply = $this->makeRequest("communities/service/atom/community/instance?communityUuid={$community_id}");
-		return $reply;
+	public function deleteCommunity($communityId) {
+		return $this->api->getCommunitiesAPI()->deleteCommunity($communityId);
+	}
+	
+	public function getCommunityDiscussions($communityId, $page, $searchText) 
+	{
+		$searchText = str_ireplace(" ","+",$searchText);
+		return $this->api->getForumsAPI()->getCommunityForums($communityId,$page, $searchText)->getEntries();
+	}
+
+	public function getForumReplies($forumId)
+	{
+		return $this->api->getForumsAPI()->getForumReplies($forumId);
+	}
+	public function getCommunityBookmarks($communityId, $pageNumber = 1, $searchText = '') 
+	{
+		$searchText = str_ireplace(" ","+",$searchText);
+		return $this->api->getBookmarksAPI()->getCommunityBookmarks($communityId, $pageNumber, $searchText);
+	}
+	public function createDiscussion($communityId, $title, $content, $tags, $isQuestion) 
+	{
+		return $this->api->getForumsAPI()->createTopic($communityId, $title, $content, $tags, $isQuestion);
+	}
+	
+	public function getCommunityWiki($communityId, $page = 1, $searchText = '') 
+	{
+		$searchText = str_ireplace(" ","+",$searchText);
+		return $this->api->getWikiAPI()->getCommunityWiki($communityId, $page, $searchText);
+	}
+	
+	public function getCommunityWikiContent($communityId, $wikiId) 
+	{
+		return $this->api->getWikiAPI()->getCommunityWikiContent($communityId, $wikiId);
 	}
 	
 	
-	public function searchMembers($search_text, $page=1) {
-		$search_text = str_ireplace(" ","+",$search_text);
-
-		$reply = $this->makeRequest("profiles/atom/search.do?search={$search_text}&page={$page}&ps=5");
-		return $reply;
+	public function getCommunityBlog($communityId, $page, $searchText) 
+	{
+		$searchText = str_ireplace(" ","+",$searchText);
+		return $this->api->getBlogAPI()->getCommunityBlog($communityId, $page, $searchText);
 	}
-
-	public function downloadFile($document_id) {
-		$reply = $this->makeRequest("files/basic/anonymous/api/document/{$document_id}/media");
-		return $reply;
+	public function getBlogComments($communityId, $blogId) 
+	{
+		return $this->api->getBlogAPI()->getBlogComments($communityId, $blogId);
 	}
-
-	public function getFileDetails($document_id) {
-		$reply = $this->makeRequest("files/basic/anonymous/api/myuserlibrary/document/{$document_id}/entry");
-		return $reply;
+	public function getFilesList($communityId, $page, $searchText) 
+	{
+		$searchText = str_ireplace(" ","+",$searchText);
+		return $this->api->getFilesAPI()->getCommunityFiles($communityId, $page, $searchText);
 	}
-
-	public function createCommunity($data) {
-		$client = $this->getClient();
-		$urlReq = "communities/service/atom/communities/my";
-		$url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
-		$client->setRawData($data,'application/atom+xml');
-		$client->setUri($url);
-		$client->setAuth($this->account_name,$this->account_password);
-		$reply = $client->request("POST");
-		parse_str(parse_url($reply->getHeader('Location'),PHP_URL_QUERY));
-		$community_id = $communityUuid;
-
-		return $community_id;
-	}
-
-	public function addMemberToCommunity($member_id, $community_id) {
-		$client = $this->getClient();
-		$urlReq = "communities/service/atom/community/members?communityUuid={$community_id}";
-		$url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
-		$member_xml = new SimpleXMLElement($this->community_member_xml);
-		$member_xml->contributor->addChild('snx:userid',$member_id,'http://www.ibm.com/xmlns/prod/sn');
-		$data = $member_xml->asXML();
-		$client->setRawData($data,'application/atom+xml');
-		$client->setUri($url);
-		$client->setAuth($this->account_name,$this->account_password);
-		$reply = $client->request("POST");
-
-		return $reply;
-	}
-
-	public function getMemberProfileInfo($member_id) {
-		$profile_info = array();
-
-		$profile_reply = $this->makeRequest("profiles/atom/profile.do?userid={$member_id}&format=full");
-		if($profile_reply['success']) {
-			$profile_response = new SimpleXMLElement($profile_reply['rawResponse']);
-			$profile_info['member_name'] = (string) $profile_response->entry->contributor->name;
-			foreach($profile_response->entry->children('http://www.w3.org/2005/Atom')->link as $link) {
-				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/blogs")
-					$profile_info['member_blogs'] = urldecode((string) $link->attributes()->href);
-				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/forums")
-					$profile_info['member_forums'] = urldecode((string) $link->attributes()->href);
-				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/wikis")
-					$profile_info['member_wikis'] = urldecode((string) $link->attributes()->href);
-				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/files")
-					$profile_info['member_files'] = urldecode((string) $link->attributes()->href);
-				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/communities")
-					$profile_info['member_communities'] = urldecode((string) $link->attributes()->href);
-				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/dogear")
-					$profile_info['member_bookmarks'] = urldecode((string) $link->attributes()->href);
-				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/profiles")
-					$profile_info['member_profiles'] = urldecode((string) $link->attributes()->href);
-				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/service/activities")
-					$profile_info['member_activities'] = urldecode((string) $link->attributes()->href);
-				if($link->attributes()->rel == "http://www.ibm.com/xmlns/prod/sn/image")
-					$profile_info['profile_image_url'] = urldecode((string) $link->attributes()->href);
-			}
+	public function getMembers($communityId="", $searchText="", $page=1) {
+		if(!empty($searchText)) {
+			$searchText = str_ireplace(" ","+",$searchText);
+			$reply = $this->makeRequest("profiles/atom/search.do?search={$searchText}&page={$page}&ps=5");
 		}
-
-		return $profile_info;
+		if(!empty($communityId)) {
+		//require_once 'custom/include/IBMConnections/Api/CommunitiesAPI.php';
+		//$communitiesApi = new CommunitiesAPI();
+		//$reply = $communitiesApi->listMembers($community_id);
+			$reply = $this->makeRequest("communities/service/atom/community/members?communityUuid={$communityId}&page={$page}");
+		}
+		return $reply;
 	}
 
-	public function uploadFile($fileToUploadContents, $docName, $mimeType, $comm_type) {
-        // Let's see if this is not on the whitelist of mimeTypes
-        if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhitelist) ) {
-            // It's not whitelisted
-            $mimeType = 'application/octet-stream';
-        }
+	public function getCommunity($communityId) 
+	{
+		return $this->api->getCommunitiesAPI()->getCommunity($communityId);
+	}
 
-		$urlReq = "files/basic/api/myuserlibrary/feed?visibility=".$comm_type;
-        $client = $this->getClient();
-	    $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
-		$client->setRawData($fileToUploadContents, $mimeType);
-		$client->setHeaders("slug", $docName);
-		$client->setUri($url);
-		$client->setAuth($this->account_name,$this->account_password);
-		$rawResponse = $client->request("POST");
-		$rawResponseBody = $rawResponse->getBody();
-        $reply = array('rawResponse' => $rawResponseBody);
-        return $reply;
+	public function downloadFile($document_id) 
+	{
+		return $this->api->getFilesAPI()->downloadFile($document_id);
+	}
+	
+	public function commentFile($userId, $documentId, $comment) 
+	{
+		return $this->api->getFilesAPI()->commentFile($userId, $documentId, $comment);
+	}
+	public function replyDiscussion($topicId, $title, $comment) 
+	{
+		return $this->api->getForumsAPI()->replyToTopic($topicId, $title, $comment);
+	}
+	
+	public function replyDiscussionReply($replyId, $title, $comment) 
+	{
+		return $this->api->getForumsAPI()->replyToReply($replyId, $title, $comment);
+	}
+	public function likeFile($userId, $documentId) 
+	{
+		return $this->api->getFilesAPI()->likeFile($userId, $documentId);
+	}
+
+	public function createCommunity($name, $description, $type, $tags, $logo) 
+	{
+		return $this->api->getCommunitiesAPI()->createCommunity($name, $description, $type, $tags, $logo);
+	}
+
+	public function addMemberToCommunity($member_id, $community_id, $role) 
+	{
+		$this->api->getCommunitiesAPI()->addMemberById($member_id, $community_id, $role);
+	}
+	
+	public function removeMemberFromCommunity($member_id, $community_id) 
+	{
+		$this->api->getCommunitiesAPI()->removeMemberById($member_id, $community_id);
+	}
+	
+	public function createBookmarkToCommunity($communityId, $title, $href, $description, $tags, $important) 
+	{
+		return $this->api->getBookmarksAPI()->createCommunityBookmark($communityId, $title, $href, $description, $tags, $important);
+	}
+	
+	public function shareMyFileWithCommunity($cid, $myFileId) 
+	{
+		$this->api->getCommunitiesAPI()->shareMyFileWithCommunity($cid, $myFileId);
+	}
+	
+	public function getUpdates($cid, $pageNum = 1, $searchText = '') 
+	{
+		return $this->api->getUpdatesAPI()->getCommunityUpdates($cid, $pageNum, $searchText);
+	}
+	
+	public function unshareMyFileFromCommunity($cid, $myFileId) 
+	{
+		$this->api->getCommunitiesAPI()->unshareMyFileFromCommunity($cid, $myFileId);
+	}
+	
+	public function uploadFile($fileToUpload, $docName, $mimeType = null, $visibility = "private") 
+	{
+		return $this->api->getFilesAPI()->uploadFile($docName, file_get_contents($fileToUpload),  $mimeType, $visibility);
+    }
+    
+    public function getOverviewCounts($communityId)
+    {
+		$api = $this->api->getCommunitiesAPI();
+		$reply = array();
+		$reply['activity'] = $api->getActivityCount($communityId);
+		$reply['file'] = $api->getFileCount($communityId);
+		$reply['bookmark'] = $api->getBookmarkCount($communityId);
+		$reply['wiki'] = $api->getWikiCount($communityId);
+		$reply['update'] = $api->getUpdateCount($communityId);
+		$reply['discussion'] = $api->getDiscussionCount($communityId);
+		$reply['blog'] = $api->getBlogCount($communityId);
+		return $reply;
     }
 
 
-public function updateFile($fileToUploadContents, $docName, $mimeType,$comm_type) {
-        // Let's see if this is not on the whitelist of mimeTypes
+	public function updateFile($fileToUpload, $docName, $mimeType,$comm_type) 
+	{
         if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhitelist) ) {
-            // It's not whitelisted
             $mimeType = 'application/octet-stream';
         }
 		$urlReq = "files/basic/api/myuserlibrary/document/{$docName}/entry?identifier=label";
@@ -582,20 +760,7 @@ public function updateFile($fileToUploadContents, $docName, $mimeType,$comm_type
 	    $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
 		$client->setAuth($this->account_name,$this->account_password);
 		$rawResponse = $client->setUri($url)->request("DELETE");
-        $reply = $this->uploadFile($fileToUploadContents, $docName, $mimeType,$comm_type);
+        $reply = $this->uploadFile($fileToUpload, $docName, $mimeType,$comm_type);
         return $reply;
     }
-	public function shareMyFileWithCommunity($document_id,$community_xml) {
-		$client = $this->getClient();
-
-		$urlReq = "files/basic/api/myuserlibrary/document/{$document_id}/feed";
-		$url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
-
-		$client->setRawData($community_xml,'application/atom+xml');
-		$client->setUri($url);
-		$client->setAuth($this->account_name,$this->account_password);
-		$reply = $client->request("POST");
-
-		return $reply;
-	}
 }

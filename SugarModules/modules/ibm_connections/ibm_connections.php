@@ -1,5 +1,4 @@
-<?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+<?PHP
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,38 +26,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class ibm_connections extends Basic 
-{	
-	public $new_schema = true;
-	public $module_dir = 'ibm_connections';
-	public $object_name = 'ibm_connections';
-	public $table_name = 'ibm_connections';
-	public $importable = false;
-	public $id;
-	public $name;
-	public $date_entered;
-	public $date_modified;
-	public $modified_user_id;
-	public $modified_by_name;
-	public $created_by;
-	public $created_by_name;
-	public $description;
-	public $deleted;
-	public $created_by_link;
-	public $modified_user_link;
-	public $assigned_user_id;
-	public $assigned_user_name;
-	public $assigned_user_link;
-	public $community_id;
-	public $parent_name;
-	public $parent_type;
-	public $parent_id;
-	public $disable_row_level_security = true;
+/**
+ * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
+ */
+require_once('modules/ibm_connections/ibm_connections_sugar.php');
+class ibm_connections extends ibm_connections_sugar {
 	
-	public function bean_implements($interface) {
-		switch($interface) {
-			case 'ACL': return true;
-		}
-		return false;
+	function ibm_connections(){	
+		parent::ibm_connections_sugar();
 	}
+	
 }
+?>

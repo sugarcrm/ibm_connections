@@ -1,34 +1,98 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
- *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
- 
+/**
+ * Created by JetBrains PhpStorm.
+ * User: bkilgore
+ * Date: 5/10/12
+ * Time: 3:48 PM
+ * To change this template use File | Settings | File Templates.
+ */
+
 $tabs_meta = array(
+	"Overview" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "loadOverview",
+		"label" => "LBL_OVERVIEW_TAB",
+		"order" => 0,
+		"active" => true,
+		"onload" => false,//true,
+		"buttons" => array(
+			"selectcommunity",
+		)
+	),
+	"Updates" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "loadUpdatesList",
+		"label" => "LBL_UPDATES_TAB",
+		"order" => 1,
+		"active" => false,
+		"onload" => false,//true,
+		"buttons" => array(
+		)
+	),
+	"Activities" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "getCommunityActivities",
+		"label" => "LBL_ACTIVITIES_TAB",
+		"order" => 2,
+		"active" => false,
+		"onload" => false,//true,
+		"buttons" => array(
+			"createactivity",
+		)
+	),
 	"Files" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "loadFilesList",
+		"label" => "LBL_FILES_TAB",
+		"order" => 3,
+		"active" => false,
+		"onload" => false,//true,
+		"buttons" => array(
+		)
+	),
+	"Discussions" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "getCommunityDiscussions",
+		"label" => "LBL_DISCUSSIONS_TAB",
+		"order" => 4,
+		"active" => false,
+		"onload" => false,//true,
+		"buttons" => array(
+			"creatediscussion",
+		)
+	),
+	"Bookmarks" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "getCommunityBookmarks",
+		"label" => "LBL_BOOKMARKS_TAB",
+		"order" => 5,
+		"active" => false,
+		"onload" => false,//true,
+		"buttons" => array(
+			"createbookmark",
+		)
+	),
+	"Blog" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "getCommunityBlog",
+		"label" => "LBL_BLOG_TAB",
+		"order" => 6,
+		"active" => false,
+		"onload" => false,//true,
+		"buttons" => array(
+		)
+	),
+	"Wiki" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "getCommunityWiki",
+		"label" => "LBL_WIKI_TAB",
+		"order" => 7,
+		"active" => false,
+		"onload" => false,//true,
+		"buttons" => array(
+		)
+	),
+/*	"Files" => array(
 		"tabView" => "connectionsTabView",
 		"method" => "loadFilesList",
 		"label" => "LBL_FILES_TAB",
@@ -51,38 +115,41 @@ $tabs_meta = array(
 			"selectcommunity",
 			"addmember"
 		)
+	),*/
+	"CreateCommunity" => array(
+		"tabView" => "communitiesTabView",
+		"method" => "createNewCommunity",
+		"label" => "LBL_CREATE_COMMUNITY",
+		"order" => 0,
+		"active" => true,
+		"onload" => true,
+		"buttons" => array()
 	),
+	
 	"MyCommunities" => array(
 		"tabView" => "communitiesTabView",
 		"method" => "loadConnectionsCommunities",
 		"label" => "LBL_MY_COMMUNITIES_TAB",
-		"order" => 0,
+		"order" => 1,
 		"active" => false,
 		"onload" => true,
 		"buttons" => array(
-			"newcommunity"
+		//	"newcommunity"
 		)
 	),
 	"PublicCommunities" => array(
 		"tabView" => "communitiesTabView",
 		"method" => "loadConnectionsCommunities",
 		"label" => "LBL_PUBLIC_COMMUNITIES_TAB",
-		"order" => 1,
+		"order" => 2,
 		"active" => false,
 		"onload" => true,
 		"buttons" => array(
-			"newcommunity"
+		//	"newcommunity"
 		)
 	),
-	"CreateCommunity" => array(
-		"tabView" => "communitiesTabView",
-		"method" => "createNewCommunity",
-		"label" => "LBL_CREATE_COMMUNITY",
-		"order" => -1,
-		"onload" => false,
-		"buttons" => array()
-	),
-	"CreateFile" => array(
+	
+	/*"CreateFile" => array(
 		"tabView" => "connectionsTabView",
 		"method" => "createNewFile",
 		"label" => "LBL_CREATE_FILE",
@@ -100,15 +167,17 @@ $tabs_meta = array(
 		"onload" => false,
 		"buttons" => array()
 	),
-	"MyAccount" => array(
+/*	"MyAccount" => array(
 		"tabView" => "connectionsTabView",
 		"method" => "myAccount",
 		"label" => "LBL_MY_ACCOUNT_TAB",
-		"order" => 0,
+		"order" => 2,
 		"active" => false,
 		"onload" => true,
 		"buttons" => array(
 			//"myaccount"
 		)
 	),
+	*/
+	
 );

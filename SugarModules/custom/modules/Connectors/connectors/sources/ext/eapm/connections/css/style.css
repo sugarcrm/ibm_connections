@@ -1,0 +1,647 @@
+#connectionsDiv #subpanel_connections table.edit{
+	border: 1px solid #A1A1B0;
+
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+#connectionsDiv .edit tr td, #connectionsDiv .edit tr td table {
+	padding: 0 !important;
+}
+
+#connectionsDiv .yui-navset {
+	overflow: visible;
+}
+
+#connectionsDiv a {
+	color: #196FB5;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#connectionsDiv a.url {
+	text-decoration: underline;
+}
+
+
+/*header*/
+#connectionsDiv .connections-header {
+    background-color: #DFDFE6;
+    padding: 10px 10px 0px 10px;
+	height: 50px;
+    border-bottom: 1px solid #A1A1B0;
+	min-width: 1024px;
+}
+
+#connectionsDiv .ibm-header-tabs {
+	margin-left: auto;
+	margin-right: auto;
+	width: 450px;
+}
+
+
+#connectionsDiv #ibm_community_navigation {
+    float: left;
+    width: 25%;
+	text-align: left;
+}
+
+#connectionsDiv #ibm_tabs {
+    float: left;
+    width: 50%;
+	text-align: center;
+}
+
+#connectionsDiv #ibm_search {
+    float: left;
+    width: 25%;
+	text-align: right;
+}
+
+#connectionsDiv #ibm_tabs .ibm_tabs {
+	background-image: url("../images/new/imgGradient_normalStateBtn.png");
+    background-position: center;
+    background-repeat: repeat-x;
+	border: 1px solid #A1A1B0;
+	height: 35px;
+	font-weight: bold;
+	color: #000000;
+	font-size: 11px;
+
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+#connectionsDiv #ibm_tabs .ibm_tabs:hover {
+	background-image: url("../images/new/imgGradient_hoverStateBtn.png");
+    color: #000000;
+	border-color: #A1A1B0;
+}
+
+#connectionsDiv #ibm_tabs .activeTab, #connectionsDiv #ibm_tabs .activeTab:hover {
+	background-image: url("../images/new/imgGradient_activeStateBtn.png");
+	color: #FFFFFF;
+	border-color: #2191D6;
+}
+
+#connectionsDiv #ibm_community_navigation #community_logo {
+	width: 10%;
+	float: left;
+}
+
+#connectionsDiv #ibm_community_navigation #community_logo img {
+	width: 32px;
+	height: 32px;
+}
+
+#connectionsDiv #ibm_community_navigation #community_name {
+	width: 55%;
+	float: left;
+	text-align: left;
+	padding-left: 3%;
+}
+
+	#connectionsDiv #ibm_community_navigation #community_name a {
+	    color: #196FB5;
+	    text-decoration: none;
+		font-weight: bold;
+	}
+
+
+#connectionsDiv #ibm_community_navigation .ibm-actions-nav {
+	width: 27%;
+	float: left;
+	padding-left: 3%;
+	padding-bottom: 10px;
+	/*margin-bottom: 25px;*/
+}
+/*END: header*/
+
+/* DropDown Menu */
+#connectionsDiv nav ul ul {
+	display: none;
+}
+
+#connectionsDiv nav ul li:hover > ul {
+	display: block;
+	z-index: 99999;
+}
+
+#connectionsDiv nav ul {
+	list-style: none;
+	position: relative;
+	display: inline-table;
+
+	margin: 0;
+	padding: 0;
+	background: #F1F1F1;
+	background: linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	background: -moz-linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	background: -webkit-linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	border: 1px solid #A1A1B0;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+	#connectionsDiv nav ul:after {
+		content: "";
+		clear: both;
+		display: block;
+	}
+
+	#connectionsDiv nav ul li {
+		float: left;
+		list-style-type: none;
+		white-space: nowrap;
+		margin: 0;
+		padding: 0 2px 0 2px;
+		font-weight: bold;
+	}
+	#connectionsDiv nav ul li .ibm-action_icon {
+        float: left;
+		width: 19px;
+		height: 19px;
+		padding-right: 5px;
+	}
+	#connectionsDiv nav ul li .ibm-action-label {
+        padding-right: 30px;
+	}
+		#connectionsDiv nav ul li:hover {
+			/*background: #E2E2E2;
+			background: linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+			background: -moz-linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+			background: -webkit-linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);*/
+			-moz-border-radius: 4px;
+			border-radius: 4px;
+			-webkit-border-radius: 4px;
+		}
+			#connectionsDiv nav ul li:hover a {
+				color: #000000;
+			}
+
+		#connectionsDiv nav ul li a {
+			display: block;
+			padding: 5px 4px;
+			color: #000000;
+			text-decoration: none;
+			display: inline-block;
+		}
+
+
+	#connectionsDiv nav ul ul {
+		background: #FFFFFF;
+		padding: 0;
+		position: absolute;
+		top: 135%;
+		left: -60%;
+		min-width: 200px;
+		-moz-border-radius: 10px;
+		border-radius: 10px;
+		-webkit-border-radius: 10px;
+	}
+
+	/*tooltip*/
+    #connectionsDiv nav ul ul:after {
+		border-bottom: 10px solid #FFFFFF;
+    	top: -14px;
+    	margin-left: -10px;
+	}
+
+	#connectionsDiv nav ul ul:before, #connectionsDiv nav ul ul:after {
+		border-left: 10px solid transparent;
+	    border-right: 10px solid transparent;
+	    border-bottom: 10px solid #FFFFFF;
+	    top: -10px;
+	    content: "";
+	    height: 0;
+	    left: 50%;
+	    margin-left: -9px;
+	    position: absolute;
+	    width: 0;
+	}
+	/* END: tooltip*/
+
+		#connectionsDiv nav ul ul li {
+			float: none;
+			position: relative;
+		}
+			#connectionsDiv nav ul ul li a {
+				padding: 15px 15px;
+				text-align: center;
+			}
+
+            #connectionsDiv nav ul ul li a div.ibm_button, #connectionsDiv nav ul ul li a div.ibm_button:hover {
+               height: 30px;
+			   width: 30px;
+			   background-position: center;
+			   background-repeat: no-repeat;
+			}
+
+            #connectionsDiv nav ul ul li a div.ico_close, #connectionsDiv nav ul ul li a div.ico_close:hover {
+            	background-image: url("../images/new/ico_close.png");
+            }
+			#connectionsDiv nav ul ul li a div.ico_edit, #connectionsDiv nav ul ul li a div.ico_edit:hover {
+            	background-image: url("../images/new/ico_edit.png");
+            }
+			#connectionsDiv nav ul ul li a div.ico_delete, #connectionsDiv nav ul ul li a div.ico_delete:hover {
+            	background-image: url("../images/new/ico_delete.png");
+            }
+
+
+				/*#connectionsDiv nav ul ul li a:hover {
+					background: #E2E2E2;
+					background: linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+					background: -moz-linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+					background: -webkit-linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+				} */
+		#connectionsDiv nav ul ul li.select-community {
+            background-image: url("../images/new/imgGradient_selectCommunity.png");
+			background-position: left;
+			background-repeat: repeat-x;
+			height: 45px;
+
+			-moz-border-radius: 0 0 10px 10px;
+			border-radius: 0 0 10px 10px;
+			-webkit-border-radius: 0 0 10px 10px;
+		}
+
+		#connectionsDiv nav ul ul li.select-community a {
+			width: 80%;
+            padding: 0;
+			margin: 4% 4% 4% 6%;
+		}
+
+
+        #connectionsDiv nav ul ul li.select-community div.ibm_button, #connectionsDiv nav ul ul li.select-community div.ibm_button:hover {
+        	width: 100%;
+			background-image: url("../images/new/ico_selectCommunity.png");
+			background-position: 5% 50%;
+			background-repeat: no-repeat;
+			height: 19px;
+			padding: 4px 0px 4px 15px;
+        }
+
+
+	#connectionsDiv nav ul ul ul {
+		position: absolute; left: 100%; top:0;
+	}
+
+
+	/*More*/
+	#connectionsDiv .before-nav {
+    	float: left;
+	}
+
+	#connectionsDiv nav.nav-issets {
+    	float: left;
+		margin-left: 3px;
+		padding-bottom: 10px;
+	}
+
+	#connectionsDiv nav.nav-issets ul li.more-isset {
+    	background-image: url("../images/new/ico_more.png");
+		background-position: 50% 50%;
+		background-repeat: no-repeat;
+    	height: 33px;
+		width: 35px;
+	}
+
+	#connectionsDiv nav.nav-issets ul ul {
+		top: 135%;
+		left: -110%;
+		min-width: 120px;
+		padding: 10px 5px 10px 5px;
+	}
+
+	#connectionsDiv nav.nav-issets ul ul li {
+    	padding-bottom: 10px;
+	}
+
+	#connectionsDiv nav.nav-issets ul ul li:last-child {
+    	padding-bottom: 0;
+	}
+
+	#connectionsDiv nav.nav-issets ul ul li input {
+    	width: 90%;
+	}
+	/*END: More*/
+
+
+
+
+/* END: DropDown Menu */
+
+#connectionsDiv #ibm_search #ibm_search_field{
+	background: url('../images/new/ico_search.png') #FFFFFF no-repeat scroll 7px 6px;
+	height: 21px;
+	border-color: #a1a1b0;
+	padding-left:25px;
+	/*width: 60%;*/
+	box-shadow: 0px 0px 3px #a1a1b0 inset;
+	border-image: none;
+
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+#connectionsDiv .ibm_buttons {
+	text-align: right;
+	margin: 20px 0 20px 0;
+}
+
+#connectionsDiv .ibm_button {
+	color: #000000;
+	font-weight: bold;
+	background-color: #F1F1F1;
+	background-color: linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	background-color: -moz-linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	background-color: -webkit-linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	border: 1px solid #A1A1B0;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+#connectionsDiv .ibm_button:hover {
+	color: #000000;
+	background-color: #E2E2E2;
+	background-color: linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+	background-color: -moz-linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+	background-color: -webkit-linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+	background-image: none;
+}
+
+#connectionsDiv .ibm_button .button-img {
+	float: left;
+}
+
+#connectionsDiv .ibm_button .button-label {
+	float: left;
+	padding-left: 8px;
+}
+
+#connectionsDiv .item-img, #connectionsDiv .item-label {
+	float: left;
+}
+
+
+#connectionsDiv #activity_list_table .item-img {
+	width: 5%;
+    text-align: center;
+}
+
+#connectionsDiv .ibm-tab-list-table .item-label {
+	width: 85%;
+}
+
+
+.div-modal {
+	width:100%;
+	max-height:300px;
+	overflow:scroll;
+	overflow-y:auto;
+	overflow-x:hidden;
+}
+
+
+/* ibm_connection_body */
+#connectionsDiv #ibm_connection_body {
+	background-color: #FBFBFB;
+	min-height: 200px;
+}
+
+    #connectionsDiv .ibm-tab-list {
+		width:100%;
+		max-height:230px;
+		overflow:scroll;
+		overflow-y:auto;
+		overflow-x:hidden;
+	}
+
+	#connectionsDiv .ibm-tab-list .ibm-tab-list-table {
+    	-moz-border-radius: 4px;
+		border-radius: 4px;
+		-webkit-border-radius: 4px;
+		border: 1px solid #C2C3D1;
+		margin-left: 20px;
+	}
+		
+	#connectionsDiv .ibm-tab-list .ibm-tab-list-table .elements {
+    	background-image: url("../images/new/imgGradient_activity.png");
+	    background-position: center;
+	    background-repeat: repeat-x;
+		height: 67px;
+		color: #000000;
+		font-size: 11px;
+		padding: 5px;
+	}
+
+	#connectionsDiv .ibm-tab-list .ibm-tab-list-table tr td {
+		border-bottom: 1px solid #DCDCDC;
+		vertical-align: middle;
+	}
+
+	#connectionsDiv .left-col {
+    	float:left;
+		width:49%;
+		max-height:300px;
+		display:inline;
+		background-color: #F5F5F6;
+        border-right: 1px solid #CCCDD2;
+	}
+
+	#connectionsDiv .right-col {
+		float:right;
+		width:47%;
+		max-height:275px;
+		overflow:scroll;
+		overflow-y:auto;
+		overflow-x:hidden;
+		display:inline;
+		padding: 1%;
+
+		/*background-image: url("../images/new/img_arrowRight.png");
+	    background-position: 0% 50%;
+	    background-repeat: no-repeat;*/
+	}
+
+	#connectionsDiv .fullsize-col {
+		width:99%;
+		max-height:220px;
+		overflow:scroll;
+		overflow-y:auto;
+		overflow-x:hidden;
+	}
+
+	#connectionsDiv .right-col table.list {
+    	background-color: #FFFFFF;
+		border: 1px solid #D7DEE6;
+
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+		-webkit-border-radius: 4px;
+	}
+
+    #connectionsDiv .right-col table.list tr {
+    	height: 45px;
+		background-image: url("../images/new/imgGradient_activityBoxy.png");
+	    background-position: 50% 100%;
+		background-repeat: no-repeat;
+		padding: 0 10px 0 10px;
+    }
+
+	#connectionsDiv .right-col table.list tr:last-child {
+     	background-image: none;
+	}
+
+
+	#connectionsDiv .right-col table.list tr td {
+    	padding-left: 15px;
+    }
+
+	#connectionsDiv .right-col table.list tr td div:first-child, #connectionsDiv .left-col table#activity_list_table tr td div:first-child {
+		padding: 0 10px 0 10px;
+    }
+
+    #connectionsDiv .img-in-text{
+    	margin-bottom: -4px;
+	    margin-left: 5px;
+    }
+
+	/*Activity*/
+    #connectionsDiv #activity_content div.before-section {
+		padding: 10px;
+    }
+
+	#connectionsDiv #activity_content table.activity-section {
+		width:100%;
+		border-left: 1px solid #D7DEE6;
+		border-right: 1px solid #D7DEE6;
+		border-bottom: 1px solid #D7DEE6;
+
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+		-webkit-border-radius: 4px;
+    }
+
+	#connectionsDiv #activity_content table.activity-section .header-section {
+		background-image: url("../images/new/imgGradient_sectionTitle.png");
+	    background-position: center;
+	    background-repeat: repeat-x;
+		height: 50px;
+		color: #000000;
+		font-size: 11px;
+		padding: 5px;
+    }
+
+	#connectionsDiv #activity_content table.activity-section .header-section td {
+		border: 1px solid #5AAEE1;
+
+        -moz-border-top-left-radius: 4px;
+    	-moz-border-top-right-radius: 4px;
+		border-top-left-radius: 4px;
+    	border-top-right-radius: 4px;
+		-webkit-border-top-left-radius: 4px;
+    	-webkit-border-top-right-radius: 4px;
+    }
+
+	#connectionsDiv #activity_content table.activity-section .header-section td span {
+		padding-left: 10px;
+	}
+
+
+	/*END: Activity*/
+
+/* END: ibm_connection_body */
+
+/* Footer */
+#connectionsDiv .ibm-connection-footer td {
+  display: none;
+	border-top: 1px solid #CECED7;
+}
+
+
+#connectionsDiv .ibm-tab-list .ibm-tab-list-table .elements.activeIBMElement {
+	  /*  background-position: 0% 50%;
+	    background-repeat: no-repeat;*/
+	    background-image: url("../images/new/imgGradient_sectionTitle.png");
+	    background-position: center;
+	    background-repeat: repeat-x;
+		height: 67px;
+		color: #000000;
+		font-size: 11px;
+		padding: 5px;
+}
+
+#search_MyCommunities,  #search_PublicCommunities
+{
+background: url('../images/new/ico_search.png') #FFFFFF no-repeat scroll 7px 6px;
+	height: 21px;
+	border-color: #a1a1b0;
+	padding-left:25px;
+	/*width: 60%;*/
+	box-shadow: 0px 0px 3px #a1a1b0 inset;
+	border-image: none;
+
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+.ibm-quick-post {
+    	padding: 8px;
+	}
+ .ibm_button {
+	color: #000000;
+	font-weight: bold;
+	background-color: #F1F1F1;
+	background-color: linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	background-color: -moz-linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	background-color: -webkit-linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	border: 1px solid #A1A1B0;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+.ibm_button:hover {
+	color: #000000;
+	background-color: #E2E2E2;
+	background-color: linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+	background-color: -moz-linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+	background-color: -webkit-linear-gradient(top, #F0F0F0 0%, #D9D9D9 100%);
+	background-image: none;
+}
+
+.member_list_div{
+	display: inline-table;
+}
+
+.ibm_drop_file {
+	color: #000000;
+	background-color: #F1F1F1;
+	background-color: linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	background-color: -moz-linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	background-color: -webkit-linear-gradient(top, #F2F2F2 0%, #EFEFEF 100%);
+	border: 1px solid #A1A1B0;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	width:40px;height:50px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
