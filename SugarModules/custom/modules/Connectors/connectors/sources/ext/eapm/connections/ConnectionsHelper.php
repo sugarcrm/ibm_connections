@@ -70,37 +70,37 @@ class ConnectionsHelper
 	        return $helper->uploadNewFile();
 	    }
 	    if ( $methodName == 'downloadFile' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->downloadFile();
 	    }
 	    if ( $methodName == 'saveNewCommunity' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->saveNewCommunity();
 	    }
 	    if ( $methodName == 'sourceForAutoCompleteMember' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->sourceForAutoCompleteMember();
 	    }
 	    if ( $methodName == 'loadConnectionsCommunities' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->loadConnectionsCommunities();
 	    }
 	    if ( $methodName == 'loadFilesList' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->loadFilesList();
 	    }
 	    if ( $methodName == 'loadMembersList' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->loadMembersList();
 	    }
 	    if ( $methodName == 'createNewCommunity' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->createNewCommunity();
 	    }
 	    if ( $methodName == 'createNewFile' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->createNewFile();
 	    }
 	    if ( $methodName == 'addCommunityMember' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->addCommunityMember();
 	    }
 	    if ( $methodName == 'myAccount' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->myAccount();
 	    }
 	    if ( $methodName == 'saveCommunitySelection' ) {
-	        return $helper->uploadNewFile();
+	        return $helper->saveCommunitySelection();
 	    }
 	    
 	    throw new Exception("Method passed '$methodName' does not exist");        
