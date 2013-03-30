@@ -54,7 +54,7 @@ $manifest = array (
   'name' => 'IBM Connections',
   'published_date' => '2012-03-27 20:00:00',
   'type' => 'module',
-  'version' => '2.0.beta6',
+  'version' => '2.0.beta7',
   'remove_tables' => 'prompt',
 );
 
@@ -90,117 +90,6 @@ $installdefs = array (
       'from' => '<basepath>/SugarModules/custom',
       'to' => 'custom',
     ),
-   /* 1 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/include/externalAPI/Connections/ConnectionsXML.php',
-      'to' => 'custom/include/externalAPI/Connections/ConnectionsXML.php',
-    ),
-    2 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/include/externalAPI/Connections/ExtAPIConnections.php',
-      'to' => 'custom/include/externalAPI/Connections/ExtAPIConnections.php',
-    ),
-    3 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/tabs.meta.php',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tabs.meta.php',
-    ),
-    4 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/Connections.js',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/Connections.js',
-    ),
-    5 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php',
-    ),
-    6 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsLogicHook.php',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsLogicHook.php',
-    ),
-    7 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/config.php',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/config.php',
-    ),
-    8 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/connections.php',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/connections.php',
-    ),
-    9 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/images/connections_collapsed.png',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/images/connections_collapsed.png',
-    ),
-    10 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/images/connections_expanded.png',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/images/connections_expanded.png',
-    ),
-    11 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/language/en_us.lang.php',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/language/en_us.lang.php',
-    ),
-    //12 => 
-    //array (
-    //  'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/mapping.php',
-    //  'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/mapping.php',
-    //),
-    13 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Connections.tpl',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Connections.tpl',
-    ),
-    14 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/ConnectionsError.tpl',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/ConnectionsError.tpl',
-    ),
-    15 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/CreateCommunity.tpl',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/CreateCommunity.tpl',
-    ),
-    16 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/CreateFile.tpl',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/CreateFile.tpl',
-    ),
-    17 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/ProfileCard.tpl',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/ProfileCard.tpl',
-    ),
-    18 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/ProfileCard.css',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/ProfileCard.css',
-    ),
-    19 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Search.tpl',
-      'to' => 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Search.tpl',
-    ),
-    20 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/controller.php',
-      'to' => 'custom/modules/Connectors/controller.php',
-    ),
-    21 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/metadata/connectors.php',
-      'to' => 'custom/modules/Connectors/metadata/connectors.php',
-    ),
-    22 => 
-    array (
-      'from' => '<basepath>/SugarModules/custom/modules/Connectors/metadata/display_config.php',
-      'to' => 'custom/modules/Connectors/metadata/display_config.php',
-    ),
-    */
   ),
   'language' => 
   array (

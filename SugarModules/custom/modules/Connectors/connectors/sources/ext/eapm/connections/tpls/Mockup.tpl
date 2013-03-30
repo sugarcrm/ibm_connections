@@ -64,5 +64,5 @@
 		</td>
 	</tr>
 <tr><td><div width='100%' heigth='250px;' id='ibm_connection_body'></div></td></tr>
-<tr class='ibm-connection-footer'><td><div  id='quick_post_div' width='100%'><div style='float:right;'>{include file="$quickPostTpl"}</div></div></td></tr>
+<!-- <tr class='ibm-connection-footer'><td><div  id='quick_post_div' width='100%'><div style='float:right;'>{include file="$quickPostTpl"}</div></div></td></tr>-->
 </table>
