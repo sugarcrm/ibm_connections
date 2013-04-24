@@ -578,7 +578,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 	
 	public function postNote($communityId, $content)     
 	{
-		$this->api->getUpdatesAPI()->postNote($communityId, $content);
+		return $this->api->getUpdatesAPI()->postNote($communityId, $content);
 	}
 	
 	public function createActivitySection($activityId, $name)     

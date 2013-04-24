@@ -1,0 +1,41 @@
+.smallBorder{
+ border: 1px solid #ddd;
+}
+
+/*
+#similar {
+	margin: 15px 5px 0px 0px;
+}
+
+*/
+
+#similarOpportunities {
+	margin-top: 10px;
+}
+
+#opportunitiesList {
+	list-style: none;
+}
+
+#opportunitiesList li {
+    float: left; 
+	margin-right: 1em;
+}
+
+li.active {
+	font-weight: bold;
+}
+
+#similar h4 {
+  color: #333;
+}
+
+select.btn-mini {
+    height: auto;
+    line-height: 14px;
+}
+
+select.btn-mini + .caret {
+    margin-left: -20px;
+    margin-top: 9px;
+}

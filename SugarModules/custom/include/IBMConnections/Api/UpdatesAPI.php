@@ -56,57 +56,43 @@ class UpdatesAPI extends AbstractConnectionsAPI
 		 return array('list' => $updates,'metadata' => array());//$this->getLastResultMetadata());
 	}
 	
+	private function timestamp() {
+  		// Gives us a timestamp in a format that Connections will use
+  		$time = time();
+  		return date("Y-m-d", $time) . 'T' . date("H:i:s", $time) .'.000Z';
+  }
+	
 	public function postNote($communityId, $content) {
-	/*
-		//$parent = $this->getActivity($activityId);
-        //$path = $this->extractRelativeUrlPath($parent->getCollectionLink());
-        $path = "/connections/opensocial/rest/ublog/urn:lsid:lconn.ibm.com:communities.community:{$communityId}/@all";
-        $entry = IBMEditableAtomEntry::createEmptyEditableEntry();
-        $entry->addCategory('note', 'http://www.ibm.com/xmlns/prod/sn/type');
-        //$entry->setTitle($name);
-        $entry->setContent($content);
- 		$this->httpClient = $this->getHttpClient();
-       	$this->httpClient->resetParameters();
-        $this->httpClient->setRawData($entry->getDomString());
-        $response = $this->requestForPath('POST',$path,
-                        array('Content-Type' => 'application/atom+xml',
-                                'Content-Language' => 'en-US',));
-                                
-        echo $response->getStatus();
-        print_r($response->getBody());
-        
-        
-        boardId: "urn:lsid:lconn.ibm.com:communities.community:ac71e701-1f90-4679-965d-5c5755be2c77"
-
-entry: {summary:rurururururururur, replies:{totalItems:0,…}, content:rurururururururur, objectType:note,…}
-author: {connections:{state:active}, objectType:person,…}
-connections: {state:active}
-state: "active"
-displayName: "Max Jensen"
-id: "urn:lsid:lconn.ibm.com:profiles.person:756647c0-a7a2-1031-94f8-a3db76a297cb"
-objectType: "person"
-content: "rurururururururur"
-id: "urn:lsid:lconn.ibm.com:communities.note:77f501ec-7507-4826-8347-7c9f4149b787"
-likes: {totalItems:0,…}
-totalItems: 0
-url: "https://greenhouse.lotus.com/connections/opensocial/rest/ublog/@all/@all/urn:lsid:lconn.ibm.com:communities.note:77f501ec-7507-4826-8347-7c9f4149b787/likes"
-objectType: "note"
-published: "2013-02-26T11:20:53.729Z"
-replies: {totalItems:0,…}
-totalItems: 0
-url: "https://greenhouse.lotus.com/connections/opensocial/rest/ublog/@all/@all/urn:lsid:lconn.ibm.com:communities.note:77f501ec-7507-4826-8347-7c9f4149b787/comments"
-summary: "rurururururururur"
-url: "https://greenhouse.lotus.com/communities/service/html/community/updates?communityUuid=ac71e701-1f90-4679-965d-5c5755be2c77&entryId=77f501ec-7507-4826-8347-7c9f4149b787"
-
-
-
-Request URL:https://greenhouse.lotus.com/connections/opensocial/rest/ublog/urn:lsid:lconn.ibm.com:communities.community:ac71e701-1f90-4679-965d-5c5755be2c77/@all
-Request Method:POST
-Status Code:200 OK
-Request Payload
-{"content":"rurururururururur"}
-        */
+	  $communityUID = "urn:lsid:lconn.ibm.com:communities.community:". $communityId;
+	  $path         = "/connections/opensocial/basic/rest/activitystreams/" . $communityUID . "/@all";
+	  $json = array(
+			"actor"   => array("id" => "@me"),
+			"verb"	  => "post",
+			"title"	  => "\${Actor} " . $content,
+			"updated" => $this->timestamp(),
+			"object"  => array(
+      	"summary"	    => $content,
+			  "replies"     => array("totalItems" => 0),
+      	"objectType"  => "note",
+			  "id"          => uniqid(),
+      ),
+      "target"  => array(
+        "objectType"  => "community",
+        "id"          => $communityUID,
+        "url"         => $this->url . $path,
+      ),
+		);
+		$headers = array(
+		  'Content-Type' => 'application/json; charset=UTF-8',
+		  'Accept'       => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+		);
+	  $this->getHttpClient()->resetParameters();
+	  $this->getHttpClient()->setRawData(json_encode($json));
+	  $response = $this->requestForPath("POST", $path, $headers);
+	  //$GLOBALS['log']->fatal("POST to " . $this->url . $path . "\n" . json_encode($json) . "\nResponse: " . $response->getStatus());
+	  return $response->getBody();
 	}
+
 	
 	
 	public function getCommunityStatusUpdates($communityId, $sortBy = "updated", $sortOrder = "desc",  $pageSize = null, $pageNumber = null) {

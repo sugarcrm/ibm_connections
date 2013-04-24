@@ -44,6 +44,7 @@ class ConnectionsAPI extends AbstractConnectionsAPI
     private $blog = null;
     private $bookmarks = null;
     private $forums = null;
+    private $updates = null;
 
 
  public function __construct($httpClient = null)

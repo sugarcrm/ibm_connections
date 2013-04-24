@@ -31,9 +31,7 @@
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='edit view'>
 	<tr><td>
 		<div class='connections-header'>
-		  <nav>
-		    <ul id='ibm_community_navigation'>{$ibm_header}</ul>
-		  </nav>
+			<div id='ibm_community_navigation'>{$ibm_header}</div>
 			<div id='ibm_tabs'>
 			<div class="ibm-header-tabs">
 				<div class='before-nav'>
@@ -64,5 +62,5 @@
 		</td>
 	</tr>
 <tr><td><div width='100%' heigth='250px;' id='ibm_connection_body'></div></td></tr>
-<!-- <tr class='ibm-connection-footer'><td><div  id='quick_post_div' width='100%'><div style='float:right;'>{include file="$quickPostTpl"}</div></div></td></tr>-->
+<tr class='ibm-connection-footer'><td><div  id='quick_post_div' width='100%'><div style='float:right;'>{include file="$quickPostTpl"}</div></div></td></tr>
 </table>

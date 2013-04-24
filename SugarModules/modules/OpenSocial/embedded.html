@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>SugarCRM</title>
+
+    <link rel="stylesheet" href="javascripts/bootstrap/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="stylesheets/bootstrap-select.css" type="text/css">
+    <link rel="stylesheet" href="stylesheets/sugarcrm.css" type="text/css">
+
+    <script type="text/javascript" charset="utf-8" src="javascripts/jquery.js"></script>
+    <script type="text/javascript" charset="utf-8" src="javascripts/jshashtable.js"></script>
+    <script type="text/javascript" charset="utf-8" src="javascripts/jquery.numberformatter.js"></script>    
+    <script type="text/javascript" charset="utf-8" src="javascripts/jquery.timeago.js"></script>
+    <script type="text/javascript" charset="utf-8" src="javascripts/underscore.js"></script>
+    <script type="text/javascript" charset="utf-8" src="javascripts/bootstrap-select.js"></script>
+
+    <script type="text/javascript" charset="utf-8" src="javascripts/embedded.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="opportunityDetail">
+        <div id="title">
+          <h3>
+            <span id="opportunityName"></span>
+          </h3>
+	  <h3>
+            <small id="accountName"></small>
+          </h3>
+        </div>
+        <div id="detail">
+          <div class="row">
+      			<div class="span2 propertyName">
+      				<strong>Amount (USD):</strong>
+      			</div>
+      			<div class="span">
+      				<span id="amount"></span> <span class="label" id="probability"></span>
+      			</div>
+      		</div>
+      		<div class="row">
+      			<div class="span2 propertyName">
+      				<strong>Expected Close:</strong>
+      			</div>
+      			<div class="span" id="date_closed">
+      			</div>
+      		</div>
+      		<div class="row">
+      			<div class="span offset2"><span id="soon" class="label label-important">CLOSING SOON</span></div>
+      		</div>
+      		<div class="row">
+      			<div class="span2 propertyName">
+      				<strong>Sales Stage:</strong>
+      			</div>
+      			<div class="span" id="stage">  
+      			</div>
+      		</div>
+      		<div class="row">
+      			<div class="span2 propertyName">
+      				<strong>Next Step:</strong>
+      			</div>
+      			<div class="span2" id="nextStep">
+      			</div>
+      		</div>
+      		<div class="row">
+      		  <div class="span2 propertyName">
+      		    <strong>Description:</strong>
+      		  </div>
+      		</div>
+          <div class="row">
+      		  <div class="span4" id="description">
+      			</div>
+      		</div>  
+      		<div class="row">
+      		  <div class="span2 propertyName">
+      		    <strong>Owned By:</strong>
+      		  </div>
+      		  <div class="span" id="owner">  
+      			</div>
+      		</div>
+        </div>
+      </div>
+      <hr />
+      <div class="similarOpportunities">
+          <div class="row" id="similar">
+      	    <h4 class="span4">View Similar</h4>        
+          </div>
+    		  <div class="row" id="opportunities">
+    		    <ul class="span4" id="opportunitiesList"></ul>
+    		  </div>  
+        </div>
+      </div>
+    <script type="text/html" id="OpportunityDetail">
+    </script>
+  </body>
+</html>
+

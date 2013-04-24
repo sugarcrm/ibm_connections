@@ -31,6 +31,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class ConnectionsLogicHook 
 {
+  
+    public function publishToActivityStream(SugarBean $bean) {
+        require_once('custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsActivityStreamEntry.php');
+        $entry = new ConnectionsActivityStreamEntry($bean);
+        $entry->enqueue();
+    }
 
     protected function handleFieldMap($bean, $mapping) 
     {

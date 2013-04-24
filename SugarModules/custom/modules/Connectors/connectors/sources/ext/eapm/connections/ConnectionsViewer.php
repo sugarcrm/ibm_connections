@@ -28,7 +28,7 @@ class ConnectionsViewer
 	
 	public function navWrapStart()
 	{
-		return "<li id='ibm_navigator'>
+		return "<div id='ibm_navigator'>
 					<nav class='ibm-actions-nav'>
 						<ul>
 							<li>
@@ -39,7 +39,7 @@ class ConnectionsViewer
 	
 	public function navWrapEnd()
 	{
-		 return "</ul></li></ul></nav></li>";
+		 return "</ul></li></ul></nav></div>";
 	}
 	function wiki($arr)
 	{
@@ -345,6 +345,7 @@ class ConnectionsViewer
 		return "<li class='select-community'>
 					<a href='#' onclick='showCommunities();return false;'>
 						<div class='ibm_button'>
+
 							{$this->language['LBL_SELECT_COMMUNITY_BUTTON']}
 						</div>
 					</a>

@@ -209,10 +209,8 @@ function removeMemberFromList(member_id, role)
   $('#'+role+'_list option:selected[value="'+member_id+'"]').remove();//'<option value="'+member_id+'" selected></option>');
   $('#'+member_id+'_'+role).remove();
 }
-
 function showCommunities() {
-  
-    if (typeof(YAHOO.connections.communitiesPanel) == 'undefined') {
+    if(typeof(YAHOO.connections.communitiesPanel) == 'undefined') {
       YAHOO.connections.communitiesPanel = new YAHOO.widget.Dialog("communities_dialog",
               { width : "40em",
                 fixedcenter : true,
@@ -222,10 +220,8 @@ function showCommunities() {
               });
       YAHOO.connections.communitiesPanel.render();
     }
-  
-    if (typeof(YAHOO.connections.communitiesTabView) == 'undefined') {
-      loadTabGroup("communitiesTabView");      
-    }
+    if(typeof(YAHOO.connections.communitiesTabView) == 'undefined')
+        loadTabGroup("communitiesTabView");
 
     var defaultTab = "CreateCommunity";
     var tabNum = YAHOO.connections.tabs_meta[defaultTab].order;
@@ -776,7 +772,7 @@ function quickCreateIBM(event)
 		var post_data="";
 		switch (asset_type)
 		{
-			case 'update': return;var url = createURL('method=likeFile&user_id='+user_id+'&document_id='+doc_id);break;
+			case 'update': var url = createURL('method=postNote&content='+ibm_name);break;
 			case 'activity': var url = createURL('method=saveActivity&activity_name='+ibm_name);break;
 			case 'question': var url = createURL('method=saveDiscussion&discussion_name='+ibm_name+'&discussion_is_question=1');break;
 			case 'file': YAHOO.util.Connect.setForm('QuickpostFile', true); var url = createURL(); post_data = 'method=uploadNewFile&file_name='+ibm_name+'&visibility=private&quickpost=1';break;
