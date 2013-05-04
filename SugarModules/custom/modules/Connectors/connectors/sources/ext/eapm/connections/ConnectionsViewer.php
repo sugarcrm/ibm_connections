@@ -260,7 +260,7 @@ class ConnectionsViewer
 		switch ($icon)
 		{
 			case 'add' : $img = '<div class="button-img"><img src="'.$this->img_url.'/new/ico_add.png" /></div>'; break;
-			case 'newActivity' : $img = '<div class="button-img"><img src="'.$this->img_url.'/new/ico_newActivity" /></div>'; break;
+			case 'newActivity' : $img = '<div class="button-img"><img src="'.$this->img_url.'/new/ico_newActivity.png" /></div>'; break;
 		}
 		return "<button class='ibm_button' onclick='{$click}'> {$img}&nbsp;<div class='button-label'>{$this->language[$label]}</div> </button>&nbsp;";
 	}
