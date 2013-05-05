@@ -82,7 +82,8 @@ $connector_strings = array (
 
 	'LBL_PROBLEM_LOADING_PAGE' => 'There was a problem loading this page',
 	'LBL_LAST_UPDATED' => 'Last Updated:',
-	'LBL_UPDATED' => 'Updated',
+    'LBL_UPDATED_BY' => 'Updated by',
+    'LBL_UPDATED_ON' => 'Updated on',	
 	'LBL_BY'=> 'by',
 	'LBL_CREATED' => 'created',
 	'LBL_UPLOADED' => 'uploaded',
@@ -199,5 +200,6 @@ $connector_strings = array (
 	'LBL_SELECT_FILE' => 'Choose File',
 	'LBL_WIDGET_IS_NOT_ACTIVATED' => 'Widget is not enabled for Community, please enable in IBM Connections and refresh this page.',
 	'LBL_DROP_FILE_HERE' => 'Drop file here',
+	'LBL_ASSIGN_TO' => 'Assign to',
 );
 

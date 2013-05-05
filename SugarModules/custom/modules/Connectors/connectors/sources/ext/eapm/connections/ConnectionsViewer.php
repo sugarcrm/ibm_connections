@@ -131,7 +131,7 @@ class ConnectionsViewer
 										<a href='{$arr['link']}' target='_blank'><b>{$arr['title']}</b></a>
 										<img src='{$this->img_url}/icons/{$arr['type']}.PNG' />
 									</input><br/>
-									{$members} | {$this->language['LBL_UPDATED']} ".$this->getBusinesscard($arr['author'])." {$arr['updated']}
+									{$members} | {$this->language['LBL_UPDATED_BY']} ".$this->getBusinesscard($arr['author'])." {$arr['updated']}
 									". $tag_str."
 								<br/>
 							</td>
@@ -476,7 +476,7 @@ class ConnectionsViewer
 								<a href='{$arr['webEditUrl']}' target='_blank'>{$arr['title']}</a> {$content}
 							</span>  ". $completion_text . $comments_text."<br/>
 							
-						{$this->language['LBL_UPDATED']} {$arr['last_updated']} {$this->language['LBL_BY']} ".$this->getBusinesscard($arr['contributor']).$due_text . "
+						{$this->language['LBL_UPDATED_ON']} {$arr['last_updated']} {$this->language['LBL_BY']} ".$this->getBusinesscard($arr['contributor']).$due_text . "
 						</div>
 						<div class='active-arrow'>
 						</div>
@@ -493,7 +493,7 @@ class ConnectionsViewer
 					<td class ='elements' id='blog_".$arr['id']."' onclick=\"return onloadBlogComments('{$arr['id']}');\">
 						<b><span>{$arr['title']}</span></b>
 						<span id='blog_content_{$arr['id']}'  style='display:none;'>{$arr['content']}</span><br/>
-						{$this->language['LBL_UPDATED']} {$arr['last_updated']} {$this->language['LBL_BY']} {$this->getBusinesscard($arr['contributor'])}
+						{$this->language['LBL_UPDATED_ON']} {$arr['last_updated']} {$this->language['LBL_BY']} {$this->getBusinesscard($arr['contributor'])}
 					 | " . $arr['commentsCount']. " ". $this->language['LBL_COMMENT'] . "<br>
 					</td>
 				</tr>";
