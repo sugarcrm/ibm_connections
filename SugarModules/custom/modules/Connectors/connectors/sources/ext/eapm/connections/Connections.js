@@ -1126,7 +1126,8 @@ var markCompletedHandler = {
 }
 
 function deleteCommunity(id){
-	if (!confirm('Delete Community?')) return;
+    var text = getLabel('LBL_CONFIRM_DELETE');
+    if (!confirm(text)) return;
 	var url = createURL('method=deleteCommunity&community_id=' +id);
   	YAHOO.util.Connect.asyncRequest('POST', url, deleteCommunityHandler);
     return false;

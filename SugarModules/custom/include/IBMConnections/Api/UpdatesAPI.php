@@ -38,6 +38,7 @@ class UpdatesAPI extends AbstractConnectionsAPI
        	//if (empty($pageSize)) $pageSize = AbstractConnectionsAPI::MAX_PAGE_SIZE;
         $this->getHttpClient()->setParameterGet("ps", 10);
         $this->getHttpClient()->setParameterGet("page", $pageNumber);
+        $this->getHttpClient()->setParameterGet("lang", (!empty($GLOBALS['current_language']) ? $GLOBALS['current_language'] : 'en-US'));
         $result = $this->requestForPath("GET", "/news/atom/stories/community");
         // $result = $this->requestForPath("GET", "/news/atom/stories/statusupdates?source=all");
         // echo $result->getBody();
