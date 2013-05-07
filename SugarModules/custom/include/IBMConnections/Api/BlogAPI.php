@@ -51,7 +51,7 @@ class BlogAPI extends AbstractConnectionsAPI
 		$this->getHttpClient()->setParameterGet("includeTags", "true");
 		$this->getHttpClient()->setParameterGet("ps", 5);
 		$this->getHttpClient()->setParameterGet("page", $page);
-		$this->getHttpClient()->setParameterGet("lang", "en_us");
+		$this->getHttpClient()->setParameterGet("lang", (!empty($GLOBALS['current_language']) ? $GLOBALS['current_language'] : 'en-US'));
 		///atom/blogs?commUuid={resourceId}&blogType=communityblog
 		//$result = $this->requestForPath("GET", "blogs/atom/blogs?commUuid={$communityId}&blogType=communityblog");
 		$result = $this->requestForPath("GET", "blogs/roller-ui/rendering/feed/{$communityId}/entries/atom");
@@ -72,7 +72,7 @@ class BlogAPI extends AbstractConnectionsAPI
 	//echo "blogs/{$communityId}/api/entrycomments/{$blogId}";
 		$this->getHttpClient()->resetParameters();
 		$this->getHttpClient(true)->setParameterGet("ps", 150);
-		$this->getHttpClient()->setParameterGet("lang", "en_us");
+		$this->getHttpClient()->setParameterGet("lang", (!empty($GLOBALS['current_language']) ? $GLOBALS['current_language'] : 'en-US'));
 		$result = $this->requestForPath("GET", "blogs/roller-ui/rendering/df62d3f7-1837-4f7b-900e-af7b2cdf937c/feed/entrycomments/una_piattaforma_che_%25C3%25A8_un_vero_e_proprio_social_network_molto_filtrato/atom?lang=en_us&authenticate=no");
 		//$result = $this->requestForPath("GET", "blogs/{$communityId}/api/entrycomments/{$blogId}");
 		return $result->getBody();
