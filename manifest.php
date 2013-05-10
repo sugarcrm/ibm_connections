@@ -63,7 +63,6 @@ $installdefs = array (
   'id' => 'IBM',
   'beans' => 
   array (
-    0 => 
     array (
       'module' => 'ibm_connections',
       'class' => 'ibm_connections',
@@ -80,12 +79,10 @@ $installdefs = array (
   'image_dir' => '<basepath>/icons',
   'copy' => 
   array (
-    0 => 
     array (
       'from' => '<basepath>/SugarModules/modules',
       'to' => 'modules',
     ),
-    1 => 
     array (
       'from' => '<basepath>/SugarModules/custom',
       'to' => 'custom',
@@ -93,11 +90,16 @@ $installdefs = array (
   ),
   'language' => 
   array (
-    0 => 
     array (
       'from' => '<basepath>/SugarModules/language/application/en_us.lang.php',
       'to_module' => 'application',
       'language' => 'en_us',
+    ),
+  ),
+  'connectors' => array (
+    array (
+      'connector' => '<basepath>/SugarModules/connectors/connections',
+      'name' => 'ext_eapm_connections',
     ),
   ),
 );
