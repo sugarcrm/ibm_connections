@@ -32,6 +32,13 @@ require_once('include/connectors/sources/ext/eapm/eapm.php');
 
 class ext_eapm_connections extends ext_eapm {
 
+	protected $allowedModuleList = array(
+		'Accounts' => 'Accounts',
+		'Leads' => 'Leads',
+		'Opportunities' => 'Opportunities',
+		'Cases' => 'Cases',
+	);
+
 	public function __construct() {
 		parent::__construct();
 		$this->_enable_in_wizard = false;
