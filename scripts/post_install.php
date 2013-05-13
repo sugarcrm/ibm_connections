@@ -16,10 +16,20 @@ function post_install() {
 		'Opportunities',
 		'Cases',
 	);
+	
+	$mapping = array(
+		'beans' => array(),
+	);
+	
 	foreach ($moduleList as $moduleName) {
 		$modules_sources[$moduleName]['ext_eapm_connections'] = 'ext_eapm_connections';
+		$mapping['beans'][$moduleName] = true;
 	}
 	write_array_to_file('modules_sources', $modules_sources, $fileName);
+	
+	require_once 'include/connectors/sources/SourceFactory.php';
+	$source = SourceFactory::getSource('ext_eapm_connections');
+	$source->saveMappingHook($mapping);
 }
 
 ?>
