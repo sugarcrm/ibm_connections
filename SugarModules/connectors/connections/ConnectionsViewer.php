@@ -409,7 +409,7 @@ class ConnectionsViewer
 	}
 
 
-	function file($arr)
+	function fileSection($arr)
 	{
 	
 				$download_link = "index.php?module=Connectors&action=Connections&method=downloadFile&documentId={$arr['id']}&documentName={$arr['title']}&documentSize={$arr['fileSize']}";

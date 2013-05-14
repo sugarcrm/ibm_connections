@@ -106,7 +106,7 @@ class CommunityMappingService {
         $cid = null;
         $tableName = $this->getTableName($bean);
         if ($tableName) {
-            $cid = $this->get($tableName, $this->getMappingKey($bean));
+            $cid = $this->getConnectionsId($tableName, $this->getMappingKey($bean));
         }
 
         return $cid;
@@ -156,7 +156,7 @@ class CommunityMappingService {
                     . $dictionary[$tablename]['external_mappings']['connections']
                     . ' = "' . $connId . '";';
         } else if ($connId == null && $sid != null) {
-            $connId = $this->get($tablename, $sid);
+            $connId = $this->getConnectionsId($tablename, $sid);
             $query = 'delete from ' . $tablename . ' where '
                     . $dictionary[$tablename]['external_mappings']['connections']
                     . ' = "' . $connId . '" or '
@@ -231,7 +231,7 @@ class CommunityMappingService {
      * @param $sugar id
      * @return $connectionsId
      */
-    protected function get($tablename, $sid) {
+    protected function getConnectionsId($tablename, $sid) {
         require_once('custom/metadata/' . $tablename . 'MetaData.php');
         global $dictionary;
 
@@ -302,7 +302,7 @@ class CommunityMappingService {
         return $result_array;
          */
 
-        return $this->get(CommunityMappingService::OPPORTUNITY_COMMUNITY_TBL, $sid);
+        return $this->getConnectionsId(CommunityMappingService::OPPORTUNITY_COMMUNITY_TBL, $sid);
 
     }
 }

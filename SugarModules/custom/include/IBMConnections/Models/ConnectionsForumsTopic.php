@@ -178,7 +178,6 @@ class ConnectionsForumsTopic extends ConnectionsModel
             $nodeList->item($i)->attributes->getNamedItem("type") != null){
                 if(strcmp($nodeList->item($i)->attributes->getNamedItem("rel")->textContent,"alternate") &&
                 strcmp($nodeList->item($i)->attributes->getNamedItem("type")->textContent,"text/html"))
-                error_log("======" . $nodeList->item($i)->attributes->getNamedItem("href")->textContent . "=====");
                 return $nodeList->item($i)->attributes->getNamedItem("href")->textContent;
             }
         }
