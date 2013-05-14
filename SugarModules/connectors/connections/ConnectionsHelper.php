@@ -76,16 +76,19 @@ class ConnectionsHelper
 		$reply = $this->apiClass->checkLogin();
         if ( !$reply['success'] ) {
         	if (array_key_exists('rawResponse', $reply)) {
+        		ob_clean();
 				echo json_encode(array('success' => false, 'problem' => 'auth'));
 				return;
 			}
 			else {
+				ob_clean();
 				echo json_encode(array('success' => false, 'problem' => 'url'));
 				return;
 			}
         } else {
 			
             $eapm->validated();
+            ob_clean();
 			echo json_encode(array('success' => true));			
         }
 		
@@ -272,6 +275,7 @@ class ConnectionsHelper
 		$reply = $this->apiClass->getMembers("", $search_text);
 		$response = new SimpleXMLElement($reply['rawResponse']);
 		$member_list = $this->getMembersArray($response);
+		ob_clean();
 		echo json_encode($member_list);
 	}
 
@@ -361,12 +365,14 @@ class ConnectionsHelper
 		else {
 			$tag = array();
 		}
+		ob_clean();
 		return json_encode( $this->apiClass->createActivity($this->getCommunityId(), $this->activity_name, $this->activity_goal, $tag, $this->due_date));
 	}
 	
 	public function saveActivitySection()
 	{
 		$this->apiClass->createActivitySection($this->ibm_parent_id, $this->name);
+		ob_clean();
 		echo json_encode(array('id'=> $this->ibm_parent_id));
 	}
 	
@@ -387,6 +393,7 @@ class ConnectionsHelper
 		else {
 			$this->apiClass->createActivityToDo($this->ibm_parent_id, $this->title, $this->description, $this->due_date, $tag, array('name' => $this->assigned_name, 'id' => $this->assigned_id));
 		}
+		ob_clean();
 		echo json_encode(array('id'=> $this->ibm_parent_id));
 		
 	}
@@ -406,6 +413,7 @@ class ConnectionsHelper
 		else {
 			$this->apiClass->createActivityEntry($this->ibm_parent_id, $this->title, $this->description,$tag);
 		}
+		ob_clean();
 		echo json_encode(array('id'=> $this->ibm_parent_id));
 	}
 	
@@ -420,12 +428,14 @@ class ConnectionsHelper
 	public function commentFile()
 	{
 		$result = $this->apiClass->commentFile($this->ibm_user_id, $this->ibm_doc_id, $this->comment_content);
+		ob_clean();
 		echo json_encode(array('id' => $this->ibm_doc_id,'result'=> $result));
 	}
 	
 	public function likeFile()
 	{
 		$result = $this->apiClass->likeFile($this->user_id, $this->document_id);
+		ob_clean();
 		echo json_encode(array('id' => $this->document_id, 'result'=> $result));
 	}
 	
@@ -437,6 +447,7 @@ class ConnectionsHelper
 	public function deleteCommunity()
 	{
 		$res = $this->apiClass->deleteCommunity($this->community_id);
+		ob_clean();
 		echo json_encode(array('deleted' => $res));
 		
 	}
@@ -444,6 +455,7 @@ class ConnectionsHelper
 	public function markToDoCompleted()
 	{
 		$result = $this->apiClass->markToDoCompeted($this->todo_id);
+		ob_clean();
 		echo json_encode(array('result' => $result, 'id' => $this->activity_id));
 		
 	}
@@ -453,6 +465,7 @@ class ConnectionsHelper
 		$list = $this->getBookmarksList($this->getCommunityId(), $this->page_number, $this->search_text);
 		$tab = 'bookmark';
 		$reply = $this->display($tab, 1,'');
+		ob_clean();
 		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab .'_list'));
 	}
 	
@@ -461,7 +474,8 @@ class ConnectionsHelper
 		$reply = $this->view->button('LBL_UPDATES_ALL','showUpdates("all");return false;');
 		$reply .= $this->view->button('LBL_UPDATES_STATUS','showUpdates("status");return false;');
 		$list = $this->getUpdatesList($this->getCommunityId(), $this->page_number);
-		$reply .= $this->display('update', 1,'');	
+		$reply .= $this->display('update', 1,'');
+		ob_clean();	
 		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => 'update_list', 'page' => $this->page_number));
 	}
 	
@@ -469,6 +483,7 @@ class ConnectionsHelper
 	{
 		$list = $this->getDiscussionsList($this->getCommunityId(),$this->page_number, $this->search_text);
 		$reply = $this->display('discussion', 2, '' );
+		ob_clean();
 		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => 'discussion_list'));
 	}
 	
@@ -482,6 +497,7 @@ class ConnectionsHelper
 		$list = $this->getActivitiesList($communityId, $search_text, $page);
 		$tab = 'activity';
 		$reply = $this->display($tab, 2,'', '');
+		ob_clean();
 		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab .'_list'));
 	}
 	
@@ -506,10 +522,12 @@ class ConnectionsHelper
 	{
 		if ($this->reply_to == 'reply'){
 			$this->apiClass->replyDiscussionReply($this->ibm_parent_id, $this->reply_title, $this->reply_content);
+			ob_clean();
 			echo json_encode(array('topic_id' =>$this->ibm_discussion_id));
 		}
 		else{
 			$this->apiClass->replyDiscussion($this->ibm_parent_id, $this->reply_title, $this->reply_content);
+			ob_clean();
 			echo json_encode(array('topic_id' =>$this->ibm_parent_id));
 		}
 		
@@ -568,6 +586,7 @@ class ConnectionsHelper
 		$connections->save();
 		$navig = $this->getCommunityNavigation($this->community_id, true);
 		$header = $navig['head'];
+		ob_clean();
 		echo json_encode(array('content' => $header , 'community_id' => $this->community_id));
 		//echo $this->language['LBL_COMMUNITY_SELECTION_SAVED'];
 	}
@@ -643,6 +662,7 @@ class ConnectionsHelper
 		$list = $this->getFilesList($communityId, $this->page_number, $this->search_text);
 		$tab = 'file';
 		$reply = $this->display($tab, 2,'', $profile_body);
+		ob_clean();
 		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab .'_list'));
 			
 	}
@@ -658,6 +678,7 @@ class ConnectionsHelper
 		
 		$tab = 'wiki';
 		$reply = $this->display($tab, 2,'', '');
+		ob_clean();
 		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab .'_list'));
 	}
 	
@@ -681,6 +702,7 @@ class ConnectionsHelper
 	function getCommunityWikiContent()
 	{
 		$reply  = $this->apiClass->getCommunityWikiContent($this->comm_id, $this->rec_id);
+		ob_clean();
 		echo json_encode(array('content' => $reply));
 		
 	}
@@ -691,6 +713,7 @@ class ConnectionsHelper
 		$list = $this->getCommunityBlogList($this->getCommunityId(),$this->page_number, $this_search_text);
 		$tab = 'blog';
 		$reply = $this->display($tab, 2,'', '');
+		ob_clean();
 		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab .'_list'));
 	}
 	
@@ -730,6 +753,7 @@ class ConnectionsHelper
 		$html .= '</div>';
 		$html .= "</td></tr>";
 		$html .= "</table>";
+		ob_clean();
 		echo json_encode(array('frame' => $html , 'content' => '', 'container_id'=> ''));
 	}
 	
@@ -760,7 +784,7 @@ class ConnectionsHelper
 			"header"=> "New " . $element,
 			"body"=> $body,
 		);
-
+		ob_clean();
 		echo json_encode($model_content);
 	}
 	
@@ -825,6 +849,7 @@ class ConnectionsHelper
 			"body"=>$body
 		);
 
+		ob_clean();
 		echo json_encode($model_content);
 	}
 
@@ -1004,7 +1029,7 @@ class ConnectionsHelper
 			"header"=> "activity node",
 			"body"=>$reply
 		);
-
+		ob_clean();
 		echo json_encode($content);
 	}
 	
@@ -1042,7 +1067,7 @@ class ConnectionsHelper
 		$reply .= $this->view->table_end;
 		$content = array("content"=>$reply,
 		);
-
+		ob_clean();
 		echo json_encode($content);
 	}
 	
@@ -1075,7 +1100,7 @@ class ConnectionsHelper
 		}
 		$reply .= $this->view->table_end;
 		$content = array("content" => $reply);
-
+		ob_clean();
 		echo json_encode($content);
 	}
 	
@@ -1317,7 +1342,7 @@ class ConnectionsHelper
 			"header"=> "Discussion",
 			"body"=>$reply
 		);
-
+		ob_clean();
 		echo json_encode($content);
 	}
 	function getFilesList($communityId, $page = 1, $searchText = "")
@@ -1350,6 +1375,7 @@ class ConnectionsHelper
 	public function getActivityCompletion()
 	{
 		$this_activity = $this->apiClass->getActivity($this->activityId);
+		ob_clean();
 		echo json_encode(array( 'id' => $this->activityId, 'completion' => $this_activity->getCompletion()));
 	}
 	function getActivitiesList($communityId, $searchText, $page)
