@@ -702,6 +702,9 @@ class ConnectionsHelper
 	function getCommunityWikiContent()
 	{
 		$reply  = $this->apiClass->getCommunityWikiContent($this->comm_id, $this->rec_id);
+		if (strpos($reply, '>]>') < 200){
+			$reply = substr($reply, strpos($reply, '>]>') + 3);
+		}
 		ob_clean();
 		echo json_encode(array('content' => $reply));
 		
