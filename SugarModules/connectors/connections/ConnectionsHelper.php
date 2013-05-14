@@ -531,6 +531,7 @@ class ConnectionsHelper
 	
 	public function downloadFile() 
 	{
+		ob_clean();
 		$document_id = $this->documentId;
 		$document_name = $this->documentName;
 		$content = $this->apiClass->downloadFile($document_id);
@@ -543,10 +544,7 @@ class ConnectionsHelper
 		header("X-Content-Type-Options: nosniff");
 		header("Expires: 0");
 		set_time_limit(0);
-		@ob_end_clean();
-		ob_start();
 		echo $content;
-		@ob_flush();
 
 	}
 
@@ -1215,11 +1213,13 @@ class ConnectionsHelper
 		}
 		return $res;
 	}
-	private function treeFunc(&$item, $key, $arrs) 
+	
+	private function treeFunction(&$item, $key, $arrs) 
 	{ 
-		$res = $this->getChildForParent($arrs,$key); 
-		if(!empty($res)) 
-			 $item = $res; 
+		$res = $this->getChildForParent($arrs, $key); 
+		if (!empty($res)) { 
+			$item = $res;
+		}
 	}
 	
 	private function showTreeDiscussion($array, $l){
@@ -1233,6 +1233,28 @@ class ConnectionsHelper
 		}
 		return $res;
 	}
+	
+	private function applyTreeFunctionToArray(&$input, $userdata = '')
+	{
+		if (!is_array($input)) {
+			return false;
+		}
+		foreach ($input as $key => $value) {
+			if (is_array($input[$key])) {			
+				$this->applyTreeFunctionToArray($input[$key], $userdata);
+			} else {
+				$saved_value = $value;
+				$this->treeFunction($value, $key, $userdata);		
+
+				if ($value != $saved_value) {
+					$input[$key] = $value;
+				}
+			}
+		}
+		return true;
+	}
+	
+	
 	function getDiscussionModal()
 	{
 		$forumId = $this->forum_id;
@@ -1265,7 +1287,9 @@ class ConnectionsHelper
 			while($valid) 
 			{ 
 				   $oldCount  = count($arr,COUNT_RECURSIVE); 
-				   array_walk_recursive($arr, array($this, 'treeFunc'),$parent_arr); 
+				   
+				   $this->applyTreeFunctionToArray($arr, $parent_arr);
+				   
 				   $newCount = count($arr,COUNT_RECURSIVE); 
 				   if ($oldCount == $newCount)  // if there is no change, exit... 
 							   $valid = false;     
@@ -1317,7 +1341,7 @@ class ConnectionsHelper
 				$arr['downloadsCount'] = $entry->getDownloadsCount();
 				$arr['version'] = $entry->getVersion();
 				
-				$file_list .= $this->view->file($arr);
+				$file_list .= $this->view->fileSection($arr);
 					
 			}
 		}

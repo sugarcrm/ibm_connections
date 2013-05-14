@@ -123,10 +123,22 @@ class IBMAtomFeed extends IBMAbstractAtomItem {
 			$retArray[$i] = new IBMAtomEntry($this->dom, $nodeList->item($i));
 		}
 		
-		
-		usort($retArray, "self::entryPositionCmp");
+		$this->sortRepliesToReturnArray($retArray);
 		
 		return $retArray;
+	}
+	
+	private function sortRepliesToReturnArray(&$retArray)
+	{
+		for ($i = 0; $i < count($retArray) - 1; $i++) {
+			for ($j = $i + 1; $j < count($retArray); $j++) {
+				if ($this->entryPositionCmp($retArray[$i], $retArray[$j]) == 1) {
+					$tmp = $retArray[$i];
+					$retArray[$i] = $retArray[$j];
+					$retArray[$j] = $tmp;			
+				}
+			}
+		}
 	}
 	
 	/**

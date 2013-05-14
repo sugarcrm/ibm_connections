@@ -32,7 +32,7 @@ class OpportunityUpdater {
 	
 	protected function validRequest() {
 	  try {
-	    $this->json = json_decode(file_get_contents('php://input'));
+	    $this->json = json_decode(sugar_file_get_contents('php://input'));
 	    return true;
 	  } catch (Exception $e) {
 	    $this->error = array("Error" => $e);
