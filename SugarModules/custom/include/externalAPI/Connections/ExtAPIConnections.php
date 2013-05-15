@@ -288,16 +288,14 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
     public function loadDocCache($forceReload = false) {
         global $db, $current_user;
-
-		$cacheDir = rtrim(SugarConfig::getInstance()->get('cache_dir'), '/\\');
-        $cacheFileBase = $cacheDir . '/include/externalAPI/docCache_'.$current_user->id.'_LotusLiveDirect';
-        create_cache_directory('/include/externalAPI/');
+       
+        $cacheKeyName = 'docCache_' . $current_user->id . '_LotusLiveDirect';
         
-        if ( !$forceReload && sugar_is_file($cacheFileBase.'.php') ) {
-            // File exists
-            include_once($cacheFileBase.'.php');
-            if ( abs(time()-$docCache['loadTime']) < 3600 ) {
-                // And was last updated an hour or less ago
+        if (!$forceReload && isset(SugarCache::instance()->$cacheKeyName)) {
+
+            $docCache = SugarCache::instance()->$cacheKeyName;
+
+            if (abs(time() - $docCache['loadTime']) < 3600) {
                 return $docCache['results'];
             }
         }
@@ -346,7 +344,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $docCache['loadTime'] = time();
         $docCache['results'] = $results;
         
-        write_array_to_file('docCache', $docCache, $cacheFileBase.'.php');        
+        SugarCache::instance()->$cacheKeyName = $docCache;     
 
         return $results;
     }
