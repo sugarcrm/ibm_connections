@@ -44,7 +44,27 @@ class ProxyConnectionsAPI
             $this->LOGGER->info('ProxyConnectionsAPI : new ConnectionsAPI instance created.');
         }
         // calling the method on the API instance
-        return $this->apiInstance->$methodName($args);
+        
+        switch ($methodName) {
+            case 'getCommunitiesAPI':
+                return $this->apiInstance->getCommunitiesAPI($args);
+            case 'getActivitiesAPI':
+                return $this->apiInstance->getActivitiesAPI($args);
+            case 'getFilesAPI':
+                return $this->apiInstance->getFilesAPI($args);
+            case 'getProfilesAPI':
+                return $this->apiInstance->getProfilesAPI($args);
+            case 'getWikiAPI':
+                return $this->apiInstance->getWikiAPI($args);
+            case 'getBlogAPI':
+                return $this->apiInstance->getBlogAPI($args);
+            case 'getBookmarksAPI':
+                return $this->apiInstance->getBookmarksAPI($args);
+            case 'getForumsAPI':
+                return $this->apiInstance->getForumsAPI($args);
+            case 'getUpdatesAPI':
+                return $this->apiInstance->getUpdatesAPI($args);
+        }
     }
 
 }
