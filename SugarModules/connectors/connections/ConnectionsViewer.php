@@ -41,9 +41,9 @@ class ConnectionsViewer
 	{
 		 return "</ul></li></ul></nav></div>";
 	}
-	function wiki($arr)
+	
+	public function wiki($arr)
 	{
-		
 		return "<tr>
 					<td class ='elements' id='wiki_{$arr['id']}' onclick=\"return onloadWikiContent('{$arr['id']}','{$arr['content']}');\">
 						<span><b>{$arr['title']}</b></span><br/>
@@ -53,7 +53,7 @@ class ConnectionsViewer
 	
 
 	
-	function getBusinesscard($user_array)
+	public function getBusinesscard($user_array)
 	{
 		return '<span class="vcard">
   				<a class="fn url" target="_blank" href="'.$this->connection_url.'/profiles/html/profileView.do?userid='.$user_array['id'].'">' . $user_array['name'] . '</a>
@@ -62,7 +62,7 @@ class ConnectionsViewer
 			';
 
 	}
-	function update($arr )
+	public function update($arr )
 	{
 		return "<div class='{$arr['type']}'>
 					<span >
@@ -75,7 +75,7 @@ class ConnectionsViewer
 				</div>";
 	}
 	
-	function bookmark($arr)
+	public function bookmark($arr)
 	{
 		return "<td style='padding-left: 15px;width:33%'>
 					<span>
@@ -86,7 +86,7 @@ class ConnectionsViewer
 				
 	}
 	
-	function activityReply($arr)
+	public function activityReply($arr)
 	{
 		return "<tr>
 					<td>
@@ -95,12 +95,13 @@ class ConnectionsViewer
 				</tr>";
 				
 	}
-	function discussion($arr)
+	public function discussion($arr)
 	{
 		if (!empty( $tags ) ) $tags = "{$this->language['LBL_TAGS']}: " . $arr['tags'];
 		return 
 			 "<tr >
 				<td class ='elements' id='discussion_".$arr['id']."' onclick=\"return onloadDiscusionReplies('{$arr['id']}');\">
+					{$arr['hiddenView']}
 					<div class='item-img'>
 							<img src='{$this->img_url}/icons/{$arr['topicType']}.PNG' /> 
 					</div>
@@ -118,7 +119,7 @@ class ConnectionsViewer
 	}
 	
 	
-	function community($arr) 
+	public function community($arr) 
 	{
 				$members = ($arr['member_count'] > 1) ? $arr['member_count']." ". $this->language['LBL_PEOPLE'] : "1 ". $this->language['LBL_PERSON'];
 				$tag_str = "";
@@ -142,32 +143,59 @@ class ConnectionsViewer
 	
 	
 	
-	function discussionReply($arr)
+	public function discussionReply($arr)
 	{
-		$arrachments = '';
-		for($i = 0; $i < count($arr['attachments']); $i++){
-			$arrachments .= "<br>"."<a href='{$attach_arr[$i]['href']}'>{$attach_arr[$i]['title']}</a>";
+		$attachments = '';
+		$attach_arr = $arr['attachments'];
+		for($i = 0; $i < count($attach_arr); $i++){
+			$attachments .= "<br>"."<a href='{$attach_arr[$i]['href']}'>{$attach_arr[$i]['title']}</a>";
+			
 		}
-		return "<tr>
-					<td style='padding-left: 15px;width:35px; vertical-align:top'>
-						<img src='{$this->connection_url}/profiles/photo.do?userid={$arr['author']['id']}' width='32px' height='32px'>
-					</td>
-					<td style='padding-left: 5px;width:20%; vertical-align:top'>
-						{$this->getBusinesscard($arr['author'])}<br>{$arr['updated']}
-					</td>
-					<td style='padding-left: 5px;'>
-						{$arr['content']}
-						{$arrachments}
-						<br>
-						<a href='#' onclick=\"createIBMElement('DiscussionReply','&ibm_parent_id={$arr['id']}&reply_to=reply&ibm_discussion_id={$arr['forum_id']}');return false;\">{$this->language['LBL_REPLY']}</a>
-					</td>
-				</tr>
+		return "<li level='{$arr['deep']}'>
+				<div class='discussionComment' style='margin-left:". 15 * $arr['deep'] ."px;display:block;'>
+					<div class='discussion-comments-item'>
+						<div style='width:35px;'>
+							<img src='{$this->connection_url}/profiles/photo.do?userid={$arr['author']['id']}' width='32px' height='32px'>
+						</div>
+						<div style='padding-left: 5px;width:20%;'>
+							{$this->getBusinesscard($arr['author'])}<br>{$arr['updated']}
+						</div>
+						<div style='padding-left: 10px;'>
+							<b>{$arr['title']}</b><br/>
+							{$arr['content']}
+							{$attachments}
+							<br>
+							<a href='#' onclick=\"createIBMElement('DiscussionReply','&ibm_parent_id={$arr['id']}&reply_to=reply&ibm_discussion_id={$arr['forum_id']}');return false;\">{$this->language['LBL_REPLY']}</a>
+						</div>
+					</div>
+				</div>
+				</li>
+				";
+	}
+	
+	public function discussionTitle($arr)
+	{
+		
+		return "<div id='discussionTitle_{$arr['id']}' class='discussionTitle' style='margin-left:". 15 * $arr['deep'] ."px;display:none;'>
+					<div class='discussion-comments-item'>
+						<div style='width:35px;'>
+							<img src='{$this->connection_url}/profiles/photo.do?userid={$arr['author']['id']}' width='32px' height='32px'>
+						</div>
+						<div style='padding-left: 5px;width:20%;'>
+							{$this->getBusinesscard($arr['author'])}<br>{$arr['published']}
+						</div>
+						<div style='padding-left: 10px;'>
+							<b>{$arr['title']}</b><br/>
+							{$arr['content']}
+						</div>
+					</div>
+				</div>
 				";
 	}
 	
 	
 	
-	function activityToDo($arr)
+	public function activityToDo($arr)
 	{
 		$icon = ($arr['completed']) ? 'ico_checkedBlueBig.png' :'ico_uncheckBlueBig.png';
 		$action = ($arr['completed']) ? '' : " onclick='markCompleted(\"{$arr['id']}\",\"{$arr['parent_id']}\");'";
@@ -212,7 +240,7 @@ class ConnectionsViewer
 				</tr>";
 	}
 	
-	function activityToDoModal($arr)
+	public function activityToDoModal($arr)
 	{
 		$icon = ($arr['completed']) ? 'ico_checkedBlueBig.png' :'ico_uncheckBlueBig.png';
 		$type_content = "<img src='{$this->img_url}/new/{$icon}' id='todo_{$arr['id']}' />";
@@ -254,7 +282,7 @@ class ConnectionsViewer
 					</td>
 				</tr>";
 	}
-	function button($label, $click, $icon = '' )
+	public function button($label, $click, $icon = '' )
 	{
 		$img = '';
 		switch ($icon)
@@ -265,7 +293,7 @@ class ConnectionsViewer
 		return "<button class='ibm_button' onclick='{$click}'> {$img}&nbsp;<div class='button-label'>{$this->language[$label]}</div> </button>&nbsp;";
 	}
 	
-	function actionsEditCommunity($communityId)
+	public function actionsEditCommunity($communityId)
 	{
 		return
 				"<a href='#' onclick='if (document.getElementById(\"community_id_selection\") != null) document.getElementById(\"community_id_selection\").value=\"\";selectCommunity();return false;'>
@@ -289,7 +317,7 @@ class ConnectionsViewer
 	}
 	
 
-	function activityEntry($arr)
+	public function activityEntry($arr)
 	{
 		$att_icon = "";
 		$comment_node_icon = "";
@@ -315,7 +343,7 @@ class ConnectionsViewer
 					</td>
 				</tr>";
 	}
-	function activityEntryModal($arr)
+	public function activityEntryModal($arr)
 	{
 		$att_icon = "";
 		$comment_node_icon = "";
@@ -340,7 +368,7 @@ class ConnectionsViewer
 					</td>
 				</tr>";
 	}
-	function selectCommunityMenu()
+	public function selectCommunityMenu()
 	{
 		return "<li class='select-community'>
 					<a href='#' onclick='showCommunities();return false;'>
@@ -351,7 +379,7 @@ class ConnectionsViewer
 					</a>
 				</li>";
 	}
-	function activitySection($arr)
+	public function activitySection($arr)
 	{
 		return "
 				<tr>
@@ -385,7 +413,7 @@ class ConnectionsViewer
 	}
 	
 	
-	function discussionModal($arr)
+	public function discussionModal($arr)
 	{
 		$attachments = '';
 		$attach_arr = $arr['attachments'];
@@ -409,7 +437,7 @@ class ConnectionsViewer
 	}
 
 
-	function fileSection($arr)
+	public function fileSection($arr)
 	{
 	
 				$download_link = "index.php?module=Connectors&action=Connections&method=downloadFile&documentId={$arr['id']}&documentName={$arr['title']}&documentSize={$arr['fileSize']}";
@@ -450,7 +478,7 @@ class ConnectionsViewer
 
 	}
 	
-	function activity($arr)
+	public function activity($arr)
 	{
 		$due_text = "";
 		$comments_text = "";
@@ -487,7 +515,7 @@ class ConnectionsViewer
 	}
 	
 	
-	function blog($arr)
+	public function blog($arr)
 	{
 		return "<tr>
 					<td class ='elements' id='blog_".$arr['id']."' onclick=\"return onloadBlogComments('{$arr['id']}');\">

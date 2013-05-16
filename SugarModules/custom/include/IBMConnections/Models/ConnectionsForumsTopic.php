@@ -65,7 +65,13 @@ class ConnectionsForumsTopic extends ConnectionsModel
        // $person = CommunitiesIntegration::toSugarProfile($person);
         return $person;
     }
+	public function getContent() {
+		return $this->atom->getContent();
+	}
 
+	public function getPublishedDate() {
+		return $this->formatTimeDate($this->atom->getPublishedDate());
+	}
 
     /**
      *

@@ -89,11 +89,13 @@
 #connectionsDiv #ibm_community_navigation #community_logo {
 	width: 10%;
 	float: left;
+	vertical-align: middle;
 }
 
 #connectionsDiv #ibm_community_navigation #community_logo img {
 	width: 32px;
 	height: 32px;
+	vertical-align: middle;
 }
 
 #connectionsDiv #ibm_community_navigation #community_name {
@@ -632,6 +634,30 @@ background: url('../images/new/ico_search.png') #FFFFFF no-repeat scroll 7px 6px
 	width:40px;height:50px;
 }
 
+.discussionTread {
+	list-style-type: none;
+	padding: 5px;
+	margin: 0px;
+}
+
+.discussionTread li{
+	list-style-type: none;
+}
+
+.discussionComment {
+	background-color: #fff;
+	border: 1px solid #ccc;
+	box-shadow: 0px 2px 5px #eee;
+}
+
+.discussion-comments-item{
+	display:table;
+	padding:10px;
+}
+.discussion-comments-item div{
+	vertical-align:top;
+	display:table-cell;
+}
 
 
 

@@ -119,7 +119,9 @@ function loadTabGroup(tab_group) {
    // if(tab_group == 'connectionsTabView')
     //    YAHOO.connections[tab_group].appendTo('subpanel_connections');//ibm_tabs');
     if(tab_group == 'communitiesTabView')
+    {
         YAHOO.connections[tab_group].appendTo('connections_communities');
+    }
 }
 
 function newTab(tab_name, tab_group) {
@@ -132,7 +134,8 @@ function newTab(tab_name, tab_group) {
 							dataSrc: url,
 							cacheData: false,
 							active: tabActive});
-    if (tab_group == "communitiesTabView") {
+    if (tab_group == "communitiesTabView" )
+    {
         tab.loadHandler =  {
             success: function(o) {
                this.set("content", o.responseText);
@@ -240,12 +243,13 @@ function showCommunities() {
     var tabView = getTabView(defaultTab);
     tabView.selectTab(tabNum);
     YAHOO.connections.communitiesPanel.show();
+   // YAHOO.connections.communitiesPanel.center();
 }
 
 function closeCommunityPanel()
 {
 	if(typeof(YAHOO.connections.communitiesPanel) != 'undefined') {
-		YAHOO.connections.communitiesPanel.cancel();
+		YAHOO.connections.communitiesPanel.hide();
 	}
 }
 
@@ -1071,10 +1075,25 @@ function onloadDiscusionReplies(forum_id) {
 		$(all_elements[i]).removeClass('activeIBMElement');
 	}
 	$('#discussion_'+forum_id).addClass('activeIBMElement');
-	
+	var visibleTitle = $('.visible-title').first();
+	var tempId = $(visibleTitle).attr('id');
+	if (tempId != null && tempId != 'undefined' && tempId != '')
+	{
+		var id = tempId.substr(-36);
+		$('#discussionTitle_'+id).css('display','none');
+		$('#discussionTitle_'+id).appendTo( $('#discussion_'+id) );
+		$('#discussionTitle_'+id).removeClass('visible-title');
+    	
+		
+	}
    var url = createURL('method=getDiscussion&forum_id=' +forum_id);
    document.getElementById('discussion_content').innerHTML = '';
-  	YAHOO.util.Connect.asyncRequest('POST', url, discusionRepliesHandler);
+    //document.getElementById('discussion_content').innerHTML = $('#discussion_title_'+forum_id).val();
+    $('#discussionTitle_'+forum_id).appendTo( $('#discussion_content') );
+    $('#discussionTitle_'+forum_id).css('display','block');
+    $('#discussionTitle_'+forum_id).addClass('visible-title');
+    setTimeout("SemTagSvc.parseDom(null, 'discussion_content')", 1500 );
+    YAHOO.util.Connect.asyncRequest('POST', url, discusionRepliesHandler);
     return false;
 }
 
@@ -1082,8 +1101,8 @@ function onloadDiscusionReplies(forum_id) {
 var discusionRepliesHandler = {
     success: function(data) {
     var response = JSON.parse(data.responseText);
-    document.getElementById('discussion_content').innerHTML = response.content;
-     setTimeout("SemTagSvc.parseDom(null, 'discussion_content')", 1000 );
+    document.getElementById('discussion_content').innerHTML += response.content;
+     //setTimeout("SemTagSvc.parseDom(null, 'discussion_content')", 1000 );
     },
     failure: function(data) {
 
