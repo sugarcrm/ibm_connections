@@ -23,8 +23,8 @@
         
         <div>
             <div>
-            <button' class="ibm_button" onclick='if(replyDiscussionValidation()) {ldelim} return replyDiscussion(); {rdelim} ' > {$language.LBL_SAVE}</button> 
-            <button onclick="closeCreationWindow();" >{$language.LBL_CANCEL}</button></div>
+            <button class="ibm_button" onclick='if(replyDiscussionValidation()) {ldelim} return replyDiscussion(); {rdelim} ' > {$language.LBL_SAVE}</button> 
+            <button class="ibm_button" onclick="closeCreationWindow();" >{$language.LBL_CANCEL}</button></div>
         </div>
     </form>
 </div>

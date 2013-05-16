@@ -13,7 +13,7 @@ class ConnectionsHelper
 	public $language;
 	private $view;
 
-	function __construct() 
+	public function __construct() 
 	{
 		require_once('include/connectors/utils/ConnectorUtils.php');
 		require_once('custom/modules/Connectors/connectors/sources/ext/eapm/connections/tabs.meta.php');
@@ -522,8 +522,9 @@ class ConnectionsHelper
 	{
 		if ($this->reply_to == 'reply'){
 			$this->apiClass->replyDiscussionReply($this->ibm_parent_id, $this->reply_title, $this->reply_content);
+			$topic_id = $this->ibm_discussion_id;
 			ob_clean();
-			echo json_encode(array('topic_id' =>$this->ibm_discussion_id));
+			echo json_encode(array('topic_id' => $topic_id));
 		}
 		else{
 			$this->apiClass->replyDiscussion($this->ibm_parent_id, $this->reply_title, $this->reply_content);
@@ -922,8 +923,11 @@ class ConnectionsHelper
 				$arr['repliesCount'] = $entry->getRepliesCount();
 				$arr['contributor'] = $entry->getLastPostBy();
 				$arr['topicType'] = $entry->getTopicType();
+				$arr['content'] = $entry->getContent();
 				$arr['updated'] = $this->formateDate($entry->getUpdatedDate());
-				
+				$arr['author'] = $entry->getAuthor();
+				$arr['published'] = $this->formateDate($entry->getPublishedDate());
+				$arr['hiddenView'] = $this->view->discussionTitle($arr);
 				$reply .= $this->view->discussion($arr);
 				
 			}
@@ -1037,7 +1041,7 @@ class ConnectionsHelper
 	}
 	
 	
-	function getDiscussion()
+	/*function getDiscussion()
 	{
 		$forumId = $this->forum_id;
 		$entries  = $this->apiClass->getForumReplies($forumId);
@@ -1073,9 +1077,70 @@ class ConnectionsHelper
 		ob_clean();
 		echo json_encode($content);
 	}
+	*/
+	
+	function getDiscussion()
+	{
+		$forumId = $this->forum_id;
+		$entries  = $this->apiClass->getForumReplies($forumId);
+		
+		$reply = $this->view->button('LBL_REPLY', 'createIBMElement("DiscussionReply","&ibm_parent_id='.$forumId.'&reply_to=topic");' );
+		//$reply .= $this->view->table_start;
+		$reply .= "<ul class='discussionTread'>";
+		if(!empty($entries)) {
+			foreach($entries as $entry) {
+				//if ($entry->isDeleted()) continue;
+				$id = $entry->getId();
+				
+				if (empty($arrs[$id])) $arrs[$id] = array(); 
+				$parent_arr[$id] = $entry->getInReplyTo();
+				$arrs[$id]['id'] = $id;
+				$arrs[$id]['title'] = $entry->getTitle();
+				$arrs[$id]['author'] = $entry->getAuthor();
+				$arrs[$id]['content'] = $entry->getContent();
+				$arrs[$id]['parent_id'] = $entry->getInReplyTo();
+				$arrs[$id]['topic_type'] = $entry->getTopicType();
+				$arrs[$id]['updated'] = $this->formateDate($entry->getUpdatedDate());
+				$arrs[$id]['ordered'] = false;
+				$arrs[$id]['forum_id'] = $forumId;
+				$arrs[$id]['attachments'] = $entry->getAttachments();
+			}
+			
+			$arr = $this->getChildForParent($parent_arr,$forumId);
+
+			$valid = true; 
+			while($valid) 
+			{ 
+				   $oldCount  = count($arr,COUNT_RECURSIVE); 
+				   
+				   $this->applyTreeFunctionToArray($arr, $parent_arr);
+				   
+				   $newCount = count($arr,COUNT_RECURSIVE); 
+				   if ($oldCount == $newCount)  // if there is no change, exit... 
+							   $valid = false;     
+			} 
+			$order = array();
+			$order += $this->showTreeDiscussion($arr, 0);
+			
+			foreach($order as $ord => $deep){
+				$arr = $arrs[$ord];
+				$arr['deep'] = $deep;
+				$reply .= $this->view->discussionReply($arr);
+			}
+		}
+		else {
+			//$reply .= "<tr><td>{$this->language['LBL_NO_DATA']}</td></tr>";
+		}
+		$reply .= "</ul>";
+		//$reply .= $this->view->table_end;
+		$content = array("content"=>$reply,
+		);
+		ob_clean();
+		echo json_encode($content);
+	}
 	
 	
-	function getActivity()
+	public function getActivity()
 	{
 		$id = $this->activity_id;
 		$entries  = $this->apiClass->getActivityNodes($id);
@@ -1283,7 +1348,7 @@ class ConnectionsHelper
 	}
 	
 	
-	function getDiscussionModal()
+	public function getDiscussionModal()
 	{
 		$forumId = $this->forum_id;
 		$entries  = $this->apiClass->getForumReplies($forumId);
@@ -1348,7 +1413,7 @@ class ConnectionsHelper
 		ob_clean();
 		echo json_encode($content);
 	}
-	function getFilesList($communityId, $page = 1, $searchText = "")
+	public function getFilesList($communityId, $page = 1, $searchText = "")
 	{
 		$entries = $this->apiClass->getFilesList($communityId, $page, $searchText);
 		$file_list = '';
@@ -1381,7 +1446,7 @@ class ConnectionsHelper
 		ob_clean();
 		echo json_encode(array( 'id' => $this->activityId, 'completion' => $this_activity->getCompletion()));
 	}
-	function getActivitiesList($communityId, $searchText, $page)
+	public function getActivitiesList($communityId, $searchText, $page)
 	{
 		$entries  = $this->apiClass->getActivitiesList($communityId, $searchText, $page);
 		$list = '';
@@ -1420,7 +1485,7 @@ class ConnectionsHelper
 	}
 	
 	
-	function getCommunityBlogList($communityId, $page = 1, $searchText = '')
+	public function getCommunityBlogList($communityId, $page = 1, $searchText = '')
 	{
 		$entries  = $this->apiClass->getCommunityBlog($communityId, $page, $searchText);
 		$list = '';
@@ -1446,7 +1511,7 @@ class ConnectionsHelper
 		return $list;
 	}
 	
-	function getCommunityMemberArray($comm_id = '')
+	public function getCommunityMemberArray($comm_id = '')
 	{
 		if (empty($comm_id)) $comm_id = $this->getCommunityId();
 		if (empty($comm_id)) return;
