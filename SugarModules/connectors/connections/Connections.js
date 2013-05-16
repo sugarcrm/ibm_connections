@@ -127,13 +127,25 @@ function newTab(tab_name, tab_group) {
     var tabActive = (YAHOO.connections.tabs_meta[tab_name].active == true)?true:false;
     var url = createURL('method='+method+'&tab_name='+tab_name);
     var label = getLabel(YAHOO.connections.tabs_meta[tab_name].label);
-
-    YAHOO.connections[tab_group].addTab( new YAHOO.widget.Tab({
-        label: label,
-        dataSrc: url,
-        cacheData: false,
-        active: tabActive
-    }));
+    var tab = new YAHOO.widget.Tab({
+							label: label,
+							dataSrc: url,
+							cacheData: false,
+							active: tabActive});
+    if (tab_group == "communitiesTabView") {
+        tab.loadHandler =  {
+            success: function(o) {
+               this.set("content", o.responseText);
+                if(typeof(YAHOO.connections.communitiesPanel) != 'undefined') 
+                {
+               		 YAHOO.connections.communitiesPanel.center();
+                }
+            },
+            failure: function(o) {
+            }
+        };
+     }
+    YAHOO.connections[tab_group].addTab(tab);
 }
 
 
