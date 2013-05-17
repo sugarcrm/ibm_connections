@@ -108,14 +108,15 @@ class ConnectionsHelper
 				return array('head' => "<div id='community_name'>{$this->language['LBL_PRIVATE_COMMUNITY']}</div>", 'visibility' => $visibility, 'members' => array());
 			}
 			$navigation = ($recordOwner) ? $this->view->navWrapStart()."	<li>{$this->view->actionsEditCommunity($communityId)}</li>". $this->view->selectCommunityMenu() .$this->view->navWrapEnd() :"";
-			$head = "<div id='community_logo'>
+			$head = "
+			<div id='community_logo'>
 							<img src='{$community->getLogoLink()}'/>
 					</div>
 					<div id='community_name'> 
+						
 						<a href='".urldecode((string) $community->getLink())."' target='_blank'>".$community->getTitle()."</a>
 					</div>
 					{$navigation}";
-			
 			$visibility = $community->getCommunityType();
 		
 		}
@@ -1514,7 +1515,7 @@ class ConnectionsHelper
 	public function getCommunityMemberArray($comm_id = '')
 	{
 		if (empty($comm_id)) $comm_id = $this->getCommunityId();
-		if (empty($comm_id)) return;
+		if (empty($comm_id)) return array();
 		$reply = $this->apiClass->getMembers($comm_id);
 		$response = new SimpleXMLElement($reply['rawResponse']);
 		return $this->getMembersArray($response);
