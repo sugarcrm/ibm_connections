@@ -81,7 +81,9 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     //protected $dateFormat = 'm/d/Y H:i:s';
 
     public $connector = "ext_eapm_connections";
-    public $supportedModules = array();
+    public $supportedModules = array(
+    	'Documents',
+    );
     public $authMethod = 'password';
 
     public $docSearch = false;
@@ -185,63 +187,15 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
     public function uploadDoc($bean, $fileToUpload, $docName, $mimeType)
     {
-        // Let's see if this is not on the whitelist of mimeTypes
-        if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhiteList) ) {
-            // It's not whitelisted
-            $mimeType = 'application/octet-stream';
-        }
-
-        $client = $this->getClient();
-	    $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
-        $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/folderc/snx:files";
-        if ( $this->getVersion() == 1 ) {
-            $url .= "!{$this->api_data['subscriberId']}";
-        }
-        $GLOBALS['log']->debug("LOTUS REQUEST: $url");
-        $rawResponse = $client->setUri($url)
-            ->setRawData(sugar_file_get_contents($fileToUpload), $mimeType)
-            ->setHeaders("slug", $docName)
-            ->request("POST");
-        $reply = array('rawResponse' => $rawResponse->getBody());
-//        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
-//        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
-        if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
-            $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
-            return;
-        }
-
-        $xml = new DOMDocument();
-        $xml->preserveWhiteSpace = false;
-        $xml->strictErrorChecking = false;
-        $xml->loadXML($reply['rawResponse']);
-        if ( !is_object($xml) ) {
-            $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
-            return;
-        }
-
-        $xp = new DOMXPath($xml);
-        $url = $xp->query('//atom:entry/atom:link[attribute::rel="alternate"]');
-        $directUrl = $xp->query('//atom:entry/atom:link[attribute::rel="edit-media"]');
-        $id = $xp->query('//atom:entry/cmisra:pathSegment');
-
-        if ( !is_object($url) || !is_object($directUrl) || !is_object($id) ) {
-            $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server';
-            return;
-        }
-        $bean->doc_url = $url->item(0)->getAttribute("href");
-        $bean->doc_direct_url = $directUrl->item(0)->getAttribute("href");
-        $bean->doc_id = $id->item(0)->textContent;
-
-        // Refresh the document cache
-        $this->loadDocCache(true);
-
-        return array('success'=>TRUE);
+    	$fileObject = $this->uploadFile($fileToUpload, $docName, $mimeType, "public");
+    	
+    	if (is_object($fileObject) && $fileObject->docId) {
+    		$bean->doc_id = $fileObject->docId;
+    		$bean->doc_url = $fileObject->docUrl;
+    		$bean->doc_direct_url = $fileObject->docUrl;
+    		return array('success' => true);
+    	}
+    	return array('success' => false);
     }
 
     public function deleteFile($document_id)
@@ -482,6 +436,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
 
         $defaultVersion = 2;
+        return $defaultVersion;
 
         $reply = $this->makeRequest('/files/basic/api/nonce','GET',false);
         if ( !$reply['success'] ) {
