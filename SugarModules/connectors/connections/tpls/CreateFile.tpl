@@ -39,7 +39,7 @@
         </tr>
         <tr><td>&nbsp;</td></tr>
         <tr>
-            <td colspan='2'><input type='button' class="ibm_button" value='{$language.LBL_SAVE}' onclick='saveNewFile();' /></td>
+            <td colspan='2'><input type='button' class="ibm_button" value='{$language.LBL_SAVE}' onclick='saveNewFile(); return false;' /></td>
         </tr>
     </table>
     </form>

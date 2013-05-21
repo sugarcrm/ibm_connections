@@ -2,7 +2,7 @@
 	<form action="index.php" method="POST" name="CommentFileForm" id="CommentFileForm" enctype="multipart/form-data">
 	<input type='hidden' name='module' value='Connectors' />
 	<input type='hidden' name='action' value='Connections' />
-	<input type='hidden' name='method' value='commentFile' />
+	<input type='hidden' name='method' value='' />
 	<input type='hidden' name='to_pdf' value='1' />
 	<input type='hidden' name='parent_type' value='{$parent_type}' />
 	<input type='hidden' name='parent_id' value='{$parent_id}' />
@@ -18,8 +18,8 @@
         </div>
 
         <div>
-            <div><button class="ibm_button" onclick='if(commentFileValidation()) {ldelim} return commentFile(); {rdelim}  ' > {$language.LBL_SAVE}</button>
-            <button class="ibm_button" onclick="closeCreationWindow();" > {$language.LBL_CANCEL}</button></div>
+            <div><button class="ibm_button" onclick="if(commentFileValidation()) {ldelim} document.getElementById('CommentFileForm').method.value='commentFile'; return commentFile(); {rdelim} " > {$language.LBL_SAVE}</button>
+            <button class="ibm_button" onclick="closeCreationWindow(); return false;" > {$language.LBL_CANCEL}</button></div>
         </div>
     </form>
 </div>

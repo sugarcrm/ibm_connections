@@ -2,7 +2,7 @@
 	<form action="index.php" method="POST" name="CreateCommunity" id="CreateCommunity">
 	<input type='hidden' name='module' value='Connectors' />
 	<input type='hidden' name='action' value='Connections' />
-	<input type='hidden' name='method' value='saveCommunity' />
+	<input type='hidden' name='method' value='' />
 	<input type='hidden' name='to_pdf' value='1' />
 	<input type='hidden' name='parent_type' value='{$parent_type}' />
 	<input type='hidden' name='parent_id' value='{$parent_id}' />
@@ -40,7 +40,7 @@
             		<option value="owner">{$language.LBL_MEMBER_ROLE_OWNER}</option>
             	</select>
             	&nbsp;
-            	<input type='text' size='28' name='member_name' id='member_name'  onfocus = "addMemberAutocomplete();"'/>
+            	<input type='text' size='28' name='member_name' id='member_name'  onfocus = "addMemberAutocomplete();"/>
             </td>
             <td>&nbsp;</td>
         </tr>
@@ -97,8 +97,8 @@
             <td colspan='3'>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan='3'><button class="ibm_button" onclick="if(communityValidation()) {ldelim} return saveNewCommunity(); {rdelim}" >{$language.LBL_SAVE}</button>
-            <button class="ibm_button" onclick="closeCreationWindow();closeCommunityPanel();" >{$language.LBL_CANCEL}</button></td>
+            <td colspan='3'><button class="ibm_button" onclick="if(communityValidation()) {ldelim} document.getElementById('CreateCommunity').method.value='saveCommunity'; saveNewCommunity(); {rdelim} return false;" >{$language.LBL_SAVE}</button>
+            <button class="ibm_button" onclick="closeCreationWindow();closeCommunityPanel();return false;" >{$language.LBL_CANCEL}</button></td>
         </tr>
     </table>
     </form>

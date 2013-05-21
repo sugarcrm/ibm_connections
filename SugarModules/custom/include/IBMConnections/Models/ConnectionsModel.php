@@ -25,7 +25,7 @@ class ConnectionsDateTime extends TimeDate {
     }
     
     public function relativeTimeFormat($timestamp) { 
-        $ts = time() - $timestamp + 240;//strtotime(str_replace("-","/",$d)); 
+        $ts = time() - $timestamp;//strtotime(str_replace("-","/",$d)); 
        // $ts = abs($ts);
         if ($ts > 31536000) {
         	$val = round($ts / 31536000, 0);

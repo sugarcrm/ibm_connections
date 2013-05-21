@@ -194,7 +194,7 @@ $('#member_name').autocomplete({
     select: function(event, ui) {
     
       var role = $('#ibm_member_role option:selected').val();
-      if ($('#'+role+'_list option:selected[value="'+ui.item.member_id+'"]').length > 0) return;
+      if ($('#'+role+'_list option:selected[value="'+ui.item.member_id+'"]').length > 0) return false;
       $('#member_list_div').append('<span style=" border: 1px solid #999999;background-color: #fafafa;padding: 1px 0 1px 5px;display:inline;" id="'+ui.item.member_id+'_'+role+'"> <span  style="border-right-style: 1px solid #999999;" onclick="removeMemberFromList(\''+ui.item.member_id+'\', \''+role+'\')";> X </span> '+ui.item.value+' ('+role+')</span>&nbsp;');
       if (role == 'member'){
       	$('#member_list').append('<option value="'+ui.item.member_id+'" selected></option>');
@@ -203,27 +203,64 @@ $('#member_name').autocomplete({
       	$('#owner_list').append('<option value="'+ui.item.member_id+'" selected></option>');
       }
       $('#member_name').val('');
-      //addMember(ui.item.member_id, ui.item.community_id);
-      //document.getElementById('member_name').value = ui.item.value;
-      //getTabView('Members');
-      //searchListings('AddMember',1);
-    //      var defaultTab = "Members";
-   //       loadListings(defaultTab,1,'');
-  //  var tabNum = YAHOO.connections.tabs_meta[defaultTab].order;
-   // var tabView = getTabView(defaultTab);
- //   tabView.selectTab(tabNum);
-      //loadListings(defaultTab,1,'');
-      
-      
     }
 		
 		});
+	$('#member_name').autocomplete("option", "appendTo", "#CreateCommunity");
 }
+
+function addMemberMembersTabAutocomplete()
+{
+if( typeof(window.$) !== "undefined")
+$('#mt_member_name').autocomplete({
+		source: function(request,response) {
+				  $.ajax({
+					url: createURL('method=sourceForAutoCompleteMember&search_text='+request.term),
+					dataType: "json",
+					minChars: 2,
+					success: function(data) {
+					  response($.map(data, function(item) {
+						return {
+						  label: item.member_name,
+						  value: item.member_name,
+						  member_id:  item.member_id,
+						  community_id: item.community_id,
+						}
+					  }));
+					},
+					error: function(data) {
+						}
+				  });
+				},
+    select: function(event, ui) {
+    
+      var role = $('#mt_member_role option:selected').val();
+      $('#mt_member_id').val(ui.item.member_id);      
+    }
+		
+		});
+		
+		$('#mt_member_name').autocomplete("option", "appendTo", "#AddMemberForm");
+}
+
+
 function removeMemberFromList(member_id, role)
 {
   $('#'+role+'_list option:selected[value="'+member_id+'"]').remove();//'<option value="'+member_id+'" selected></option>');
   $('#'+member_id+'_'+role).remove();
 }
+
+function removeMember(member_id)
+{
+  var text = getLabel('LBL_CONFIRM_REMOVE_MEMBER');
+  if (!confirm(text)) return false;
+  var url = createURL('method=removeMember&member_id='+member_id);
+  $('#ibm_member_'+member_id).hide();
+  YAHOO.util.Connect.asyncRequest('POST', url);
+  return false;
+}
+
+
 function showCommunities() {
     if(typeof(YAHOO.connections.communitiesPanel) == 'undefined') {
       YAHOO.connections.communitiesPanel = new YAHOO.widget.Dialog("communities_dialog",
@@ -250,13 +287,18 @@ function closeCommunityPanel()
 {
 	if(typeof(YAHOO.connections.communitiesPanel) != 'undefined') {
 		YAHOO.connections.communitiesPanel.hide();
+		return false;
 	}
+	
 }
 
 function closeCreationWindow()
 {
 	if(typeof(YAHOO.connections.createElementPanel) != 'undefined') {
+		//YAHOO.connections.createElementPanel.hide();
+		YAHOO.connections.createElementPanel.cancel();
 		YAHOO.connections.createElementPanel.hide();
+		return false;
 	}
 }
 function createIBMElement(element, additional_params) {
@@ -289,6 +331,7 @@ var createElementHandler = {
         var response = JSON.parse(data.responseText);
         YAHOO.connections.createElementPanel.setHeader(response.header);
         YAHOO.connections.createElementPanel.setBody(response.body);
+        YAHOO.connections.createElementPanel.center();
         initCal();
         SUGAR.ajaxStatusClass.prototype.hideStatus();
     },
@@ -327,6 +370,7 @@ var editElementHandler = {
         var response = JSON.parse(data.responseText);
         YAHOO.connections.createElementPanel.setHeader(response.header);
         YAHOO.connections.createElementPanel.setBody(response.body);
+        YAHOO.connections.createElementPanel.center();
         SUGAR.ajaxStatusClass.prototype.hideStatus();
     },
     failure: function(data) {
@@ -415,6 +459,7 @@ var viewDiscussionHandler = {
        var response = JSON.parse(data.responseText);
        YAHOO.connections.modalViewPanel.setHeader(response.header);
        YAHOO.connections.modalViewPanel.setBody(response.body);
+       YAHOO.connections.modalViewPanel.center();
        SUGAR.ajaxStatusClass.prototype.hideStatus();
     },
     failure: function(data) {
@@ -462,7 +507,7 @@ function selectCommunity() {
 	if (document.getElementById('community_id_selection') == null || document.getElementById('community_id_selection').value == '')  {
 		community_id = '';
     	var text = getLabel('LBL_CONFIRM_DELETE');
-    	if (!confirm(text)) return;
+    	if (!confirm(text)) return false;
     }
     else community_id = document.getElementById('community_id_selection').value;
     SUGAR.ajaxStatusClass.prototype.showStatus('Saving');
@@ -515,7 +560,6 @@ function getTabView(tab_name) {
 
 function saveNewCommunity() {
     var createCommunityForm = document.getElementById('CreateCommunity');
-
     var url = 'index.php';
     YAHOO.util.Connect.setForm('CreateCommunity');
     YAHOO.util.Connect.asyncRequest('POST', url, saveNewCommunityHandler);
@@ -528,7 +572,7 @@ var saveNewCommunityHandler = {
        // closeTab('CreateCommunity');
         window.setTimeout('ajaxStatus.hideStatus()', 1000);
 		//YAHOO.connections.createElementPanel.hide();
-		//closeCommunityPanel();
+	//	closeCommunityPanel();
 		closeCreationWindow();
 		//loadListings('MyCommunities',1,'');
        /* if(publicCommunity)
@@ -537,7 +581,6 @@ var saveNewCommunityHandler = {
             loadListings('MyCommunities',1,'');*/
     },
     failure: function(data) {
-
     }
 }
 
@@ -784,7 +827,7 @@ function quickCreateIBM(event)
 		var select_el = document.getElementById('ibm_asset');
 		var asset_type = select_el.options[select_el.selectedIndex].value;
 		var ibm_name = document.getElementById('ibm_name').value;
-		if (ibm_name == '' ) return;
+		if (ibm_name == '' ) return false;
 		var post_data="";
 		switch (asset_type)
 		{
@@ -793,7 +836,7 @@ function quickCreateIBM(event)
 			case 'question': var url = createURL('method=saveDiscussion&discussion_name='+ibm_name+'&discussion_is_question=1');break;
 			case 'file': YAHOO.util.Connect.setForm('QuickpostFile', true); var url = createURL(); post_data = 'method=uploadNewFile&file_name='+ibm_name+'&visibility=private&quickpost=1';break;
 			case 'bookmark': var url = createURL('method=saveBookmark&bookmark_path='+ibm_name+'&bookmark_name='+ibm_name.substr(0,30));break;
-			default : return;
+			default : return false;
 			
 		}	
 		
@@ -845,8 +888,8 @@ var likeFileHandler = {
 }
 
 function deleteFile(doc_id) {
-	var text = getLabel('LBL_CONFIRM_DELETE');
-    if (!confirm(text)) return;
+	var text = getLabel('LBL_CONFIRM_DELETE_FILE');
+    if (!confirm(text)) return false;
     
 	var url = createURL('method=deleteFile&document_id='+doc_id);
     YAHOO.util.Connect.asyncRequest('POST', url, FileHandler);
@@ -882,10 +925,13 @@ function saveNewFile() {
 }
 
 
-function addMember(member_id, community_id) {
+function addMember() {
+	if ($('#mt_member_id').val() == '') return false;
+	//var community_id = $('#ibm_id').val();
+	var member_id = $('#mt_member_id').val();
+	var member_role = $('#mt_member_role').val();
     SUGAR.ajaxStatusClass.prototype.showStatus(getLabel('LBL_ADD_MEMBER'));
-
-    var url = createURL('method=addMember&community_id='+community_id+'&member_id='+member_id);
+    var url = createURL('method=addMember&member_id='+member_id+'&member_role='+member_role);
     YAHOO.util.Connect.asyncRequest('POST', url, selectMemberHandler);
     return false;
 }
@@ -894,6 +940,7 @@ function addMember(member_id, community_id) {
 var selectMemberHandler = {
     success: function(data) {
         SUGAR.ajaxStatusClass.prototype.hideStatus();
+        loadTabData(YAHOO.connections.data.tab_name, 1, '');
     },
     failure: function(data) {
 
@@ -1020,7 +1067,7 @@ var loadTabDataHandler = {
 	if (data.responseText == '') {
 		YAHOO.connections.data.page_number -= 1;
 		if (YAHOO.connections.data.page_number < 1) YAHOO.connections.data.page_number = 1;
-		return;
+		return false;
 	}
     var response = JSON.parse(data.responseText);
      
@@ -1029,7 +1076,7 @@ var loadTabDataHandler = {
     	el.innerHTML = response.frame;
     	if (response.container_id == '') {
     		setTimeout("SemTagSvc.parseDom(null, 'ibm_connection_body')", 500 );
-    		return;
+    		return false;
     	}
     	var container = document.getElementById(response.container_id);
     	var container_table = document.getElementById(response.container_id+'_table');
@@ -1138,7 +1185,7 @@ var activityViewHandler = {
 
 function markCompleted(id, parent_id){
 	var el=document.getElementById('todo_'+id);//.disabled = true;
-	if ( $(el).hasClass('completed')) return;
+	if ( $(el).hasClass('completed')) return false;
 	el.src = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/images/new/ico_checkedBlueBig.png';
 	$(el).addClass('completed');
 	var url = createURL('method=markToDoCompleted&todo_id=' +id+'&activity_id='+parent_id);
@@ -1157,8 +1204,8 @@ var markCompletedHandler = {
 }
 
 function deleteCommunity(id){
-    var text = getLabel('LBL_CONFIRM_DELETE');
-    if (!confirm(text)) return;
+    var text = getLabel('LBL_CONFIRM_DELETE_COMMUNITY');
+    if (!confirm(text)) return false;
 	var url = createURL('method=deleteCommunity&community_id=' +id);
   	YAHOO.util.Connect.asyncRequest('POST', url, deleteCommunityHandler);
     return false;
@@ -1288,6 +1335,3 @@ function showLoadingModal() {
     YAHOO.connections.wait.render(document.body);
     YAHOO.connections.wait.show();
 }
-
-
-
