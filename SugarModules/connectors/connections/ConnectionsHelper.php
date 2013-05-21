@@ -161,7 +161,7 @@ class ConnectionsHelper
 		if ($endIndex > $totalResults) $endIndex = $totalResults;
 		if ($endIndex < 0) $endIndex = 0;
 		if ($totalResults == 0) $startIndex = $totalResults;
-		//$pageCount = "<span class='pageNumbers'>(Page {$current_page} of {$totalPages})</span>";
+		
 		$pageCount = "<span class='pageNumbers'>({$startIndex} - {$endIndex} of {$totalResults})</span>";
 		if($current_page > 1) {
 			$start_button_src = SugarThemeRegistry::current()->getImageURL('start.png');
@@ -544,8 +544,7 @@ class ConnectionsHelper
 		$fileToUpload = $_FILES['file_el']['tmp_name'];
 		$mimeType = $_FILES['file_el']['type'];
 		
-		$reply = $this->apiClass->uploadFile($fileToUpload, $this->file_name, $mimeType,$this->visibility);
-		//print_r($reply->docId);
+		$reply = $this->apiClass->uploadFile($fileToUpload, $this->file_name, $mimeType,$this->visibility);		
 		if (!empty($reply->docId)){
 			$this->apiClass->shareMyFileWithCommunity($this->getCommunityId(), $reply->docId);
 		}
@@ -567,24 +566,6 @@ class ConnectionsHelper
 		header("Expires: 0");
 		set_time_limit(0);
 		echo $content;
-		
-		/*$document_id = $this->documentId;
-		$document_name = $this->documentName;
-		$content = $this->apiClass->downloadFile($document_id);
-		header("Pragma: public");
-		header("Cache-Control: maxage=1, post-check=0, pre-check=0");
-		header("Content-Type: application/force-download");
-        header("Content-type: application/octet-stream");
-        header("Content-Disposition: attachment; filename=\"".$document_name."\";");
-        header("Content-Length: " . $this->documentSize);
-		header("X-Content-Type-Options: nosniff");
-		header("Expires: 0");
-		set_time_limit(0);
-		@ob_end_clean();
-		ob_start();
-		echo $content;
-		@ob_flush();
-*/
 	}
 
 	public function addMember() 
@@ -1068,55 +1049,15 @@ class ConnectionsHelper
 	}
 	
 	
-	/*function getDiscussion()
-	{
-		$forumId = $this->forum_id;
-		$entries  = $this->apiClass->getForumReplies($forumId);
-		$reply = $this->view->button('LBL_REPLY', 'createIBMElement("DiscussionReply","&ibm_parent_id='.$forumId.'&reply_to=topic");' );
-		$reply .= $this->view->table_start;
-		
-		if(!empty($entries)) {
-			foreach($entries as $entry) {
-				if ($entry->isDeleted()) continue;
-				$arr['parent_id'] = $entry->getInReplyTo();
-				if ($arr['parent_id'] != $forumId) continue;
-				$id = $entry->getId();
-				$arr['id'] = $id;
-				$arr['title'] = $entry->getTitle();
-				$arr['author'] = $entry->getAuthor();
-				$arr['content'] = $entry->getContent();
-				$arr['parent_id'] = $entry->getInReplyTo();
-				$arr['forum_id'] = $forumId;
-				
-				$arr['updated'] = $this->formateDate($entry->getUpdatedDate());
-				$arr['ordered'] = false;
-				$arr['attachments'] = $entry->getAttachments();
-				$reply .= $this->view->discussionReply($arr);
-			}
-		}
-		else {
-			$reply .= "<tr><td>{$this->language['LBL_NO_DATA']}</td></tr>";
-		}
-
-		$reply .= $this->view->table_end;
-		$content = array("content"=>$reply,
-		);
-		ob_clean();
-		echo json_encode($content);
-	}
-	*/
-	
 	function getDiscussion()
 	{
 		$forumId = $this->forum_id;
 		$entries  = $this->apiClass->getForumReplies($forumId);
 		
 		$reply = $this->view->button('LBL_REPLY', 'createIBMElement("DiscussionReply","&ibm_parent_id='.$forumId.'&reply_to=topic");' );
-		//$reply .= $this->view->table_start;
 		$reply .= "<ul class='discussionTread'>";
 		if(!empty($entries)) {
 			foreach($entries as $entry) {
-				//if ($entry->isDeleted()) continue;
 				$id = $entry->getId();
 				
 				if (empty($arrs[$id])) $arrs[$id] = array(); 
@@ -1552,8 +1493,6 @@ class ConnectionsHelper
 	
 	public function getCommunityMembers()
 	{
-		//$sortBy = $this->sortBy; 
-		//$sortOrder = $this->sortOrder;
 		global $beanList, $current_user;
 		$communityId = $this->getCommunityId();
 		$members_list = $this->getCommunityMemberArray($communityId);
@@ -1570,9 +1509,6 @@ class ConnectionsHelper
 		foreach($members_list as $member){
 			$list .= $this->view->member($member, $this->isCommunityOwner);
 		}
-		//if ($this->page_number == 1){
-	//		$list = "<div style='display:inline-block;width:100%'>" . $list . "</div>";
-		//}
 		$tab = 'members';
 		$reply = $this->display($tab, 1,'');
 		ob_clean();
