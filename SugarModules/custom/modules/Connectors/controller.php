@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: bkilgore
- * Date: 3/7/12
- * Time: 3:14 PM
- * To change this template use File | Settings | File Templates.
- */
 
 require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
 require_once('modules/Connectors/controller.php');
@@ -97,6 +90,9 @@ class CustomConnectorsController extends ConnectorsController {
 				case 'addMember':
 					$connectionsHelper->addMember();
 					break;
+				case 'removeMember':
+					$connectionsHelper->removeMember();
+					break;
 				case 'saveCommunitySelection':
 					$connectionsHelper->saveCommunitySelection();
 					break;
@@ -165,6 +161,9 @@ class CustomConnectorsController extends ConnectorsController {
 					break;
 				case 'getCommunityMemberArray':
 					$connectionsHelper->getCommunityMemberArray();
+					break;
+				case 'getCommunityMembers':
+					$connectionsHelper->getCommunityMembers();
 					break;
 			}
 			

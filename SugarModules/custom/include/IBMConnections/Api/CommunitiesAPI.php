@@ -915,12 +915,19 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
      * @return array( array( 'emailowner1' => 'owner', 'emailmember2' => 'member'));
      * @return array( array( 'id1' => 'owner', 'id2' => 'member'));
      */
-    public function listMembers($cid) {
+    public function listMembers($cid, $page = 1, $sortField = 'created', $asc = 'true') {
         $result = array();
 
         // Retrieve Members Email for this community..
         $path = '/communities/service/atom/community/members?communityUuid=' . $cid;
+       
         $this->httpClient = $this->getHttpClient();
+        if ( $sortField == 'created' ||  $sortField == 'name'){
+        	$this->httpClient->setParameterGet("sortField", $communityId);
+        }
+        $this->httpClient->setParameterGet("page", $page);
+        $this->httpClient->setParameterGet("ps", 32);
+        $this->httpClient->setParameterGet("asc", $asc);
         $response = $this->requestForPath('GET', $path);
         
         $dom = new DOMDocument();

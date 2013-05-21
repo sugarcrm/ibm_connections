@@ -8,7 +8,7 @@
  */
 
 $tabs_meta = array(
-	"Overview" => array(
+	/*"Overview" => array(
 		"tabView" => "connectionsTabView",
 		"method" => "loadOverview",
 		"label" => "LBL_OVERVIEW_TAB",
@@ -17,6 +17,17 @@ $tabs_meta = array(
 		"onload" => false,//true,
 		"buttons" => array(
 			"selectcommunity",
+		)
+	),*/
+	"Members" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "getCommunityMembers",
+		"label" => "LBL_MEMBERS_TAB",
+		"order" => 0,
+		"active" => true,
+		"onload" => false,//true,
+		"buttons" => array(
+			"addmember",
 		)
 	),
 	"Updates" => array(

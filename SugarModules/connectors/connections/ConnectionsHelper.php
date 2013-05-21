@@ -161,7 +161,7 @@ class ConnectionsHelper
 		if ($endIndex > $totalResults) $endIndex = $totalResults;
 		if ($endIndex < 0) $endIndex = 0;
 		if ($totalResults == 0) $startIndex = $totalResults;
-		//$pageCount = "<span class='pageNumbers'>(Page {$current_page} of {$totalPages})</span>";
+		
 		$pageCount = "<span class='pageNumbers'>({$startIndex} - {$endIndex} of {$totalResults})</span>";
 		if($current_page > 1) {
 			$start_button_src = SugarThemeRegistry::current()->getImageURL('start.png');
@@ -226,6 +226,7 @@ class ConnectionsHelper
 			case 'Discussions' : return '<div class="ibm_buttons">' . $this->view->button('LBL_NEW_DISCUSSION_BUTTON', 'createIBMElement("Discussion");'). "</div>"; break;
 			case 'Activities' : return '<div class="ibm_buttons">' . $this->view->button('LBL_NEW_ACTIVITY_BUTTON', 'createIBMElement("Activity");', 'newActivity') . "</div>"; break;
 			case 'Bookmarks' : return '<div class="ibm_buttons">' .  $this->view->button('LBL_NEW_BOOKMARK_BUTTON', 'createIBMElement("Bookmark");')."</div>";break;
+			case 'Members' : return ($this->isCommunityOwner) ?'<div class="ibm_buttons">' .  $this->view->button('LBL_ADD_MEMBER_BUTTON', 'createIBMElement("Member");')."</div>" : ""; break;
 		}
 		return;	
 	}
@@ -423,7 +424,7 @@ class ConnectionsHelper
 		$tag_str = str_replace(' ',',',$this->discussion_tags);
 		if (!empty($tag_str)) $tag  = explode(',', $tag_str);
 		else $tag = array();
-		$this->apiClass->createDiscussion($this->getCommunityId(),$this->discussion_name,  $this->discussion_content, $tag, $this->discussion_is_question);
+		$this->apiClass->createDiscussion($this->getCommunityId(),$this->discussion_name,  $this->discussion_content_form, $tag, $this->discussion_is_question);
 	}
 	
 	public function commentFile()
@@ -543,7 +544,7 @@ class ConnectionsHelper
 		$fileToUpload = $_FILES['file_el']['tmp_name'];
 		$mimeType = $_FILES['file_el']['type'];
 		
-		$reply = $this->apiClass->uploadFile($fileToUpload, $this->file_name, $mimeType,$this->visibility);
+		$reply = $this->apiClass->uploadFile($fileToUpload, $this->file_name, $mimeType,$this->visibility);		
 		if (!empty($reply->docId)){
 			$this->apiClass->shareMyFileWithCommunity($this->getCommunityId(), $reply->docId);
 		}
@@ -565,12 +566,18 @@ class ConnectionsHelper
 		header("Expires: 0");
 		set_time_limit(0);
 		echo $content;
-
 	}
 
 	public function addMember() 
 	{
-		$this->apiClass->addMemberToCommunity($this->member_id, $this->community_id);
+		$communityId = $this->getCommunityId();
+		$this->apiClass->addMemberToCommunity($this->member_id, $communityId, $this->member_role);
+	}
+	
+	public function removeMember() 
+	{
+		$communityId = $this->getCommunityId();
+		$this->apiClass->removeMemberFromCommunity($this->member_id, $communityId);
 	}
 
 	public function saveCommunitySelection() 
@@ -590,7 +597,6 @@ class ConnectionsHelper
 		$header = $navig['head'];
 		ob_clean();
 		echo json_encode(array('content' => $header , 'community_id' => $this->community_id));
-		//echo $this->language['LBL_COMMUNITY_SELECTION_SAVED'];
 	}
 
 	public function saveCommunity() 
@@ -786,7 +792,7 @@ class ConnectionsHelper
 		if (isset($this->ibm_discussion_id) && !empty($this->ibm_discussion_id)) $smarty->assign('ibm_discussion_id', $this->ibm_discussion_id);
 		$body = $smarty->fetch($tplName);
 		$model_content = array(
-			"header"=> "New " . $element,
+			"header"=> $this->language['LBL_TITLE_NEW_' . strtoupper($element)],
 			"body"=> $body,
 		);
 		ob_clean();
@@ -821,6 +827,7 @@ class ConnectionsHelper
 		}
 		return $ids_array;
 	}
+	
 	public function loadEditionBody() 
 	{
 		$element = $this->element;
@@ -850,7 +857,7 @@ class ConnectionsHelper
 		$body = $smarty->fetch($tplName);
 
 		$model_content = array(
-			"header"=> "" . $element,
+			"header"=> $this->language['LBL_EDITION_' . strtoupper($element)],
 			"body"=>$body
 		);
 
@@ -1018,8 +1025,8 @@ class ConnectionsHelper
 					case 'reply': 
 									$arr = array(
 										'contributor' => $node->getContributor(),
-										'content' =>$node->getContent(),
-										'updated' =>$this->formateDate($node->getFormattedUpdatedDate())
+										'content' => $node->getContent(),
+										'updated' => $this->formateDate($node->getFormattedUpdatedDate())
 									);
 									$reply .= $this->view->activityReply($arr);
 									break;
@@ -1034,51 +1041,13 @@ class ConnectionsHelper
 		$reply .= $this->view->table_end;
 		$reply .= $this->view->scrollable_div_end;
 		$content = array(
-			"header"=> "activity node",
-			"body"=>$reply
+			"header"=> $this->language['LBL_ACTIVITY_NODE'],
+			"body"=> $reply
 		);
 		ob_clean();
 		echo json_encode($content);
 	}
 	
-	
-	/*function getDiscussion()
-	{
-		$forumId = $this->forum_id;
-		$entries  = $this->apiClass->getForumReplies($forumId);
-		$reply = $this->view->button('LBL_REPLY', 'createIBMElement("DiscussionReply","&ibm_parent_id='.$forumId.'&reply_to=topic");' );
-		$reply .= $this->view->table_start;
-		
-		if(!empty($entries)) {
-			foreach($entries as $entry) {
-				if ($entry->isDeleted()) continue;
-				$arr['parent_id'] = $entry->getInReplyTo();
-				if ($arr['parent_id'] != $forumId) continue;
-				$id = $entry->getId();
-				$arr['id'] = $id;
-				$arr['title'] = $entry->getTitle();
-				$arr['author'] = $entry->getAuthor();
-				$arr['content'] = $entry->getContent();
-				$arr['parent_id'] = $entry->getInReplyTo();
-				$arr['forum_id'] = $forumId;
-				
-				$arr['updated'] = $this->formateDate($entry->getUpdatedDate());
-				$arr['ordered'] = false;
-				$arr['attachments'] = $entry->getAttachments();
-				$reply .= $this->view->discussionReply($arr);
-			}
-		}
-		else {
-			$reply .= "<tr><td>{$this->language['LBL_NO_DATA']}</td></tr>";
-		}
-
-		$reply .= $this->view->table_end;
-		$content = array("content"=>$reply,
-		);
-		ob_clean();
-		echo json_encode($content);
-	}
-	*/
 	
 	function getDiscussion()
 	{
@@ -1086,11 +1055,9 @@ class ConnectionsHelper
 		$entries  = $this->apiClass->getForumReplies($forumId);
 		
 		$reply = $this->view->button('LBL_REPLY', 'createIBMElement("DiscussionReply","&ibm_parent_id='.$forumId.'&reply_to=topic");' );
-		//$reply .= $this->view->table_start;
 		$reply .= "<ul class='discussionTread'>";
 		if(!empty($entries)) {
 			foreach($entries as $entry) {
-				//if ($entry->isDeleted()) continue;
 				$id = $entry->getId();
 				
 				if (empty($arrs[$id])) $arrs[$id] = array(); 
@@ -1134,8 +1101,7 @@ class ConnectionsHelper
 		}
 		$reply .= "</ul>";
 		//$reply .= $this->view->table_end;
-		$content = array("content"=>$reply,
-		);
+		$content = array("content"=> $reply,);
 		ob_clean();
 		echo json_encode($content);
 	}
@@ -1408,7 +1374,7 @@ class ConnectionsHelper
 		}
 		
 		$content = array(
-			"header"=> "Discussion",
+			"header"=> $this->language['LBL_DISCUSSION'],
 			"body"=>$reply
 		);
 		ob_clean();
@@ -1434,6 +1400,7 @@ class ConnectionsHelper
 				$arr['viewLink'] = $entry->getViewLink();
 				$arr['downloadsCount'] = $entry->getDownloadsCount();
 				$arr['version'] = $entry->getVersion();
+				$arr['fileSize'] = $entry->getFileSize();
 				
 				$file_list .= $this->view->fileSection($arr);
 					
@@ -1516,9 +1483,36 @@ class ConnectionsHelper
 	{
 		if (empty($comm_id)) $comm_id = $this->getCommunityId();
 		if (empty($comm_id)) return array();
-		$reply = $this->apiClass->getMembers($comm_id);
+		$sortBy = (empty($this->sortBy)) ? 'name' : $this->sortBy;
+		$asc = (empty($this->asc)) ? true : $this->asc;
+		$page = (empty($this->page_number)) ? 1 : $this->page_number;
+		$reply = $this->apiClass->getMembers($comm_id, $this->search_text, $page, $sortBy, $asc);
 		$response = new SimpleXMLElement($reply['rawResponse']);
 		return $this->getMembersArray($response);
+	}
+	
+	public function getCommunityMembers()
+	{
+		global $beanList, $current_user;
+		$communityId = $this->getCommunityId();
+		$members_list = $this->getCommunityMemberArray($communityId);
+		$this->isCommunityOwner = false;
+		foreach($members_list as $member){
+			if($this->apiClass->api_data['userId'] == $member['member_id']){
+				if($member['member_role'] == 'owner'){
+					$this->isCommunityOwner = true;
+				}
+				break;
+			} 
+		}
+		$list = '';
+		foreach($members_list as $member){
+			$list .= $this->view->member($member, $this->isCommunityOwner);
+		}
+		$tab = 'members';
+		$reply = $this->display($tab, 1,'');
+		ob_clean();
+		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab .'_list', 'page' => $this->page_number));
 	}
 	
 

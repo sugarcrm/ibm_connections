@@ -527,5 +527,25 @@ class ConnectionsViewer
 				</tr>";
 	}
 	
+	public function member($arr, $isCommunityOwner = false)
+	{
+		$info = array('id' => $arr['member_id'] ,'name' => $arr['member_name']);
+		$view = "<div id='ibm_member_{$arr['member_id']}' class='ibm-member'>
+						<div>
+						<img src='{$this->connection_url}/profiles/photo.do?userid={$arr['member_id']}' width='48px' height='48px' style='vertical-align:top;' >
+						</div>
+						<div>
+						{$this->getBusinesscard($info)}
+					 	<br /> " . $this->language['LBL_MEMBER_ROLE_'. strtoupper($arr['member_role'])];
+		if ($isCommunityOwner) {
+			$view .= "	<br /> <a href='#'onclick=\"return removeMember('{$arr['member_id']}');\">" . $this->language['LBL_REMOVE'] ."</a>";
+		}
+		$view .= "
+					 	</div>
+				</div>		";
+		return $view;
+		
+	}
+	
 	
 }
