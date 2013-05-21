@@ -235,20 +235,7 @@ $('#mt_member_name').autocomplete({
     select: function(event, ui) {
     
       var role = $('#mt_member_role option:selected').val();
-      $('#mt_member_id').val(ui.item.member_id);
-      console.log(role + '  ' +$('#mt_member_id').val());
-      //addMember(ui.item.member_id, ui.item.community_id);
-      //document.getElementById('member_name').value = ui.item.value;
-      //getTabView('Members');
-      //searchListings('AddMember',1);
-    //      var defaultTab = "Members";
-   //       loadListings(defaultTab,1,'');
-  //  var tabNum = YAHOO.connections.tabs_meta[defaultTab].order;
-   // var tabView = getTabView(defaultTab);
- //   tabView.selectTab(tabNum);
-      //loadListings(defaultTab,1,'');
-      
-      
+      $('#mt_member_id').val(ui.item.member_id);      
     }
 		
 		});
@@ -1348,6 +1335,3 @@ function showLoadingModal() {
     YAHOO.connections.wait.render(document.body);
     YAHOO.connections.wait.show();
 }
-
-
-
