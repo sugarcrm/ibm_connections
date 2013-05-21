@@ -470,10 +470,6 @@
 		overflow-x:auto;
 		display:inline;
 		padding: 1%;
-
-		/*background-image: url("../images/new/img_arrowRight.png");
-	    background-position: 0% 50%;
-	    background-repeat: no-repeat;*/
 	}
 
 	#connectionsDiv .fullsize-col {
@@ -572,8 +568,6 @@
 
 
 #connectionsDiv .ibm-tab-list .ibm-tab-list-table .elements.activeIBMElement {
-	  /*  background-position: 0% 50%;
-	    background-repeat: no-repeat;*/
 	    background-image: url("../images/new/imgGradient_sectionTitle.png");
 	    background-position: center;
 	    background-repeat: repeat-x;
@@ -585,11 +579,10 @@
 
 #search_MyCommunities,  #search_PublicCommunities
 {
-background: url('../images/new/ico_search.png') #FFFFFF no-repeat scroll 7px 6px;
+	background: url('../images/new/ico_search.png') #FFFFFF no-repeat scroll 7px 6px;
 	height: 21px;
 	border-color: #a1a1b0;
 	padding-left:25px;
-	/*width: 60%;*/
 	box-shadow: 0px 0px 3px #a1a1b0 inset;
 	border-image: none;
 
@@ -623,7 +616,7 @@ background: url('../images/new/ico_search.png') #FFFFFF no-repeat scroll 7px 6px
 	background-image: none;
 }
 
-.member_list_div{
+#connectionsDiv .member_list_div{
 	display: inline-table;
 }
 
@@ -640,57 +633,49 @@ background: url('../images/new/ico_search.png') #FFFFFF no-repeat scroll 7px 6px
 	width:40px;height:50px;
 }
 
-.discussionTread {
+#connectionsDiv .discussionTread {
 	list-style-type: none;
 	padding: 5px;
 	margin: 0px;
 }
 
-.discussionTread li{
+#connectionsDiv .discussionTread li{
 	list-style-type: none;
 }
 
-.discussionComment {
+#connectionsDiv .discussionComment {
 	background-color: #fff;
 	border: 1px solid #ccc;
 	box-shadow: 0px 2px 5px #eee;
+	
 }
 
 #connectionsDiv #ibm_search .search-panel{
 	vertical-align: middle;
 	line-height: 40px;
 }
-.discussion-comments-item{
-	/*display:table;*/
+#connectionsDiv .discussion-comments-item{
 	padding:10px;
+	display: table;
 }
-.discussion-comments-item div{
+#connectionsDiv .discussion-comments-item div{
 	vertical-align:top;
-	/*display:table-cell;*/
+	display:table-cell;
 }
-/*
-#ibm_community_navigation{
-display:table;
-}
-#ibm_community_navigation div{
-display:table-cell;
-}*/
- #community_name{
+        
+ #connectionsDiv #community_name{
 	vertical-align: middle;
 	display:table-cell;
-/*	line-height: 36px;*/
 }
+ #connectionsDiv .ibm-member{
+ 	display:inline-table;
+ 	width:24%;
+ 	padding-bottom:20px;
+ }
+ #connectionsDiv .ibm-member div{
+ 	display:inline-table;
+ }
 
-/*
-#outer {height: 400px; overflow: hidden; position: relative;}
-#outer[id] {display: table; position: static;}
-
-#middle {position: absolute; top: 50%;} 
-#middle[id] {display: table-cell; vertical-align: middle; width: 100%; position: static;}
-
-#inner {position: relative; top: -50%}
-
-*/
 
 
 

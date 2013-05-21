@@ -35,7 +35,8 @@
 			<div id='ibm_tabs'>
 			<div class="ibm-header-tabs">
 				<div class='before-nav'>
-					<input type="button" value="{$language.LBL_OVERVIEW_TAB}" class='ibm_tabs' onclick='loadTabData("Overview", 1, "");' id = 'ibm_Overview_tab' />
+				<!--	<input type="button" value="{$language.LBL_OVERVIEW_TAB}" class='ibm_tabs' onclick='loadTabData("Overview", 1, "");' id = 'ibm_Overview_tab' /> -->
+					<input type="button" value="{$language.LBL_MEMBERS_TAB}" class='ibm_tabs' onclick='loadTabData("Members", 1, "");' id = 'ibm_Members_tab' />
 					<input type="button" value="{$language.LBL_UPDATES_TAB}" class='ibm_tabs' onclick='loadTabData("Updates", 1, "");'  id = 'ibm_Updates_tab' />
 					<input type="button" value="{$language.LBL_ACTIVITIES_TAB}" class='ibm_tabs' onclick='loadTabData("Activities", 1,"");'  id = 'ibm_Activities_tab' />
 					<input type="button" value="{$language.LBL_FILES_TAB}" class='ibm_tabs' onclick='loadTabData("Files", 1, "");'  id = 'ibm_Files_tab' />

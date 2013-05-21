@@ -2,7 +2,7 @@
 	<form action="index.php" method="POST" name="CreateActivityForm" id="CreateActivityForm">
 	<input type='hidden' name='module' value='Connectors' />
 	<input type='hidden' name='action' value='Connections' />
-	<input type='hidden' name='method' value='saveActivity' />
+	<input type='hidden' name='method' value='' />
 	<input type='hidden' name='to_pdf' value='1' />
 	<input type='hidden' name='parent_type' value='{$parent_type}' />
 	<input type='hidden' name='parent_id' value='{$parent_id}' />
@@ -30,8 +30,8 @@
     &nbsp;
     <div>
         <div>
-        	<button class="ibm_button" onclick='if(activityValidation()) {ldelim} return createActivity(); {rdelim}'>{$language.LBL_SAVE}</button> 
-        	<button class="ibm_button" onclick="closeCreationWindow();" />{$language.LBL_CANCEL}</button>
+        	<button class="ibm_button" onclick="if(activityValidation()) {ldelim} document.getElementById('CreateActivityForm').method.value='saveActivity'; return createActivity(); {rdelim}">{$language.LBL_SAVE}</button> 
+        	<button class="ibm_button" onclick="closeCreationWindow(); return false;" />{$language.LBL_CANCEL}</button>
         </div>
     </div>
     </form>

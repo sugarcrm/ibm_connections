@@ -201,5 +201,26 @@ $connector_strings = array (
 	'LBL_WIDGET_IS_NOT_ACTIVATED' => 'Widget is not enabled for Community, please enable in IBM Connections and refresh this page.',
 	'LBL_DROP_FILE_HERE' => 'Drop file here',
 	'LBL_ASSIGN_TO' => 'Assign to',
+	'LBL_REMOVE' => 'Remove',
+	'LBL_TITLE_NEW_COMMUNITY' => 'New Community',
+	'LBL_TITLE_NEW_MEMBER' => 'Add Member',
+	'LBL_TITLE_NEW_FILE' => 'New File',
+	'LBL_TITLE_NEW_ACTIVITY' => 'New Activity',
+	'LBL_TITLE_NEW_DISCUSSION' => 'New Discussion',
+	'LBL_TITLE_NEW_BOOKMARK' => 'New Bookmark',
+	'LBL_TITLE_NEW_DISCUSSIONREPLY' => 'New Reply',
+	'LBL_TITLE_NEW_ACTIVITYTODO' => 'New To Do',
+	'LBL_TITLE_NEW_ACTIVITYSECTION' => 'New Section',
+	'LBL_TITLE_NEW_ACTIVITYENTRY' => 'New Entry',
+	'LBL_TITLE_NEW_COMMENTFILE' => 'New Comment',
+	'LBL_ACTIVITY_NODE' => 'Activity Node',
+	'LBL_DISCUSSION' => 'Discussion',
+	'LBL_EDITION_COMMUNITY' => 'Community Edition',
+	'LBL_CONFIRM_DELETE_FILE' => 'Are you sure you want to delete this file?',
+	'LBL_CONFIRM_REMOVE_MEMBER' => 'Are you sure you want to remove this member?',
+	'LBL_CONFIRM_DELETE_COMMUNITY' => 'Are you sure you want to delete this community?',
+	
+
+	
 );
 

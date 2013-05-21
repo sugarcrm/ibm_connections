@@ -651,16 +651,26 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		$searchText = str_ireplace(" ","+",$searchText);
 		return $this->api->getFilesAPI()->getCommunityFiles($communityId, $page, $searchText);
 	}
-	public function getMembers($communityId="", $searchText="", $page=1) {
-		if(!empty($searchText)) {
-			$searchText = str_ireplace(" ","+",$searchText);
+	public function getMembers($communityId="", $searchText="", $page = 1, $sortBy = 'name', $asc = true) {
+		$searchText = str_ireplace(" ","+",$searchText);
+		if(!empty($searchText) && empty($communityId)) {
 			$reply = $this->makeRequest("profiles/atom/search.do?search={$searchText}&page={$page}&ps=5");
 		}
 		if(!empty($communityId)) {
 		//require_once 'custom/include/IBMConnections/Api/CommunitiesAPI.php';
 		//$communitiesApi = new CommunitiesAPI();
 		//$reply = $communitiesApi->listMembers($community_id);
-			$reply = $this->makeRequest("communities/service/atom/community/members?communityUuid={$communityId}&page={$page}");
+			$request = "communities/service/atom/community/members?communityUuid={$communityId}&page={$page}&ps=16&sortField={$sortBy}";
+			if(!empty($asc) && $asc){
+				$request .= "&asc=true";
+			}
+			else{
+				$request .= "&desc=true";
+			}
+			if(!empty($searchText)){
+				$request .= "&search=" . $searchText;
+			}
+			$reply = $this->makeRequest($request);
 		}
 		return $reply;
 	}

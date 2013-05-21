@@ -2,7 +2,7 @@
 	<form action="index.php" method="POST" name="CreateActivityToDo" id="CreateActivityToDo">
 	<input type='hidden' name='module' value='Connectors' />
 	<input type='hidden' name='action' value='Connections' />
-	<input type='hidden' name='method' value='saveActivityToDo' />
+	<input type='hidden' name='method' value='' />
 	<input type='hidden' name='to_pdf' value='1' />
 	<input type='hidden' name='parent_type' value='{$parent_type}' />
 	<input type='hidden' name='parent_id' value='{$parent_id}' />
@@ -43,8 +43,8 @@
             <td colspan='2'>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan='2'><button class="ibm_button" onclick='if(activityToDoValidation()) {ldelim} return createActivityToDo(); {rdelim} '>{$language.LBL_SAVE} </button>
-            <button class="ibm_button" onclick="closeCreationWindow();" >{$language.LBL_CANCEL}</button></td>
+            <td colspan='2'><button class="ibm_button" onclick="if(activityToDoValidation()) {ldelim} document.getElementById('CreateActivityToDo').method.value='saveActivityToDo';  return createActivityToDo(); {rdelim} ">{$language.LBL_SAVE} </button>
+            <button class="ibm_button" onclick="closeCreationWindow(); return false;" >{$language.LBL_CANCEL}</button></td>
         </tr>
     </table>
     </form>
