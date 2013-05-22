@@ -440,7 +440,7 @@ class ConnectionsViewer
 	public function fileSection($arr)
 	{
 	
-				$download_link = "index.php?module=Connectors&action=Connections&method=downloadFile&documentId={$arr['id']}&documentName={$arr['title']}&documentSize={$arr['fileSize']}";
+				$download_link = "index.php?module=Connectors&action=Connections&method=downloadFile&documentId={$arr['id']}&documentName=".htmlspecialchars($arr['title'], ENT_QUOTES)."&documentSize={$arr['fileSize']}";
 				$title = $arr['title'];
 				$pos = strrpos($title, "."); 
 				if ($pos !== false) {
@@ -459,7 +459,7 @@ class ConnectionsViewer
 				if (strlen($arr['tags']) > 0 ) $tags = $this->language['LBL_TAGS'].': '.$arr['tags'];
 				return "<tr class='elements'>
 							<td>
-									<div class='item-img'><a href='{$download_link}'><img src='{$this->img_url}/file_types/{$icon_name}.PNG' /></a></div>
+									<div class='item-img'><a href=\"{$download_link}\"><img src='{$this->img_url}/file_types/{$icon_name}.PNG' /></a></div>
 									<div class='item-label'>
 									<a href='{$download_link}'><b>{$arr['title']}</b></a>
 								&nbsp;<img src='{$this->img_url}/icons/{$arr['visibility']}.PNG' title='{$arr['visibility']}'/><br/>
