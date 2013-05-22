@@ -552,9 +552,8 @@ class ConnectionsHelper
 	
 	public function downloadFile() 
 	{
-		ob_clean();
 		$document_id = $this->documentId;
-		$document_name = $this->documentName;
+		$document_name = htmlspecialchars_decode($this->documentName);
 		$content = $this->apiClass->downloadFile($document_id);
 		header("Pragma: public");
 		header("Cache-Control: maxage=1, post-check=0, pre-check=0");
@@ -565,6 +564,7 @@ class ConnectionsHelper
 		header("X-Content-Type-Options: nosniff");
 		header("Expires: 0");
 		set_time_limit(0);
+		ob_clean();
 		echo $content;
 	}
 
