@@ -18,7 +18,7 @@ class CustomSugarFieldRelate extends SugarFieldRelate
 	
 	function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
 	{		
-		if ($vardef['module'] == "Users" || $vardef['module'] == "Employees") {	
+		if (!empty($vardef['module']) && ($vardef['module'] == "Users" || $vardef['module'] == "Employees")) {	
 			$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
 		    $this->ss->left_delimiter = '{';
 		    $this->ss->right_delimiter = '}';
