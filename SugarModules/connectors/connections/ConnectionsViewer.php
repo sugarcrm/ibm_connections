@@ -106,9 +106,9 @@ class ConnectionsViewer
 							<img src='{$this->img_url}/icons/{$arr['topicType']}.PNG' /> 
 					</div>
 					<div class='item-label'>
-						<a href='#' onclick=\"return viewDiscussion('{$arr['id']}');\">
+						<!-- <a href='#' onclick=\"return viewDiscussion('{$arr['id']}');\"> -->
 							<b>{$arr['title']}</b>
-						</a>
+						<!-- </a> -->
 					{$tags}<br/>
 					{$this->language['LBL_LAST_POST_BY']} {$this->getBusinesscard($arr['contributor'])} {$arr['updated']} | 
 					<span id='reply_count_{$arr['id']}'>{$arr['repliesCount']}</span> {$this->language['LBL_REPLIES']} 

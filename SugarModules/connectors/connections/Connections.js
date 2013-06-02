@@ -90,7 +90,7 @@ function checkAccess(allow_mod) {
       	for (var i = 0; i < tabs.length; i++ ) {
       		tabs[i].disabled = false;
       	}
-		
+		loadDefaultTab();
     }
     else  {
     document.getElementById('ibm_name'). disabled = true;
@@ -103,6 +103,10 @@ function checkAccess(allow_mod) {
     }
 	
 } 
+
+function loadDefaultTab() {
+	loadTabData("Members", 1, "");
+}
 
 function loadTabGroup(tab_group) {
     if(typeof(tab_group) == 'undefined' || tab_group == 'DOMReady')

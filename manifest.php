@@ -34,6 +34,8 @@ $manifest = array (
     array (
       0 => '6\.4\.*',
       1 => '6\.5\.*',
+      2 => '6\.6\.*',
+      3 => '6\.7\.*',
     ),
   ),
   1 => 
@@ -54,7 +56,7 @@ $manifest = array (
   'name' => 'IBM Connections',
   'published_date' => '2012-03-27 20:00:00',
   'type' => 'module',
-  'version' => '2.0.1-OpenSocial',
+  'version' => '2.1.0-OpenSocial',
   'remove_tables' => 'prompt',
 );
 

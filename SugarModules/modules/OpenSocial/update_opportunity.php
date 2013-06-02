@@ -1,4 +1,5 @@
 <?php
+die("Disabled");
 if(!defined('sugarEntry'))define('sugarEntry', true);
 
 require_once('include/entryPoint.php');
