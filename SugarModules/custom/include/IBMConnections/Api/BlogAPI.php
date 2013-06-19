@@ -55,7 +55,9 @@ class BlogAPI extends AbstractConnectionsAPI
 		///atom/blogs?commUuid={resourceId}&blogType=communityblog
 		//$result = $this->requestForPath("GET", "blogs/atom/blogs?commUuid={$communityId}&blogType=communityblog");
 		$result = $this->requestForPath("GET", "blogs/roller-ui/rendering/feed/{$communityId}/entries/atom");
-		$this->checkResult($result);
+		if (empty($result) || !$this->checkResult($result)){
+         	return array();
+        }
 		try{
 			$feed = IBMAtomFeed::loadFromString($result->getBody());
 			$blog = new ConnectionsBlog($feed);
@@ -67,37 +69,6 @@ class BlogAPI extends AbstractConnectionsAPI
 		}
 	}
 	
-	
-	public function getBlogComments($communityId, $blogId) {
-	//echo "blogs/{$communityId}/api/entrycomments/{$blogId}";
-		$this->getHttpClient()->resetParameters();
-		$this->getHttpClient(true)->setParameterGet("ps", 150);
-		$this->getHttpClient()->setParameterGet("lang", (!empty($GLOBALS['current_language']) ? $GLOBALS['current_language'] : 'en-US'));
-		$result = $this->requestForPath("GET", "blogs/roller-ui/rendering/df62d3f7-1837-4f7b-900e-af7b2cdf937c/feed/entrycomments/una_piattaforma_che_%25C3%25A8_un_vero_e_proprio_social_network_molto_filtrato/atom?lang=en_us&authenticate=no");
-		//$result = $this->requestForPath("GET", "blogs/{$communityId}/api/entrycomments/{$blogId}");
-		return $result->getBody();
-		echo "<pre>";
-		print_r($result->getBody);
-		print_r($result);
-		echo "</pre>";
-		$this->checkResult($result);
-		try{
-			$feed = IBMAtomFeed::loadFromString($result->getBody());
-			echo "<pre>";
-		print_r($feed);
-		echo "</pre>";
-	        $entries = $feed->getEntries();
-    	    $comments = array();
-    	    foreach ($entries as $entry) {
-    	        $comments[] = new ConnectionsBlogComments($entry);
-    	    }
-			return $comments;
-		}
-		catch(Exception $e)
-		{
-			return;
-		}
-	}
 }
 
 

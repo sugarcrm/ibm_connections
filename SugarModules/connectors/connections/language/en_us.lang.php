@@ -220,6 +220,7 @@ $connector_strings = array (
 	'LBL_CONFIRM_REMOVE_MEMBER' => 'Are you sure you want to remove this member?',
 	'LBL_CONFIRM_DELETE_COMMUNITY' => 'Are you sure you want to delete this community?',
 	'LBL_UPDATING' => 'Updating',
+	'LBL_NO_CONNECTION' => 'No Connection',
 
 	
 );

@@ -229,7 +229,7 @@ abstract class AbstractConnectionsAPI extends ExternalAPIBase// implements WebDo
         $this->getHttpClient()->setParameterGet("communityUuid", $id);
         $this->getHttpClient()->setParameterGet("ps", AbstractConnectionsAPI::MAX_PAGE_SIZE);
         $result = $this->requestForPath("GET", "/communities/service/atom/community/remoteApplications");
-        if ($result->getStatus() != 200) {
+        if (empty($result) || $result->getStatus() != 200) {
             return null;
         }
         

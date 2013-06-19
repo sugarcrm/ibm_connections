@@ -563,7 +563,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 	public function getCommunityDiscussions($communityId, $page, $searchText) 
 	{
 		$searchText = str_ireplace(" ","+",$searchText);
-		return $this->api->getForumsAPI()->getCommunityForums($communityId,$page, $searchText)->getEntries();
+		$forums = $this->api->getForumsAPI()->getCommunityForums($communityId,$page, $searchText);
+		return  (empty($forums)) ? array() : $forums->getEntries();
 	}
 
 	public function getForumReplies($forumId)

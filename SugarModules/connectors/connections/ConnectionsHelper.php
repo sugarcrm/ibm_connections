@@ -106,7 +106,11 @@ class ConnectionsHelper
 			$community = $this->apiClass->getCommunity($communityId);
 			if (empty($community)) {
 				$head = ($recordOwner) ? $this->view->navWrapStart() ."	<li>{$this->view->actionsEditCommunity('')}</li>". $this->view->selectCommunityMenu() . $this->view->navWrapEnd() : '';
+				
 				return array('head' => "<div id='community_name'>{$this->language['LBL_PRIVATE_COMMUNITY']}</div>{$head}", 'visibility' => 'denied', 'members' => array());
+			}
+			if ($community == "no_connection") {
+				return array('head' => "<div id='community_name'>{$this->language['LBL_NO_CONNECTION']}</div>", 'visibility' => 'denied', 'members' => array());
 			}
 			$navigation = ($recordOwner) ? $this->view->navWrapStart()."	<li>{$this->view->actionsEditCommunity($communityId)}</li>". $this->view->selectCommunityMenu() .$this->view->navWrapEnd() :"";
 			$head = "
@@ -774,6 +778,17 @@ class ConnectionsHelper
 		global $timedate;
 		$element = $this->element;
 		$tplName = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Create' . $element . '.tpl';
+		$community = $this->apiClass->getCommunity($id);
+		if ($community == "no_connection"){
+			$model_content = array(
+				"header"=> $this->language['LBL_TITLE_NEW_' . strtoupper($element)],
+				"body"=>$this->language['LBL_NO_CONNECTION']
+			);
+
+			ob_clean();
+			echo json_encode($model_content);
+			return;
+		}
 		$smarty = new Sugar_Smarty();
 		$smarty->assign('parent_type', $this->parent_type);
 		$smarty->assign('parent_id', $this->parent_id);
@@ -842,7 +857,16 @@ class ConnectionsHelper
 		$smarty->assign('language', $this->language);
 		
 		$community = $this->apiClass->getCommunity($id);
-		
+		if ($community == "no_connection"){
+			$model_content = array(
+				"header"=> $this->language['LBL_EDITION_' . strtoupper($element)],
+				"body"=>$this->language['LBL_NO_CONNECTION']
+			);
+
+			ob_clean();
+			echo json_encode($model_content);
+			return;
+		}
 		$smarty->assign('name', $community->getTitle());
 		$smarty->assign('community_id', $community->getId());
 		$smarty->assign('type', $community->getCommunityType());
