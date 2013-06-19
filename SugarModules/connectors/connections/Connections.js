@@ -64,7 +64,7 @@ function connectionsLogin()
 }
 var connectionsLoginHandler = {
     success: function(data) {
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
         var response = JSON.parse(data.responseText);
         if (response.success == false) {
         	document.getElementById("eapm_notice_div").innerHTML = getLabel('LBL_STATUS') + ' <span class="error">' + getLabel('LBL_CONNECT_PROBLEM_' + response.problem.toUpperCase()) + '</span>';
@@ -524,7 +524,10 @@ var selectCommunityHandler = {
     success: function(data) {
         SUGAR.ajaxStatusClass.prototype.hideStatus();
         setTimeout(function() {
-            YAHOO.connections.communitiesPanel.cancel();
+        	if(typeof(YAHOO.connections.communitiesPanel) != 'undefined') 
+                {
+               		YAHOO.connections.communitiesPanel.cancel();
+                }
         }, 500);
          var response = JSON.parse(data.responseText);
         var elems = $('.ibm_tabs');
@@ -573,16 +576,8 @@ function saveNewCommunity() {
 
 var saveNewCommunityHandler = {
     success: function(data) {
-       // closeTab('CreateCommunity');
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
-		//YAHOO.connections.createElementPanel.hide();
-	//	closeCommunityPanel();
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
 		closeCreationWindow();
-		//loadListings('MyCommunities',1,'');
-       /* if(publicCommunity)
-            loadListings('PublicCommunities',1,'');
-        else
-            loadListings('MyCommunities',1,'');*/
     },
     failure: function(data) {
     }
@@ -599,8 +594,7 @@ function createBookmark() {
 var createBookmarkHandler = {
     success: function(data) {
         YAHOO.connections.createElementPanel.hide();
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
-        //loadListings('Bookmarks',1,'');
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
         loadTabData('Bookmarks',1,'');
     },
     failure: function(data) {
@@ -619,8 +613,7 @@ function createDiscussion() {
 var createDiscussionHandler = {
     success: function(data) {
         YAHOO.connections.createElementPanel.hide();
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
-        //loadListings('Discussions',1,'');
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
         loadTabData('Discussions',1,'');
     },
     failure: function(data) {
@@ -638,7 +631,7 @@ function commentFile() {
 
 var commentFileHandler = {
     success: function(data) {
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
          YAHOO.connections.createElementPanel.hide();
          var response = JSON.parse(data.responseText);
         var el = document.getElementById('comment_'+response.id);
@@ -664,7 +657,7 @@ function replyDiscussion() {
 var replyDiscussionHandler = {
     success: function(data) {
         YAHOO.connections.createElementPanel.hide();
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
         var response = JSON.parse(data.responseText);
         onloadDiscusionReplies(response.topic_id);
 		refreshReplyCount(response.topic_id);
@@ -690,7 +683,7 @@ function createActivity() {
 var createActivityHandler = {
     success: function(data) {
         YAHOO.connections.createElementPanel.hide();
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
         //loadListings('Activities',1,'');
         loadTabData('Activities',1,'');
     },
@@ -785,7 +778,7 @@ var createActivityNodeHandler = {
         var response = JSON.parse(data.responseText);
         onloadActivityView(response.id);
         recalculateCompletion(response.id);
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
         
        
         //loadListings('Activities',1,'');
@@ -798,7 +791,7 @@ var createActivityNodeHandler = {
 function recalculateCompletion(id)
 {
 	var url = createURL('method=getActivityCompletion&activityId='+id);
-	ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
+	ajaxStatus.showStatus(getLabel('LBL_UPDATING'));
 	YAHOO.util.Connect.asyncRequest('POST', url, recalculateCompletionHandler);
    	
 }
@@ -806,7 +799,7 @@ var recalculateCompletionHandler = {
 	success: function(data) {
         var response = JSON.parse(data.responseText);
         document.getElementById('activity_completion_'+response.id).innerHTML = response.completion;
-        window.setTimeout('ajaxStatus.hideStatus()', 100);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
     },
     failure: function(data) {
 
@@ -857,11 +850,11 @@ var quickPostHandler = {
 	upload: function(data) {
       document.getElementById('ibm_name').value = '';
       document.getElementById('file_el').value = '';
-        window.setTimeout('ajaxStatus.hideStatus()', 100);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
     },
     success: function(data) {
         document.getElementById('ibm_name').value = '';
-        window.setTimeout('ajaxStatus.hideStatus()', 100);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
     },
     failure: function(data) {
     }
@@ -877,7 +870,7 @@ function likeFile(user_id, doc_id) {
 
 var likeFileHandler = {
     success: function(data) {
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
          var response = JSON.parse(data.responseText);
         var el = document.getElementById('like_'+response.id);
         if (response.result == true)
@@ -903,7 +896,7 @@ function deleteFile(doc_id) {
 
 var FileHandler = {
     success: function(data) {
-        window.setTimeout('ajaxStatus.hideStatus()', 1000);
+        window.setTimeout('ajaxStatus.hideStatus()', 500);
         loadTabData('Files',1,'');
     },
     failure: function(data) {
@@ -919,7 +912,7 @@ function saveNewFile() {
 	xhr.open("POST", url, true);
 	xhr.onreadystatechange = function() {
 	if (xhr.readyState == 4 && xhr.status == 200) {
-		window.setTimeout('ajaxStatus.hideStatus()', 2000);
+		window.setTimeout('ajaxStatus.hideStatus()', 500);
 		loadTabData('Files',1,'');
 		}
 	};
@@ -1188,17 +1181,30 @@ var activityViewHandler = {
 }
 
 function markCompleted(id, parent_id){
-	var el=document.getElementById('todo_'+id);//.disabled = true;
-	if ( $(el).hasClass('completed')) return false;
-	el.src = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/images/new/ico_checkedBlueBig.png';
-	$(el).addClass('completed');
-	var url = createURL('method=markToDoCompleted&todo_id=' +id+'&activity_id='+parent_id);
+	var el=document.getElementById('todo_'+id);
+	if ( $(el).hasClass('completed_todo')) 
+	{
+		mark=0;
+		$(el).removeClass('completed_todo');
+		$(el).addClass('uncompleted_todo');
+	}
+	else 
+	{
+		mark=1;
+		$(el).removeClass('uncompleted_todo');
+		$(el).addClass('completed_todo');
+		
+	}
+	//el.src = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/images/new/ico_checkedBlueBig.png';
+	var url = createURL('method=markToDoCompleted&todo_id=' +id+'&activity_id='+parent_id+'&completed='+mark);
+	ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
   	YAHOO.util.Connect.asyncRequest('POST', url, markCompletedHandler);
     return false;
 }
 
 var markCompletedHandler = {
     success: function(data) {
+    window.setTimeout('ajaxStatus.hideStatus()', 500);
     var response = JSON.parse(data.responseText);
     recalculateCompletion(response.id);
     },

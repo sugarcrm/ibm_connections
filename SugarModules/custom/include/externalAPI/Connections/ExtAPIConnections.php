@@ -504,9 +504,9 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		$this->api->getCommunitiesAPI()->editCommunity($communityId, $title, $content, $type, $tags);
 	}
 	
-	public function markToDoCompeted($entryId)
+	public function markToDoCompeted($entryId, $completed = true)
 	{
-		return $this->api->getActivitiesAPI()->markToDoCompleted($entryId);
+		return $this->api->getActivitiesAPI()->markToDoCompleted($entryId, $completed);
 	}
 	
 	public function getActivity($activityId)
@@ -563,7 +563,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 	public function getCommunityDiscussions($communityId, $page, $searchText) 
 	{
 		$searchText = str_ireplace(" ","+",$searchText);
-		return $this->api->getForumsAPI()->getCommunityForums($communityId,$page, $searchText)->getEntries();
+		$forums = $this->api->getForumsAPI()->getCommunityForums($communityId,$page, $searchText);
+		return  (empty($forums)) ? array() : $forums->getEntries();
 	}
 
 	public function getForumReplies($forumId)

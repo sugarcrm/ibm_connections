@@ -42,7 +42,9 @@ class WikiAPI extends AbstractConnectionsAPI
 		}
 		
 		$result = $this->requestForPath("GET", "/wikis/basic/api/communitywiki/". $communityId."/feed");
-		if (! $this->checkResult($result)) return;
+		if (empty($result) || !$this->checkResult($result)){
+         	return array();
+        }
 		$wikiPages = array();
 		$feed = IBMAtomFeed::loadFromString($result->getBody());
 		
@@ -54,8 +56,9 @@ class WikiAPI extends AbstractConnectionsAPI
 	public function getCommunityWikiContent($communityId, $wikiId) {
 		$this->getHttpClient()->resetParameters();
 		$result = $this->requestForPath("GET", "/wikis/basic/api/wiki/{$communityId}/page/{$wikiId}/media");
-		
-		if (! $this->checkResult($result)) return ;
+		if (empty($result) || !$this->checkResult($result)){
+         	return array();
+        }
 		return $result->getBody();
 	}
 }

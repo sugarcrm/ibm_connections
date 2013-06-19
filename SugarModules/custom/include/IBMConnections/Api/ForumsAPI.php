@@ -54,15 +54,11 @@ class ForumsAPI extends AbstractConnectionsAPI
             }                   
         }
     
-    $path = "/forums/atom/topics";
+    	$path = "/forums/atom/topics";
 		$this->getHttpClient()->resetParameters();		
 
 		if (!empty($searchText)) {
-			//$this->getHttpClient()->setParameterGet("component", 'forums');
-			//$this->getHttpClient()->setParameterGet("query", $searchText);
-			//$path = "/search/atom/mysearch/results";
 			$this->getHttpClient()->setParameterGet("search", $searchText);
-		
 		}
 		
 		$this->getHttpClient()->setParameterGet("communityUuid", $communityId);
@@ -72,7 +68,9 @@ class ForumsAPI extends AbstractConnectionsAPI
         $this->getHttpClient()->setParameterGet("ps", $pageSize);
         $this->getHttpClient()->setParameterGet("page", $pageNumber);
         $result = $this->requestForPath("GET", $path);
-		$this->checkResult($result);
+		if (empty($result) || !$this->checkResult($result)){
+         	return ;
+        }
 		
 		$feed = IBMAtomFeed::loadFromString($result->getBody());
 		
@@ -86,25 +84,17 @@ class ForumsAPI extends AbstractConnectionsAPI
 	    $this->getHttpClient()->resetParameters();		
 
 		$this->getHttpClient()->setParameterGet("topicUuid", $id);
-        $this->getHttpClient()->setParameterGet("ps", 150);//AbstractConnectionsAPI::MAX_PAGE_SIZE);
+        $this->getHttpClient()->setParameterGet("ps", 150);
         $this->getHttpClient()->setParameterGet("sortBy", "lastmod");
         $this->getHttpClient()->setParameterGet("sortOrder", "asc");
         $result = $this->requestForPath("GET", "/forums/atom/replies");
         	
-		//$this->checkResult($result);
-		
+		if (empty($result) || !$this->checkResult($result)){
+         	return array();
+        }
 		$feed = IBMAtomFeed::loadFromString($result->getBody());
-		
-		//$this->setLastResultMetadata(new ConnectionsResultMetadata($sortBy, $sortOrder, $pageSize, $pageNumber));
-		
 		$all =  new ConnectionsForums($feed, '');
 		$topics = $all->getReplies();
-        $replies = array();
-       /* foreach($topics as $entry) {
-          echo "pi";
-          print_r($entry->getLastPostBy());
-          //  $replies[] = new ConnectionsForumsTopic($entry);
-        }*/
         return $topics;
 	}
 	public function replyToTopic($topicId, $title, $content)
@@ -132,7 +122,6 @@ class ForumsAPI extends AbstractConnectionsAPI
 				'Content-Type' => 'application/atom+xml',
 				'Content-Language' => 'en-US',
 			));
-		//$result->getStatus();
 	
 	}
 	//href="https://greenhouse.lotus.com/forums/atom/replies?replyUuid=97bd0a6e-1a9f-4ca1-9173-2054902053ab" 
@@ -162,10 +151,6 @@ class ForumsAPI extends AbstractConnectionsAPI
 				'Content-Type' => 'application/atom+xml',
 				'Content-Language' => 'en-US',
 			));
-		//echo $this->url.'/forums/atom/reply?replyUuid='.$replyId;
-		//echo $result->getStatus();
-		//print_r($result->getBody());
-	
 	}
 	
 	public function createTopic($communityId, $title, $content, $tags = array(), $isQuestion = false)
@@ -187,7 +172,6 @@ class ForumsAPI extends AbstractConnectionsAPI
 				'Content-Type' => 'application/atom+xml',
 				'Content-Language' => 'en-US',
 			));
-		//$result->getStatus();
 	
 	}
 }

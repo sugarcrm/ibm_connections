@@ -63,6 +63,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
         $path = '/communities/service/atom/community/instance?communityUuid='
                 . $communityId;
         $response = $this->requestForPath('DELETE', $path);
+        if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
         if ($response->getStatus() != 200) {
             $message = 'Unexpected httpResponse code  = '
                     . $response->getStatus()
@@ -111,14 +114,15 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
 			$entry->getEntryNode()->appendChild($logoElt);	
         }
 
-       // $client = $this->getHttpClient();
         $this->getHttpClient()->setRawData($entry->getDomString());
 
         $response = $this->requestForPath('POST',
                         '/communities/service/atom/communities/my',
                         array('Content-Type' => 'application/atom+xml',
                                 'Content-Language' => 'en-US',));
-        //$this->checkResult($response);
+        if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
 
         $loc = $response->getHeader('Location');
         $parsedURL = parse_url($loc);
@@ -161,13 +165,6 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
                         '/communities/service/atom/community/instance?communityUuid='. $communityId,
                         array('Content-Type' => 'application/atom+xml',
                                 'Content-Language' => 'en-US',));
-       // return $response->getBody();
-        //$this->checkResult($response);
-
-      //  $loc = $response->getHeader('Location');
-      //  $parsedURL = parse_url($loc);
-      //  $query = explode('=', $parsedURL['query']);
-      //  return $query[1];
     }
 
     /**
@@ -176,11 +173,13 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
     public function getCommunity($id) {
 
         $remoteAppFeed = $this->getRemoteAppFeed($id);
-
+		if (empty($remoteAppFeed)) return "no_connection";
         $this->getHttpClient()->resetParameters();
         $this->getHttpClient()->setParameterGet("communityUuid", $id);
         $result = $this->requestForPath("GET", "/communities/service/atom/community/instance");
-        if (!$this->checkResult($result)) return;
+        if (empty($result) || !$this->checkResult($result)) {
+        	return;
+        }
         
         $entry = IBMAtomEntry::loadFromString($result->getBody());
 
@@ -232,7 +231,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
 		}
 
         $result = $this->requestForPath("GET", '/communities/service/atom/communities/my');
-        //$this->checkResult($result);
+        if (empty($result) || !$this->checkResult($result)){
+         	return array('communities' => array(),'metadata' => array());
+        }
 
         $communities = array();
         $feed = IBMAtomFeed::loadFromString($result->getBody());
@@ -290,7 +291,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
 		}
 
         $result = $this->requestForPath("GET", '/communities/service/atom/communities/all');
-        //$this->checkResult($result);
+        if (empty($result) || !$this->checkResult($result)){
+         	return array('communities' => array(),'metadata' => array());
+        }
 
         $communities = array();
         $feed = IBMAtomFeed::loadFromString($result->getBody());
@@ -382,7 +385,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
         $client = $this->getHttpClient();
         $client->resetParameters();
         $response = $this->requestForPath('GET', $path);
-		//$this->checkResult($response);
+		if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
 		
         $dom = new DOMDocument();
         $dom->loadXML($response->getBody());
@@ -468,7 +473,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
                                 array('X-HTTP-Method-Override' => 'PUT',
                                         'Content-Type' => self::CONTENT_TYPE,
                                         'Content-Language' => 'en-US',));
-
+				if (empty($response) || !$this->checkResult($response)){
+         			return;
+        		}
                 switch ($response->getStatus()) {
                     case 201: /*Created*/
                     case 204: /*No Content*/
@@ -502,7 +509,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
     	$client = $this->getHttpClient();
     	$client->resetParameters();
     	$response = $this->requestForPath('GET', $path);
-    	//$this->checkResult($response);
+    	if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
     
     	$dom = new DOMDocument();
     	$dom->loadXML($response->getBody());
@@ -578,7 +587,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
     							'Content-Language' => 'en-US',
     					)
     				);
-    
+    	if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
     			
     	switch ($response->getStatus()) {
     		case 201: /*Created*/
@@ -625,7 +636,6 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
 				'Content-Type' => 'application/atom+xml',
 				'Content-Language' => 'en-US',
 			));
-		//echo $result->getStatus();	
     }
     
     
@@ -659,6 +669,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
     public function removeMemberById( $id, $cid) {
     	$path = '/communities/service/atom/community/members?communityUuid='. $cid . '&userid=' . $id;
     	$response = $this->requestForPath('DELETE', $path);
+    	if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
     	switch ($response->getStatus()) {
     		case 200: //Member was successfully removed with wrong error code
     		case 204: //Member was successfully removed
@@ -691,6 +704,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
             $path = '/communities/service/atom/community/members?communityUuid='
                     . $cid . '&email=' . $email;
             $response = $this->requestForPath('DELETE', $path);
+            if (empty($response) || !$this->checkResult($response)){
+		     	return;
+		    }
             switch ($response->getStatus()) {
                 case 200:
                 //Member was successfully removed with wrong error code
@@ -724,7 +740,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
     public function shareMyFileWithCommunity($cid, $myFileId) {
         $path = '/communities/service/atom/community/instance?communityUuid='. $cid;
         $response = $this->requestForPath('GET', $path);
-       // echo $response->getStatus();
+        if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
         if($response->getStatus() == 404) {
             // No access to the community
             $message = 'Received HTTP code 404 while attempting to share File ['. $myFileId .']  with community [' . $cid .'].'
@@ -885,7 +903,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
                         array('Content-Type' => self::CONTENT_TYPE,
 
                                 'Content-Language' => 'en-US'));
-
+		if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
         switch ($response->getStatus()) {
             case 200:
             //Membership updated.
@@ -929,7 +949,9 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
         $this->httpClient->setParameterGet("ps", 32);
         $this->httpClient->setParameterGet("asc", $asc);
         $response = $this->requestForPath('GET', $path);
-        
+        if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
         $dom = new DOMDocument();
         $dom->loadXML($response->getBody());
         for ($i = 0; $i < $dom->getElementsByTagName('entry')->length; $i++) {

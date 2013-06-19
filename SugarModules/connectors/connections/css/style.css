@@ -395,8 +395,12 @@
 	float: left;
 }
 
-
+/*
 #connectionsDiv #activity_list_table .item-img {
+	width: 5%;
+    text-align: center;
+}*/
+#connectionsDiv .ibm-tab-list-table .item-img {
 	width: 5%;
     text-align: center;
 }
@@ -539,6 +543,24 @@
 		color: #000000;
 		font-size: 11px;
 		padding: 5px;
+    }
+    
+    #connectionsDiv #activity_content div.completed_todo {
+		background-image: url("../images/new/ico_checkedBlueBig.png");
+	   	height: 18px;
+	   	width: 18px;
+	    background-position: 50% 100%;
+		background-repeat: no-repeat;
+		padding: 0;
+    }
+    
+    #connectionsDiv #activity_content div.uncompleted_todo {
+		background-image: url("../images/new/ico_uncheckBlueBig.png");
+	   	height: 18px;
+	   	width: 18px;
+	    background-position: 50% 100%;
+		background-repeat: no-repeat;
+		padding: 0;
     }
 
 	#connectionsDiv #activity_content table.activity-section .header-section td {

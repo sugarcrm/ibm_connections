@@ -94,8 +94,9 @@ class FilesAPI extends AbstractConnectionsAPI {
                         array('Content-Type' => self::CONTENT_TYPE,
                                 'Content-Language' => 'en-US'));
 
-        //print_r( $response->getBody() );
-        $this->checkResult($response);
+        if (empty($result) || !$this->checkResult($result)){
+         	return array();
+        }
 		$files = array();
         $feed = IBMAtomFeed::loadFromString($response->getBody());
         $entries = $feed->getEntries();

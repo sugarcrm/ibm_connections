@@ -34,27 +34,19 @@ class UpdatesAPI extends AbstractConnectionsAPI
 	public function getCommunityUpdates($communityId, $pageNumber = 1, $searchText = '') {
 		$this->getHttpClient()->resetParameters();		
 		$this->getHttpClient()->setParameterGet("communityUUID", $communityId);
-		//$this->getHttpClient()->setParameterGet("filter","status");
-       	//if (empty($pageSize)) $pageSize = AbstractConnectionsAPI::MAX_PAGE_SIZE;
         $this->getHttpClient()->setParameterGet("ps", 10);
         $this->getHttpClient()->setParameterGet("page", $pageNumber);
         $this->getHttpClient()->setParameterGet("lang", (!empty($GLOBALS['current_language']) ? $GLOBALS['current_language'] : 'en-US'));
         $result = $this->requestForPath("GET", "/news/atom/stories/community");
-        // $result = $this->requestForPath("GET", "/news/atom/stories/statusupdates?source=all");
-        // echo $result->getBody();
-		$this->checkResult($result);
+        if (empty($result) || !$this->checkResult($result)){
+         	return array('list' => array(), 'metadata' => array());
+        };
 		$feed = IBMAtomFeed::loadFromString($result->getBody());
-		
-		//$retrievedPageNumber = ceil($feed->getStartIndex() / $feed->getItemsPerPage());
-		//$this->setLastResultMetadata(
-       // 	new ConnectionsResultMetadata($sortBy, $sortOrder, $feed->getItemsPerPage(), $retrievedPageNumber , $feed->getTotalResults())
-       // );
 		$entries = $feed->getEntries();
         foreach ($entries as $entry) {
             $updates[] = new ConnectionsUpdates($entry, null);
         }
-		//return $updates;
-		 return array('list' => $updates,'metadata' => array());//$this->getLastResultMetadata());
+		 return array('list' => $updates,'metadata' => array());
 	}
 	
 	private function timestamp() {
