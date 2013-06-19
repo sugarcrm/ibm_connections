@@ -504,9 +504,9 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		$this->api->getCommunitiesAPI()->editCommunity($communityId, $title, $content, $type, $tags);
 	}
 	
-	public function markToDoCompeted($entryId)
+	public function markToDoCompeted($entryId, $completed = true)
 	{
-		return $this->api->getActivitiesAPI()->markToDoCompleted($entryId);
+		return $this->api->getActivitiesAPI()->markToDoCompleted($entryId, $completed);
 	}
 	
 	public function getActivity($activityId)

@@ -410,13 +410,14 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         //$response->getStatus();
     }
 
-    public function markToDoCompleted($id)
+    public function markToDoCompleted($id, $completed = true)
     {
      	$this->httpClient = $this->getHttpClient();
 		$newEntry  = IBMEditableAtomEntry::createEmptyEditableEntry();
         $newEntry->addCategory('todo', 'http://www.ibm.com/xmlns/prod/sn/type', 'To Do');
-        $newEntry->addCategory('completed', 'http://www.ibm.com/xmlns/prod/sn/flags', 'Completed');
-        
+        if ($completed){
+        	$newEntry->addCategory('completed', 'http://www.ibm.com/xmlns/prod/sn/flags', 'Completed');
+        }
 		$this->httpClient->resetParameters();
         $this->httpClient->setRawData($newEntry->getDomString());
         $this->httpClient->setParameterPost("activityNodeUuid", $id);        

@@ -105,7 +105,8 @@ class ConnectionsHelper
 		else {
 			$community = $this->apiClass->getCommunity($communityId);
 			if (empty($community)) {
-				return array('head' => "<div id='community_name'>{$this->language['LBL_PRIVATE_COMMUNITY']}</div>", 'visibility' => $visibility, 'members' => array());
+				$head = ($recordOwner) ? $this->view->navWrapStart() ."	<li>{$this->view->actionsEditCommunity('')}</li>". $this->view->selectCommunityMenu() . $this->view->navWrapEnd() : '';
+				return array('head' => "<div id='community_name'>{$this->language['LBL_PRIVATE_COMMUNITY']}</div>{$head}", 'visibility' => 'denied', 'members' => array());
 			}
 			$navigation = ($recordOwner) ? $this->view->navWrapStart()."	<li>{$this->view->actionsEditCommunity($communityId)}</li>". $this->view->selectCommunityMenu() .$this->view->navWrapEnd() :"";
 			$head = "
@@ -456,7 +457,7 @@ class ConnectionsHelper
 	
 	public function markToDoCompleted()
 	{
-		$result = $this->apiClass->markToDoCompeted($this->todo_id);
+		$result = $this->apiClass->markToDoCompeted($this->todo_id, $this->completed);
 		ob_clean();
 		echo json_encode(array('result' => $result, 'id' => $this->activity_id));
 		

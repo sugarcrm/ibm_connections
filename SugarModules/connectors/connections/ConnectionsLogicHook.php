@@ -150,15 +150,13 @@ class ConnectionsLogicHook
 							$allow = 'no';
 						}
 					}
-					if (empty($comm_id)) $allow = 'no';
+					if (empty($comm_id) || $comm_info['visibility'] == 'denied') $allow = 'no';
 					$smarty->assign('allow_mod', $allow);
 					$smarty->assign('ibm_header', $header);
 				}
 				if (empty($comm_id) && !$recordOwner){
 					$contentTpl = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/NoCommunityNotOwner.tpl';
 				}
-				//echo "<pre>";
-				//print_r($eapm->api_data['userId']);
 				if (empty($eapm->eapmBean)) {
 					$contentTpl = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Login.tpl';
 				}
