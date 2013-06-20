@@ -21,7 +21,7 @@
            <td>{$language.LBL_SHARE_WITH}:</td>
             <td>
             	<select name="visibility">
-            		<option name="private" value="private" selected>{$language.LBL_COMMUNITY}</option>
+            		<option name="private" value="private" selected>{$language.LBL_PRIVATE}</option>
             		<option name="public" value="public">{$language.LBL_PUBLIC}</option>
             	</select>
             </td>
