@@ -77,16 +77,13 @@ class FilesAPI extends AbstractConnectionsAPI {
         $client->setParameterGet('sO', 'dsc');
         $client->setParameterGet('acls', 'true');
         $client->setParameterGet('collectionAcls', 'true');
-        $client->setParameterGet('pageSize',  5);//AbstractConnectionsAPI::MAX_PAGE_SIZE);
+        $client->setParameterGet('pageSize',  5);
          $client->setParameterGet('page',  $page);
         $client->setParameterGet('includeTags', 'true');
-     //   echo $search;
         if (!empty($search)) {
 			$client->setParameterGet("component", 'files');
 			$client->setParameterGet("query", $search);
 			$path = "/search/atom/mysearch/results";
-			//$client->setParameterGet("search", $search);
-		
 		}
         $this->setHttpClient($client);
         $response = $this
@@ -94,7 +91,7 @@ class FilesAPI extends AbstractConnectionsAPI {
                         array('Content-Type' => self::CONTENT_TYPE,
                                 'Content-Language' => 'en-US'));
 
-        if (empty($result) || !$this->checkResult($result)){
+        if (empty($response) || !$this->checkResult($response)){
          	return array();
         }
 		$files = array();
@@ -119,17 +116,17 @@ class FilesAPI extends AbstractConnectionsAPI {
                 throw new IBMConnectionsApiException($message,
                         CONNECTIONS_SERVICE_GENERIC, $response);
                         */
-               echo $message;
         }
 		return $files;
     }
-    public function uploadFile($fileName, $content, $mimeType, $visibility) {
+   /* public function uploadFile($fileName, $content, $mimeType, $visibility) {
         $path = '/files/basic/api/myuserlibrary/feed';
         $nonce = $this->requestNonce();
         $client = $this->getClient();
         $client->setParameterPost('visibility', $visibility);
         $client->setParameterPost('label', basename($fileName));
         $client->setFileUpload($fileName, 'file', $content, $mimeType);
+        $client->setParameterPost('createVersion', 'true');
         //$client->setIgnoreResponseContentLength();
         $curlOpts = array(
                                     CURLOPT_SSL_VERIFYHOST => false,
@@ -158,7 +155,9 @@ class FilesAPI extends AbstractConnectionsAPI {
                         array('Content-Type' => 'multipart/form-data',
                                 'Content-Language' => 'en-US',
                                 'X-Update-Nonce' => $nonce,));
-
+		if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
         switch ($response->getStatus()) {
             case 200:
                 if (strstr($response->getStatus(),
@@ -231,7 +230,125 @@ class FilesAPI extends AbstractConnectionsAPI {
 
         return $response;
     }
+*/
 
+public function uploadFile($fileName, $content, $mimeType, $visibility) {
+        $path = '/files/basic/api/myuserlibrary/feed';
+        $nonce = $this->requestNonce();
+        $client = $this->getClient();
+        $client->setParameterPost('visibility', $visibility);
+        $client->setParameterPost('label', basename($fileName));
+        $client->setFileUpload($fileName, 'file', $content, $mimeType);
+        //$client->setIgnoreResponseContentLength();
+        $curlOpts = array(
+                                    CURLOPT_SSL_VERIFYHOST => false,
+                                    CURLOPT_SSL_VERIFYPEER => false,
+                                    CURLOPT_VERBOSE => true, // Display communication with server
+                                    CURLOPT_RETURNTRANSFER => true, // Return data instead of display to std out
+                                    CURLOPT_HEADER => true, // Display headers
+                                    CURLOPT_USERPWD => $this->account_name. ":" . $this->account_password,//$client->username . ":" . $client->password,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0
+                                    
+                                );
+       $config = array(
+                        'persistent'   => true,
+                        'adapter'   => 'Zend_Http_Client_Adapter_Curl',
+                        'curloptions' => $curlOpts,
+                        'ssltransport' => 'sslv3',
+                        'strictredirects' => true,
+                        'maxredirects' => 0
+                    );
+        $client->setConfig( $config );
+		$this->setHttpClient($client);
+        $response = $this
+                ->requestForPath('POST', $path,
+                        array('Content-Type' => 'multipart/form-data',
+                                'Content-Language' => 'en-US',
+                                'X-Update-Nonce' => $nonce,));
+		if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
+        switch ($response->getStatus()) {
+            case 200:
+                if (strstr($response->getStatus(),
+                        '<meta name="status" content="409"/>') === false) {
+                    //File has been uploaded
+                    break;
+                }
+            // Error with response and falling through to the default error message.
+            default:
+                $message = 'The file - ' . $fileName . ' - couldn\'t be'
+                        . ' successfully uploaded at this time, the response returned'
+                        . ' with an unexpected HTTP error code.';
+        }
+
+        if (strstr($response->getBody(), '<body class="X-LConn-API-Response">') != false) {
+            // removing the html wrapping the json
+            $json = $this->decodeXml(substr($response->getBody(), 134, -16));
+
+            $jsonResponse = json_decode($json);
+
+            $fullId = $jsonResponse->{'id'};
+            preg_match('/[a-zA-Z|0-9]{8}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{12}/', $fullId, $id);
+            $response->docId = $id[0];
+            $response->docUrl = $jsonResponse->{'links'}[3]->{'href'};
+            $response->fileSize = $jsonResponse->{'links'}[4]->{'length'};
+        }
+
+        if (!empty($response)) {
+        	$message = '';
+            preg_match('/<meta name="status" content="409"\/>/',  $response->getBody(), $conflict);
+            if (sizeof($conflict) >= 1) {
+                $message = 'The file - ' . $fileName . ' - couldn\'t be'
+                        . ' successfully uploaded at this time, a file with the same'
+                        . ' name already exists in Connections.';
+            }
+
+            if (empty($response->docId) || empty($response->docUrl) || !isset($response->fileSize)) {
+                $message = 'The file - ' . $fileName . ' - couldn\'t be'
+                        . ' successfully uploaded at this time, the Connections'
+                        . ' ID, url, and filesize could not be set.';
+               // require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
+              //  $connEx = new IBMConnectionsApiException($message,
+               //         FILES_API_UPLOAD_FILENAME_ALREADY_EXISTS, $response);
+               // $this->LOGGER->error($connEx->__toString());
+              //  throw $connEx;
+            }
+            if (isset($message) && !empty($message))
+			{
+				$path = "files/basic/api/myuserlibrary/document/". basename($fileName) ."/entry?identifier=label&createVersion=true";
+				$client = $this->getClient();
+		    	$client->setFileUpload($fileName, 'file', $content, $mimeType);
+		    	$client->setConfig( $config );
+				$this->setHttpClient($client);
+		    	$response = $this
+		            ->requestForPath('POST', $path,
+		                    array('Content-Type' => 'multipart/form-data',
+		                            'Content-Language' => 'en-US',
+		                            'X-Update-Nonce' => $nonce,
+		                            'X-Method-Override' => 'PUT',));
+		        if (strstr($response->getBody(), '<body class="X-LConn-API-Response">') != false) {
+				    // removing the html wrapping the json
+				    $json = $this->decodeXml(substr($response->getBody(), 134, -16));
+
+				    $jsonResponse = json_decode($json);
+
+				    $fullId = $jsonResponse->{'id'};
+				    preg_match('/[a-zA-Z|0-9]{8}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{12}/', $fullId, $id);
+				    $response->docId = $id[0];
+				    $response->docUrl = $jsonResponse->{'links'}[3]->{'href'};
+				    $response->fileSize = $jsonResponse->{'links'}[4]->{'length'};
+				}
+			}
+          //  $bean->doc_id = $response->docId;
+          //  $bean->doc_url = $response->docUrl;
+          //  $bean->doc_direct_url = $response->docUrl;
+          //  $bean->file_size = $response->fileSize;
+        }
+		
+		
+        return $response;
+    }
     /**
      * Method to update File visibility in MyFiles
      *
@@ -260,8 +377,9 @@ class FilesAPI extends AbstractConnectionsAPI {
                                 'Content-Language' => 'en-US',
                                 'X-Update-Nonce' => $nonce));
 
-        //print_r( $response );
-       // echo $response->getStatus();
+        if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
         switch ($response->getStatus()) {
             case 204:
             //File visibility Updated
@@ -272,7 +390,6 @@ class FilesAPI extends AbstractConnectionsAPI {
                 $message = 'The Connections file with id - ' . $myFileId
                         . 'failed to update' . ' it\'s visibility to '
                         . $isPublic ? 'public' : 'private';
-                        echo $message;
                // require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
               //  $connEx = new IBMConnectionsApiException($message,
                  //       FILES_API_UPDATE_VISIBILITY_FAILED, $response);
@@ -309,9 +426,6 @@ class FilesAPI extends AbstractConnectionsAPI {
                                 'X-Update-Nonce' => $nonce,
                                 'X-Method-Override' => 'PUT',));
 
-        //print_r( $response );
-        echo $response->getStatus();
-        //print_r($response->getBody());
     }
 
     /**
@@ -338,7 +452,6 @@ class FilesAPI extends AbstractConnectionsAPI {
 	 public function downloadFile($documentId) {
     	$this->httpClient = $this->getHttpClient();
 		$result = $this->requestForPath("GET","/files/basic/anonymous/api/document/{$documentId}/media");
-		echo $result->getStatus();
 		return $result->getBody();
 	}
 	
@@ -442,7 +555,9 @@ class FilesAPI extends AbstractConnectionsAPI {
                         '/files/basic/api/shares/feed?sharedWhat=' . $myFileId,
                         array('Content-Type' => self::CONTENT_TYPE,
                                 'Content-Language' => 'en-US',));
-
+		if (empty($response) || !$this->checkResult($response)){
+         	return false;
+        }
         switch ($response->getStatus()) {
             case 204:
             //File has been shared
@@ -483,7 +598,9 @@ class FilesAPI extends AbstractConnectionsAPI {
         $response = $this
                 ->requestForPath('DELETE', $path,
                         array('X-Update-Nonce' => $nonce));
-        //$this->LOGGER->info($response->getStatus());
+        if (empty($response) || !$this->checkResult($response)){
+         	return false;
+        }
 
         switch ($response->getStatus()) {
             case 204:
@@ -519,8 +636,6 @@ class FilesAPI extends AbstractConnectionsAPI {
 				'Content-Type' => 'application/atom+xml',
 				'Content-Language' => 'en-US',
 			));
-		//echo $result->getStatus();
-		//echo $result->getBody();
 		if ($result->getStatus() == 201) return true;
 		return false;
 	
@@ -574,6 +689,7 @@ class FilesAPI extends AbstractConnectionsAPI {
                     $path .= '?removeTag=' . urlencode($removeTag);
                 } else {
                     $path .= '&removeTag=' . urlencode($removeTag);
+
                 }
                 $isFirstParam = false;
             }
@@ -620,7 +736,9 @@ class FilesAPI extends AbstractConnectionsAPI {
                                 'Content-Language' => 'en-US',
                                 'X-Update-Nonce' => $nonce,
                                 'X-Method-Override' => 'PUT',));
-
+		if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
         switch ($response->getStatus()) {
             case 200:
             //File metadata has been updated

@@ -56,6 +56,7 @@ $connector_strings = array (
 	
 	'LBL_COMMUNITY' => 'Community',
 	'LBL_PUBLIC' => 'Public',
+	'LBL_PRIVATE' => 'Private',
 	'LBL_NAME' => 'Name',
 	'LBL_URL' => 'URL',
 	
@@ -108,7 +109,7 @@ $connector_strings = array (
 	'LBL_PLEASE_SELECT_COMMUNITY' => 'Please select the community to associate with this ',
 	'LBL_SHARE_FILE_WITH_COMMUNITY' => 'Share a file with the community',
 	'LBL_FILE_NAME' => 'File Name',
-	'LBL_SHARE_WITH' => 'Share with',
+	'LBL_SHARE_WITH' => 'Access',
 	'LBL_ONLY_OWNER_CAN_ASSOCIATE_1' => 'There is no community associated with this record.  Only ',
 	'LBL_ONLY_OWNER_CAN_ASSOCIATE_2' => 'can associate this record with a community',
 	'LBL_CONFIRM_DELETE' => 'Are you sure you want to delete this association?',
