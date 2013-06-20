@@ -549,7 +549,7 @@ class ConnectionsHelper
 		$fileToUpload = $_FILES['file_el']['tmp_name'];
 		$mimeType = $_FILES['file_el']['type'];
 		
-		$reply = $this->apiClass->uploadFile($fileToUpload, $this->file_name, $mimeType,$this->visibility);		
+		$reply = $this->apiClass->uploadFile($fileToUpload, $this->file_name, $mimeType,$this->visibility);	
 		if (!empty($reply->docId)){
 			$this->apiClass->shareMyFileWithCommunity($this->getCommunityId(), $reply->docId);
 		}
@@ -778,7 +778,7 @@ class ConnectionsHelper
 		global $timedate;
 		$element = $this->element;
 		$tplName = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Create' . $element . '.tpl';
-		$community = $this->apiClass->getCommunity($id);
+		$community = $this->apiClass->getCommunity($this->getCommunityId());
 		if ($community == "no_connection"){
 			$model_content = array(
 				"header"=> $this->language['LBL_TITLE_NEW_' . strtoupper($element)],
