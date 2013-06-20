@@ -8,27 +8,13 @@
  */
 
 $tabs_meta = array(
-	/*"Overview" => array(
-		"tabView" => "connectionsTabView",
-		"method" => "loadOverview",
-		"label" => "LBL_OVERVIEW_TAB",
-		"order" => 0,
-		"active" => true,
-		"onload" => false,//true,
-		"buttons" => array(
-			"selectcommunity",
-		)
-	),*/
 	"Members" => array(
 		"tabView" => "connectionsTabView",
 		"method" => "getCommunityMembers",
 		"label" => "LBL_MEMBERS_TAB",
 		"order" => 0,
-		"active" => true,
-		"onload" => false,//true,
-		"buttons" => array(
-			"addmember",
-		)
+		"active" => false,
+		"onload" => false,
 	),
 	"Updates" => array(
 		"tabView" => "connectionsTabView",
@@ -36,9 +22,7 @@ $tabs_meta = array(
 		"label" => "LBL_UPDATES_TAB",
 		"order" => 1,
 		"active" => false,
-		"onload" => false,//true,
-		"buttons" => array(
-		)
+		"onload" => false,
 	),
 	"Activities" => array(
 		"tabView" => "connectionsTabView",
@@ -46,10 +30,7 @@ $tabs_meta = array(
 		"label" => "LBL_ACTIVITIES_TAB",
 		"order" => 2,
 		"active" => false,
-		"onload" => false,//true,
-		"buttons" => array(
-			"createactivity",
-		)
+		"onload" => false,
 	),
 	"Files" => array(
 		"tabView" => "connectionsTabView",
@@ -57,9 +38,7 @@ $tabs_meta = array(
 		"label" => "LBL_FILES_TAB",
 		"order" => 3,
 		"active" => false,
-		"onload" => false,//true,
-		"buttons" => array(
-		)
+		"onload" => false,
 	),
 	"Discussions" => array(
 		"tabView" => "connectionsTabView",
@@ -67,10 +46,7 @@ $tabs_meta = array(
 		"label" => "LBL_DISCUSSIONS_TAB",
 		"order" => 4,
 		"active" => false,
-		"onload" => false,//true,
-		"buttons" => array(
-			"creatediscussion",
-		)
+		"onload" => false,
 	),
 	"Bookmarks" => array(
 		"tabView" => "connectionsTabView",
@@ -78,10 +54,7 @@ $tabs_meta = array(
 		"label" => "LBL_BOOKMARKS_TAB",
 		"order" => 5,
 		"active" => false,
-		"onload" => false,//true,
-		"buttons" => array(
-			"createbookmark",
-		)
+		"onload" => false,
 	),
 	"Blog" => array(
 		"tabView" => "connectionsTabView",
@@ -89,9 +62,7 @@ $tabs_meta = array(
 		"label" => "LBL_BLOG_TAB",
 		"order" => 6,
 		"active" => false,
-		"onload" => false,//true,
-		"buttons" => array(
-		)
+		"onload" => false,
 	),
 	"Wiki" => array(
 		"tabView" => "connectionsTabView",
@@ -99,34 +70,8 @@ $tabs_meta = array(
 		"label" => "LBL_WIKI_TAB",
 		"order" => 7,
 		"active" => false,
-		"onload" => false,//true,
-		"buttons" => array(
-		)
+		"onload" => false,
 	),
-/*	"Files" => array(
-		"tabView" => "connectionsTabView",
-		"method" => "loadFilesList",
-		"label" => "LBL_FILES_TAB",
-		"order" => 0,
-		"active" => true,
-		"onload" => true,
-		"buttons" => array(
-			"selectcommunity",
-			"newfile"
-		)
-	),
-	"Members" => array(
-		"tabView" => "connectionsTabView",
-		"method" => "loadMembersList",
-		"label" => "LBL_MEMBERS_TAB",
-		"order" => 1,
-		"active" => false,
-		"onload" => true,
-		"buttons" => array(
-			"selectcommunity",
-			"addmember"
-		)
-	),*/
 	"CreateCommunity" => array(
 		"tabView" => "communitiesTabView",
 		"method" => "createNewCommunity",
@@ -134,7 +79,6 @@ $tabs_meta = array(
 		"order" => 0,
 		"active" => true,
 		"onload" => true,
-		"buttons" => array()
 	),
 	
 	"MyCommunities" => array(
@@ -144,9 +88,6 @@ $tabs_meta = array(
 		"order" => 1,
 		"active" => false,
 		"onload" => true,
-		"buttons" => array(
-		//	"newcommunity"
-		)
 	),
 	"PublicCommunities" => array(
 		"tabView" => "communitiesTabView",
@@ -155,40 +96,5 @@ $tabs_meta = array(
 		"order" => 2,
 		"active" => false,
 		"onload" => true,
-		"buttons" => array(
-		//	"newcommunity"
-		)
 	),
-	
-	/*"CreateFile" => array(
-		"tabView" => "connectionsTabView",
-		"method" => "createNewFile",
-		"label" => "LBL_CREATE_FILE",
-		"returnTab" => "Files",
-		"order" => -1,
-		"onload" => false,
-		"buttons" => array()
-	),
-	"AddMember" => array(
-		"tabView" => "connectionsTabView",
-		"method" => "addCommunityMember",
-		"label" => "LBL_ADD_MEMBER",
-		"returnTab" => "Members",
-		"order" => -1,
-		"onload" => false,
-		"buttons" => array()
-	),
-/*	"MyAccount" => array(
-		"tabView" => "connectionsTabView",
-		"method" => "myAccount",
-		"label" => "LBL_MY_ACCOUNT_TAB",
-		"order" => 2,
-		"active" => false,
-		"onload" => true,
-		"buttons" => array(
-			//"myaccount"
-		)
-	),
-	*/
-	
 );

@@ -37,44 +37,26 @@ class BookmarksAPI extends AbstractConnectionsAPI
 		$client = $this->getHttpClient();
 		$client->resetParameters();
 		$client->setParameterGet("includeTags", "true");
-		$client->setParameterGet("ps", 15);//AbstractConnectionsAPI::MAX_PAGE_SIZE);
+		$client->setParameterGet("ps", 15);
 		$client->setParameterGet("page", $pageNumber);
 		$client->setParameterGet("communityUuid", $communityId);
-		//if($tag) {
-		//	$client->setParameterGet("tag", $tag);
-		//}
 		if (!empty($searchText)) {
-			//$this->getHttpClient()->setParameterGet("component", 'dogear');
-			//$this->getHttpClient()->setParameterGet("query", $searchText);
-			//$path = "/search/atom/mysearch/results";
 			$client->setParameterGet("search", $searchText);
 		
 		}
 		$this->setHttpClient($client);
 		$rawResponse = $this->requestForPath("GET", $path);
-		//echo "<pre>";
-	//	print_r($rawResponse);
-		//echo "</pre>";
-		if ($this->checkResult($rawResponse) == false) return;
+		if (empty($rawResponse) || !$this->checkResult($rawResponse)){
+         	return array();
+        }
         $reply = array('rawResponse' => $rawResponse->getBody());
-		//$result = $client->request("GET");
-		//return $reply;
 		
 		$feed = IBMAtomFeed::loadFromString($rawResponse->getBody());
 		$entries = $feed->getEntries();
         foreach ($entries as $entry) {
              	$bookmarks[] = new ConnectionsBookmark($entry);
         }
-		
-		//$bookmarks = new ConnectionsBookmarks($feed, $sortBy, $sortOrder, $pageSize, $pageNumber);
-		//$totalResults = $bookmarks->getNumberOfBookmarks();
-		//echo "__".$totalResults;
-		//$entries = $bookmarks->getEntries();
-		//$this->setLastResultMetadata(new ConnectionsResultMetadata($sortBy, $sortOrder, $pageSize, $pageNumber, $totalResults));
-		//return $bookmarks;
-		//*/
-		//return $this->makeRequest("/communities/service/atom/community/bookmarks?communityUuid={$communityId}");
-		return $bookmarks;//$entries;
+		return $bookmarks;
 	}
 	
 	
@@ -119,8 +101,6 @@ class BookmarksAPI extends AbstractConnectionsAPI
 				'Content-Language' => 'en-US',
 			)
 		);
-		echo $result->getStatus();
-		//$this->checkResult($result);
 	}
 	
 	public function deleteCommunityBookmark($bookmarkId) {

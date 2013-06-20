@@ -44,6 +44,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
   //      	$commApi = new CommunitiesAPI($this->getHttpClient());
 //        	$commApi->activateActivities($communityId); 
         	 $feed = $this->getRemoteAppFeed($communityId);
+        	 if(empty($feed)){
+        	 	return array();
+        	 }
 		    $entries = array();    
 		    $entries = $feed->getEntries();
 			for($i = 0; $i < sizeof($entries); $i++) {             
@@ -72,7 +75,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
 
         //$this->getHttpClient()->setParameterGet("tunedout","yes");
 		$result = $this->requestForPath("GET", "/activities/service/atom2/everything");
-		$this->checkResult($result);
+		if (empty($result) || !$this->checkResult($result)){
+        	return array();
+        }
         $activities = array();
         $feed = IBMAtomFeed::loadFromString($result->getBody());
         $entries = $feed->getEntries();
@@ -86,22 +91,27 @@ class ActivitiesAPI extends AbstractConnectionsAPI
 	 * 
 	 */
 	public function getActivity($id) {
-		//$client = $this->getHttpClient();
 		$this->getHttpClient()->resetParameters();
 		$this->getHttpClient()->setParameterGet("activityUuid", $id);
 		$result = $this->requestForPath("GET", "/activities/service/atom2/activity");
+		if (empty($result) || !$this->checkResult($result)){
+        	return;
+        }
 		$feed = IBMAtomFeed::loadFromString($result->getBody());
 		return new ConnectionsActivity($feed);
 	}
 	
 	public function getNode($activityId, $nodeId)
 	{
-		$feedLink = "/activities/service/atom2/activity?activityUuid=".$activityId."&ps=150";//.AbstractConnectionsAPI::MAX_PAGE_SIZE;
+		$feedLink = "/activities/service/atom2/activity?activityUuid=".$activityId."&ps=150";
 		$this->getHttpClient()->resetParameters();
 		$result = $this->requestForPath("GET", $feedLink);
+		if (empty($result) || !$this->checkResult($result)){
+        	return;
+        }
 		$feed = IBMAtomFeed::loadFromString($result->getBody());
 
-		$nodeEntries = $feed->getEntries();//getReplies();
+		$nodeEntries = $feed->getEntries();
 		$nodes = array();
 		foreach ( $nodeEntries as $nodeEntry) {
 			if (substr($nodeEntry->getId(), -1 * strlen($nodeId)) == $nodeId) return ConnectionsActivity::createActivityNodeFromEntry($nodeEntry, $feed);
@@ -117,6 +127,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
 		$feedLink = "/activities/service/atom2/activity?activityUuid=".$activityId."&ps=150";//.AbstractConnectionsAPI::MAX_PAGE_SIZE;
 		$this->getHttpClient()->resetParameters();
 		$result = $this->requestForPath("GET", $feedLink);
+		if (empty($result) || !$this->checkResult($result)){
+        	return array();
+        }
 		$feed = IBMAtomFeed::loadFromString($result->getBody());
 		
 		$activityNodeEntries = $feed->getReplies();
@@ -135,6 +148,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
 		$link = "/activities/service/atom2/activity/history?activityUuid=".$activityId;
 		$this->getHttpClient()->resetParameters();
 		$result = $this->requestForPath("GET", $link);
+		if (empty($result) || !$this->checkResult($result)){
+        	return array();
+        }
 		$historyFeed = IBMAtomFeed::loadFromString($result->getBody());
 		$entries = $historyFeed->getEntries();
 		$changeLog = array();
@@ -202,6 +218,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
     public function createCommunityActivity($communityId, $title, $content = '', $tags = array(), $due_date = null) {
         
         $feed = $this->getRemoteAppFeed($communityId);
+        if (empty($feed)) {
+        	return;
+        }
       	$path = "";
         $entries = array();    
         $entries = $feed->getEntries();
@@ -220,6 +239,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         	$commApi = new CommunitiesAPI($this->getHttpClient());
         	$commApi->activateActivities($communityId); 
         	 $feed = $this->getRemoteAppFeed($communityId);
+        	 if (empty($feed)) {
+		    	return;
+		    }
 		  	$path = "";
 		    $entries = array();    
 		    $entries = $feed->getEntries();
@@ -276,7 +298,6 @@ class ActivitiesAPI extends AbstractConnectionsAPI
                         array('Content-Type' => 'application/atom+xml',
                                 'Content-Language' => 'en-US',));
                                 
-        //$response->getStatus();
     }
     
     public function createEntry($activityId, $title, $description, $tags = array()) {
@@ -298,7 +319,6 @@ class ActivitiesAPI extends AbstractConnectionsAPI
                         array('Content-Type' => 'application/atom+xml',
                                 'Content-Language' => 'en-US',));
                                 
-        //$response->getStatus();
     }
     
      public function createSectionEntry($activityId, $sectionId, $title, $description, $tags = array()) {
@@ -327,7 +347,6 @@ class ActivitiesAPI extends AbstractConnectionsAPI
                         array('Content-Type' => 'application/atom+xml',
                                 'Content-Language' => 'en-US',));
                                 
-        //$response->getStatus();
     }
     
     public function createToDo($activityId, $title, $description, $due_date,$tags = array(), $assigned = array('name' => null, 'id' => null)) {
@@ -363,7 +382,6 @@ class ActivitiesAPI extends AbstractConnectionsAPI
                         array('Content-Type' => 'application/atom+xml',
                                 'Content-Language' => 'en-US',));
                                 
-        //$response->getStatus();
     }
     
      public function createSectionToDo($activityId, $sectionId, $title, $description, $due_date,$tags = array(), $assigned = array('name' => null, 'id' => null)) {
@@ -407,16 +425,16 @@ class ActivitiesAPI extends AbstractConnectionsAPI
                         array('Content-Type' => 'application/atom+xml',
                                 'Content-Language' => 'en-US',));
                                 
-        //$response->getStatus();
     }
 
-    public function markToDoCompleted($id)
+    public function markToDoCompleted($id, $completed = true)
     {
      	$this->httpClient = $this->getHttpClient();
 		$newEntry  = IBMEditableAtomEntry::createEmptyEditableEntry();
         $newEntry->addCategory('todo', 'http://www.ibm.com/xmlns/prod/sn/type', 'To Do');
-        $newEntry->addCategory('completed', 'http://www.ibm.com/xmlns/prod/sn/flags', 'Completed');
-        
+        if ($completed){
+        	$newEntry->addCategory('completed', 'http://www.ibm.com/xmlns/prod/sn/flags', 'Completed');
+        }
 		$this->httpClient->resetParameters();
         $this->httpClient->setRawData($newEntry->getDomString());
         $this->httpClient->setParameterPost("activityNodeUuid", $id);        
@@ -426,7 +444,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
                             						    'Content-Language' => 'en-US'
                             						    )
                      			);
-                     			
+        if (empty($result) || !$this->checkResult($result)){
+         	return false;
+        }            			
         switch ($result->getStatus())
         {
         	case '200': 

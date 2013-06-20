@@ -197,9 +197,9 @@ class ConnectionsViewer
 	
 	public function activityToDo($arr)
 	{
-		$icon = ($arr['completed']) ? 'ico_checkedBlueBig.png' :'ico_uncheckBlueBig.png';
-		$action = ($arr['completed']) ? '' : " onclick='markCompleted(\"{$arr['id']}\",\"{$arr['parent_id']}\");'";
-		$type_content = "<img src='{$this->img_url}/new/{$icon}' id='todo_{$arr['id']}' {$action} />";
+		$class = ($arr['completed']) ? "class=\"completed_todo\"" : "class=\"uncompleted_todo\"";
+		$action = " onclick='markCompleted(\"{$arr['id']}\",\"{$arr['parent_id']}\");'";
+		$type_content = "<div id='todo_{$arr['id']}' {$class} {$action} > </div>";
 	
 		$due_text = "";
 		if (!empty($arr['dueDate'])) $due_text = " | due ". $arr['dueDate'];
@@ -213,17 +213,16 @@ class ConnectionsViewer
 		$assignedText = "";
 		if (!empty($arr['assignedTo']))
 		{
-			$assignedText = " {$this->language['LBL_ASSIGNED_TO']} ". $this->getBusinesscard($arr['assignedTo']) . " ";
+			$assignedText = " &nbsp;{$this->language['LBL_ASSIGNED_TO']} ". $this->getBusinesscard($arr['assignedTo']) . " ";
 		}
 		
 		return "<tr>
 					<td>
 						<div width='100%'>
 							<span style='float:left;'>
-							<div class='item-img'>
+								<div class='item-img'>
 								{$type_content}
 								</div>
-								
 								<div class='item-label'>
 								<b>{$arr['title']}</b>
 								</div> 
@@ -236,6 +235,7 @@ class ConnectionsViewer
 								{$comment_node_icon}
 								<a href='#' onclick='modalActivityNode(\"{$arr['parent_id']}\",\"{$arr['id']}\");return false'>{$this->language['LBL_VIEW']}</a>
 							</span><br/>
+							
 					</td>
 				</tr>";
 	}
@@ -295,13 +295,13 @@ class ConnectionsViewer
 	
 	public function actionsEditCommunity($communityId)
 	{
-		return
-				"<a href='#' onclick='if (document.getElementById(\"community_id_selection\") != null) document.getElementById(\"community_id_selection\").value=\"\";selectCommunity();return false;'>
+		$res = "<a href='#' onclick='if (document.getElementById(\"community_id_selection\") != null) document.getElementById(\"community_id_selection\").value=\"\";selectCommunity();return false;'>
 										<div class='ibm_button ico_close'>
 											
 										</div>
 											{$this->language['LBL_CLOSE']}
-									</a>
+									</a>";
+		if (!empty($communityId)) $res .= "
 									<a href='#' onclick='editIBMElement(\"Community\",\"$communityId\");return false;'>
 										<div class='ibm_button ico_edit'>
 											
@@ -314,6 +314,7 @@ class ConnectionsViewer
 										</div>
 										{$this->language['LBL_DELETE']}
 									</a>		";
+		return $res;
 	}
 	
 
