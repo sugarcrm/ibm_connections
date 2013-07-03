@@ -54,9 +54,9 @@ $manifest = array (
   'icon' => '',
   'is_uninstallable' => true,
   'name' => 'IBM Connections',
-  'published_date' => '2012-03-27 20:00:00',
+  'published_date' => '2012-07-02 20:00:00',
   'type' => 'module',
-  'version' => '2.1.0-OpenSocial',
+  'version' => '2.2.0-OpenSocial',
   'remove_tables' => 'prompt',
 );
 
@@ -74,6 +74,35 @@ $installdefs = array (
   ),
   'layoutdefs' => 
   array (
+  	array (
+      'from' => '<basepath>/SugarModules/layoutdefs/Accounts/_overrideAccountDocuments_Connections.php',
+      'to_module' => 'Accounts',
+    ),
+   array (
+      'from' => '<basepath>/SugarModules/layoutdefs/Opportunities/_overrideOpportunityDocuments_Conn.php',
+      'to_module' => 'Opportunities',
+    ),
+    array (
+      'from' => '<basepath>/SugarModules/layoutdefs/Contacts/_overrideContactDocuments_Connections.php',
+      'to_module' => 'Contacts',
+    ),
+    array (
+      'from' => '<basepath>/SugarModules/layoutdefs/Cases/_overrideCaseDocuments_Connections.php',
+      'to_module' => 'Cases',
+    ),
+    array (
+      'from' => '<basepath>/SugarModules/layoutdefs/Bugs/_overrideBugDocuments_Connections.php',
+      'to_module' => 'Bugs',
+    ),
+    array (
+      'from' => '<basepath>/SugarModules/layoutdefs/Quotes/_overrideQuoteDocuments_Connections.php',
+      'to_module' => 'Quotes',
+    ),
+    array (
+      'from' => '<basepath>/SugarModules/layoutdefs/Products/_overrideProductDocuments_Connections.php',
+      'to_module' => 'Products',
+    ),
+    
   ),
   'relationships' => 
   array (
@@ -95,6 +124,11 @@ $installdefs = array (
     array (
       'from' => '<basepath>/SugarModules/language/application/en_us.lang.php',
       'to_module' => 'application',
+      'language' => 'en_us',
+    ),
+    array (
+      'from' => '<basepath>/SugarModules/language/modules/Documents/en_us.ConnectionsFolders.php',
+      'to_module' => 'Documents',
       'language' => 'en_us',
     ),
   ),

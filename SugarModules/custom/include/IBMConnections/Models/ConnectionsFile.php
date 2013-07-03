@@ -67,6 +67,14 @@ class ConnectionsFile extends ConnectionsModel
         return $this->atom->getNodeContent("td:label");
     }
     
+      /**
+     *
+     * Enter description here ...
+     */
+    public function getLibraryId() {
+        return $this->atom->getNodeContent("td:libraryId");
+    }
+    
 	/**
 	 * 
 	 * Enter description here ...

@@ -293,6 +293,15 @@ class ConnectionsViewer
 		return "<button class='ibm_button' onclick='{$click}'> {$img}&nbsp;<div class='button-label'>{$this->language[$label]}</div> </button>&nbsp;";
 	}
 	
+	public function communityBottomButtons($activeCommunityId)
+	{
+		return "<table><tr><td>
+						<input class='button' type='button' value='Select' onclick='selectCommunity();' />
+						<input class='button' type='button' value='Cancel' onclick='closeCommunityPanel();' />
+						<input type='hidden' name='community_id_selection' id='community_id_selection' value='{$activeCommunityId}'>
+						</td></tr></table>";
+	}
+	
 	public function actionsEditCommunity($communityId)
 	{
 		$res = "<a href='#' onclick='if (document.getElementById(\"community_id_selection\") != null) document.getElementById(\"community_id_selection\").value=\"\";selectCommunity();return false;'>

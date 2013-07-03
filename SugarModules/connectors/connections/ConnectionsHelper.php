@@ -664,11 +664,20 @@ class ConnectionsHelper
 	{
 		global $beanList, $current_user;
 		$communityId = $this->getCommunityId();
+		$community = $this->apiClass->getCommunity($communityId);
+		if (empty($community)){
+			ob_clean();
+			echo json_encode(array('frame' => $reply, 'content' => $this->language['NO_CCONNECTIONS'], 'container_id' => $tab .'_list'));
+			return;
+		}
+		$type = $community->getCommunityType();
+		$message = ($type == "public") ? $this->language['LBL_FILES_MESSAGE_FOR_PUBLIC_COMMUNITY'] : "" ;
 		$tplName = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/CreateFile.tpl';
 		$smarty = new Sugar_Smarty();
 		$smarty->assign('language', $this->language);
 		$smarty->assign('parent_type', $this->parent_type);
 		$smarty->assign('parent_id', $this->parent_id);
+		$smarty->assign('message', $message);
 		$profile_body = $smarty->fetch($tplName);
 		
 		
@@ -1009,11 +1018,7 @@ class ConnectionsHelper
 			$reply .= "<tr><td>{$this->language['LBL_NO_DATA']}</td></tr>";
 		}
 		$reply .= $this->view->table_end;
-		$reply .= "<table><tr><td>
-						<input class='button' type='button' value='Select' onclick='selectCommunity();' />
-						<input class='button' type='button' value='Cancel' onclick='closeCommunityPanel();' />
-						<input type='hidden' name='community_id_selection' id='community_id_selection' value='{$communityId}'>
-						</td></tr></table>";
+		$reply .= $this->view->communityBottomButtons($communityId);
 		return $reply;
 	}
 	

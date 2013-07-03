@@ -17,6 +17,7 @@
 require_once 'custom/include/IBMConnections/FeedApi/IBMAtomEntry.php';
 require_once('custom/include/IBMConnections/Api/AbstractConnectionsAPI.php');
 require_once 'custom/include/IBMConnections/Models/ConnectionsFile.php';
+require_once 'custom/include/IBMConnections/Models/ConnectionsFolder.php';
 //require_once 'custom/include/Helpers/IBMHelperTags.php';
 //require_once('custom/include/IBMCore/Logger/SFALogger.php');
 
@@ -35,11 +36,9 @@ class FilesAPI extends AbstractConnectionsAPI {
     private $LOGGER;
     var $profilesAPI;
 
-    function __construct($httpClient = null) {
+    function __construct($httpClient = null) 
+    {
         parent::__construct($httpClient);
-       // require_once('custom/include/IBMConnections/Api/ProfilesAPI.php');
-       // $this->profilesAPI = new ProfilesAPI($this->getHttpClient());
-       // $this->LOGGER = SFALogger::getLog('connections');
     }
 
     /**
@@ -69,7 +68,8 @@ class FilesAPI extends AbstractConnectionsAPI {
      * @return array of ConnectionsFile
      * @throws IBMConnectionsApiException
      */
-    public function getCommunityFiles($cid, $page = 1, $search = '') {
+    public function getCommunityFiles($cid, $page = 1, $search = '') 
+    {
         $path = '/files/basic/api/communitycollection/' . $cid . '/feed';
         $client = $this->getHttpClient();
         $client->resetParameters();
@@ -91,7 +91,7 @@ class FilesAPI extends AbstractConnectionsAPI {
                         array('Content-Type' => self::CONTENT_TYPE,
                                 'Content-Language' => 'en-US'));
 
-        if (empty($response) || !$this->checkResult($response)){
+        if (empty($response) || !$this->checkResult($response)) {
          	return array();
         }
 		$files = array();
@@ -119,120 +119,10 @@ class FilesAPI extends AbstractConnectionsAPI {
         }
 		return $files;
     }
-   /* public function uploadFile($fileName, $content, $mimeType, $visibility) {
-        $path = '/files/basic/api/myuserlibrary/feed';
-        $nonce = $this->requestNonce();
-        $client = $this->getClient();
-        $client->setParameterPost('visibility', $visibility);
-        $client->setParameterPost('label', basename($fileName));
-        $client->setFileUpload($fileName, 'file', $content, $mimeType);
-        $client->setParameterPost('createVersion', 'true');
-        //$client->setIgnoreResponseContentLength();
-        $curlOpts = array(
-                                    CURLOPT_SSL_VERIFYHOST => false,
-                                    CURLOPT_SSL_VERIFYPEER => false,
-                                    CURLOPT_VERBOSE => true, // Display communication with server
-                                    CURLOPT_RETURNTRANSFER => true, // Return data instead of display to std out
-                                    CURLOPT_HEADER => true, // Display headers
-                                    CURLOPT_USERPWD => $this->account_name. ":" . $this->account_password,//$client->username . ":" . $client->password,
-                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0
-                                    
-                                );
-                                
-       $config = array(
-                        'persistent'   => true,
-                        'adapter'   => 'Zend_Http_Client_Adapter_Curl',
-                        'curloptions' => $curlOpts,
-                        'ssltransport' => 'sslv3',
-                        'strictredirects' => true,
-                        'maxredirects' => 0
-                    );
-       
-         $client->setConfig( $config );
-		$this->setHttpClient($client);
-        $response = $this
-                ->requestForPath('POST', $path,
-                        array('Content-Type' => 'multipart/form-data',
-                                'Content-Language' => 'en-US',
-                                'X-Update-Nonce' => $nonce,));
-		if (empty($response) || !$this->checkResult($response)){
-         	return;
-        }
-        switch ($response->getStatus()) {
-            case 200:
-                if (strstr($response->getStatus(),
-                        '<meta name="status" content="409"/>') === false) {
-                    //File has been uploaded
-                    break;
-                }
-            // Error with response and falling through to the default error message.
-            default:
-                $message = 'The file - ' . $fileName . ' - couldn\'t be'
-                        . ' successfully uploaded at this time, the response returned'
-                        . ' with an unexpected HTTP error code.';
-              //  require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
-             //  $connEx = new IBMConnectionsApiException(
-              //          'The file upload to Connections failed',
-              ///          FILES_API_UPLOAD_FILENAME_ALREADY_EXISTS, $response);
-              //  $this->LOGGER->error($connEx->__toString());
-              //  throw $connEx;
-        }
+  
 
-        if (strstr($response->getBody(), '<body class="X-LConn-API-Response">')
-                != false) {
-            // removing the html wrapping the json
-            $json = $this->decodeXml(substr($response->getBody(), 134, -16));
-
-            $jsonResponse = json_decode($json);
-
-            $fullId = $jsonResponse->{'id'};
-            preg_match(
-                    '/[a-zA-Z|0-9]{8}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{12}/',
-                    $fullId, $id);
-            $response->docId = $id[0];
-            //$response->docUrl = $this->updateIebUrl($jsonResponse->{'links'}[3]->{'href'});
-            $response->docUrl = $jsonResponse->{'links'}[3]->{'href'};
-            $response->fileSize = $jsonResponse->{'links'}[4]->{'length'};
-        }
-
-        if (!empty($response)) {
-            preg_match('/<meta name="status" content="409"\/>/',
-                    $response->getBody(), $conflict);
-            if (sizeof($conflict) >= 1) {
-                $message = 'The file - ' . $fileName . ' - couldn\'t be'
-                        . ' successfully uploaded at this time, a file with the same'
-                        . ' name already exists in Connections.';
-                        echo $message;
-                //require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
-              //  $connEx = new IBMConnectionsApiException($message,
-              //          FILES_API_UPLOAD_FILENAME_ALREADY_EXISTS, $response);
-               // $this->LOGGER->error($connEx->__toString());
-                //throw $connEx;
-            }
-
-            if (empty($response->docId) || empty($response->docUrl)
-                    || empty($response->docUrl) || !isset($response->fileSize)) {
-                $message = 'The file - ' . $fileName . ' - couldn\'t be'
-                        . ' successfully uploaded at this time, the Connections'
-                        . ' ID, url, and filesize could not be set.';
-                        echo $message;
-               // require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
-              //  $connEx = new IBMConnectionsApiException($message,
-               //         FILES_API_UPLOAD_FILENAME_ALREADY_EXISTS, $response);
-               // $this->LOGGER->error($connEx->__toString());
-              //  throw $connEx;
-            }
-            $bean->doc_id = $response->docId;
-            $bean->doc_url = $response->docUrl;
-            $bean->doc_direct_url = $response->docUrl;
-            $bean->file_size = $response->fileSize;
-        }
-
-        return $response;
-    }
-*/
-
-public function uploadFile($fileName, $content, $mimeType, $visibility) {
+	public function uploadFile($fileName, $content, $mimeType, $visibility) 
+	{
         $path = '/files/basic/api/myuserlibrary/feed';
         $nonce = $this->requestNonce();
         $client = $this->getClient();
@@ -265,7 +155,7 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
                         array('Content-Type' => 'multipart/form-data',
                                 'Content-Language' => 'en-US',
                                 'X-Update-Nonce' => $nonce,));
-		if (empty($response) || !$this->checkResult($response)){
+		if (empty($response) || !$this->checkResult($response)) {
          	return;
         }
         switch ($response->getStatus()) {
@@ -293,6 +183,11 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
             $response->docId = $id[0];
             $response->docUrl = $jsonResponse->{'links'}[3]->{'href'};
             $response->fileSize = $jsonResponse->{'links'}[4]->{'length'};
+
+
+
+
+
         }
 
         if (!empty($response)) {
@@ -357,7 +252,8 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
      * @return bool
      * @throws IBMConnectionsApiException
      */
-    public function updateMyFileVisibility($myFileId, $isPublic = false) {
+    public function updateMyFileVisibility($myFileId, $isPublic = false) 
+    {
         $path = '/files/basic/api/myuserlibrary/document/' . $myFileId
                 . '/feed';
        $path .= ($isPublic ? '?visibility=public' : '?visibility=private');
@@ -377,7 +273,7 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
                                 'Content-Language' => 'en-US',
                                 'X-Update-Nonce' => $nonce));
 
-        if (empty($response) || !$this->checkResult($response)){
+        if (empty($response) || !$this->checkResult($response)) {
          	return;
         }
         switch ($response->getStatus()) {
@@ -408,12 +304,11 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
 
      * @throws IBMConnectionsApiException
      */
-    public function updateMyFileName($myFileId, $newFilename) {
-        $path = '/files/basic/api/myuserlibrary/document/' . $myFileId
-                . '/media'; 
-       $path .= "?identifier={$newFilename}";
+    public function updateMyFileName($myFileId, $newFilename) 
+    {
+        $path = '/files/basic/api/myuserlibrary/document/' . $myFileId . '/media'; 
+        $path .= "?identifier={$newFilename}";
         $nonce = $this->requestNonce();
-       // $this->LOGGER->info($path);
         $client = $this->getHttpClient();
         $client->resetParameters();
         $client->setParameterPost('identifier', $newFilename);
@@ -437,9 +332,15 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
      */
      
      
-    public function getFileDetails($documentId) {
+    public function getFileDetails($documentId, $libraryId = '') {
     	$this->httpClient = $this->getHttpClient();
-		$result = $this->requestForPath("GET","files/basic/api/myuserlibrary/document/{$documentId}/entry");
+    	if (empty($libraryId)){
+    		$path = "files/basic/api/myuserlibrary/document/{$documentId}/entry";
+    	}
+    	else {
+    		$path = "files/basic/api/library/{$libraryId}/document/{$documentId}/entry";
+    	}
+		$result = $this->requestForPath("GET", $path);
 		try	{
 			$entry = IBMAtomEntry::loadFromString($result->getBody());
         	return new ConnectionsFile($entry);
@@ -555,7 +456,7 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
                         '/files/basic/api/shares/feed?sharedWhat=' . $myFileId,
                         array('Content-Type' => self::CONTENT_TYPE,
                                 'Content-Language' => 'en-US',));
-		if (empty($response) || !$this->checkResult($response)){
+		if (empty($response) || !$this->checkResult($response)) {
          	return false;
         }
         switch ($response->getStatus()) {
@@ -589,16 +490,16 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
      *
      * returns true if the Connections File is successfully deleted
      */
-    public function deleteDoc($documentId) {
+    public function deleteDoc($documentId) 
+    {
         $path = '/files/basic/api/myuserlibrary/document/' . $documentId
                 . '/entry';
         $client = $this->getHttpClient();
-        //$this->LOGGER->info($path);
         $nonce = $this->requestNonce();
         $response = $this
                 ->requestForPath('DELETE', $path,
                         array('X-Update-Nonce' => $nonce));
-        if (empty($response) || !$this->checkResult($response)){
+        if (empty($response) || !$this->checkResult($response)) {
          	return false;
         }
 
@@ -607,13 +508,7 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
             //File has been deleted
                 break;
             default:
-                $message = 'Error when deleting the Connections file with id - '
-                        . $documentId;
-              //  require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
-               // $connEx = new IBMConnectionsApiException($message,
-               //         FILES_API_DELETE_FILE_FAILED, $response);
-               // $this->LOGGER->error($connEx->__toString());
-         //       throw $connEx;
+                return false;
         }
         return TRUE;
     }
@@ -668,7 +563,8 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
      * @param DocumentDecorator $docDecorator
      * @throws IBMConnectionsApiException
      */
-    public function updateMetadata(DocumentDecorator $docDecorator) {
+    public function updateMetadata(DocumentDecorator $docDecorator) 
+    {
         $bean = $docDecorator->getBean();
         $path = '/files/basic/api/myuserlibrary/document/' . $bean->doc_id
                 . '/entry';
@@ -736,7 +632,7 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
                                 'Content-Language' => 'en-US',
                                 'X-Update-Nonce' => $nonce,
                                 'X-Method-Override' => 'PUT',));
-		if (empty($response) || !$this->checkResult($response)){
+		if (empty($response) || !$this->checkResult($response)) {
          	return;
         }
         switch ($response->getStatus()) {
@@ -764,8 +660,90 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
         $bean->file_size = $enclosure['length'];
         $docDecorator->save();
     }
+	
+	
+	public function getUserFolders($userId)
+	{
+		$path = '/files/basic/api/collections/feed?creator=' . $userId;
+        return $this->getFolders($path);
+	}
+	
+	public function getPinnedFolders()
+	{
+		$path = '/files/basic/api/myfavorites/collections/feed';
+        return $this->getFolders($path);
+	}
+	
+	public function getPublicFolders()
+	{
+		$path = '/files/basic/anonymous/api/collections/feed';
+        return $this->getFolders($path);
+	}
+	
+	public function getSharedFolders()
+	{
+		$path = '/files/basic/api/collections/feed?sharedWithMe=true';
+        return $this->getFolders($path);
+	}
+	
+	private function getFolders($path)
+	{
+        $page = 1;
+        $folders = array();
+        $this->getHttpClient()->resetParameters();
+        $this->getHttpClient()->setParameterGet('ps', 500);
+        $total = 500;
+        do {
+		    $this->getHttpClient()->setParameterGet('page', $page);
+		    $response = $this
+		            ->requestForPath('GET', $path,
+		                    array('Content-Type' => self::CONTENT_TYPE,
+		                            'Content-Language' => 'en-US'));
+		          
 
-    protected function updateIebUrl($oldLink) {
+		    if (empty($response) || !$this->checkResult($response)) {
+		     	return $folders;
+		    }
+			$page++;
+		    $feed = IBMAtomFeed::loadFromString($response->getBody());
+		    $total = $feed->getTotalResults();
+		    $entries = $feed->getEntries();
+		    foreach ($entries as $entry) {
+		         	$folders[] = new ConnectionsFolder($entry);
+		    }
+        }
+        while (count($folders) < $total);
+		return $folders;
+	}
+	
+	public function getFilesFromFolder($folderId, $page = '1')
+	{
+		$path = '/files/basic/api/collection/' . $folderId . '/feed';
+        $this->getHttpClient()->resetParameters();
+        $this->getHttpClient()->setParameterGet('page', $page);
+        $this->getHttpClient()->setParameterGet('ps', 10);
+        $response = $this->requestForPath('GET', $path, array('Content-Type' => self::CONTENT_TYPE, 'Content-Language' => 'en-US'));
+
+        if (empty($response) || !$this->checkResult($response)) {
+         	return array('files' => array(),'metadata' => $this->getLastResultMetadata());
+        }
+		$files = array();
+        $feed = IBMAtomFeed::loadFromString($response->getBody());
+        $entries = $feed->getEntries();
+        foreach ($entries as $entry) {
+             	$files[] = new ConnectionsFile($entry);
+        }
+        $data = array(
+			'totalResults' => $feed->getTotalResults(),
+			'itemsPerPage' => 10,
+			'startIndex' => ($page-1)*10+1
+		);
+        return array('files' => $files,'metadata' => $data);
+		//return $files;
+	}
+	
+    protected function updateIebUrl($oldLink) 
+    {
         $newLink = $oldLink;
         if ($this->getClient()->getAuthMethod() == AuthMethod::WEB_SSO) {
             //$this->LOGGER->debug("updateIebUrl: oldLink=" . $oldLink);
@@ -786,7 +764,8 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
      * @param $txt - XML encoded text
      * @return decoded text
      */
-    private function decodeXml($txt) {
+    private function decodeXml($txt) 
+    {
         $txt = str_replace('&amp;', '&', $txt);
         $txt = str_replace('&lt;', '<', $txt);
         $txt = str_replace('&gt;', '>', $txt);
@@ -802,7 +781,8 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
      * @param $txt - plain text
      * @return XML encoded text
      */
-    private function encodeXml($txt) {
+    private function encodeXml($txt) 
+    {
         $txt = str_replace('&', '&amp;', $txt);
         $txt = str_replace('<', '&lt;', $txt);
         $txt = str_replace('>', '&gt;', $txt);
@@ -814,9 +794,8 @@ public function uploadFile($fileName, $content, $mimeType, $visibility) {
     /**
      * @return IBMHttpClient
      */
-    private function getClient() {
+    private function getClient() 
+    {
         return $this->getHttpClient();
-       //$client = new Zend_Http_Client();
-       // return $client;
     }
 }

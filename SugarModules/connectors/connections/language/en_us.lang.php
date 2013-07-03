@@ -222,6 +222,7 @@ $connector_strings = array (
 	'LBL_CONFIRM_DELETE_COMMUNITY' => 'Are you sure you want to delete this community?',
 	'LBL_UPDATING' => 'Updating',
 	'LBL_NO_CONNECTION' => 'No Connection',
+	'LBL_FILES_MESSAGE_FOR_PUBLIC_COMMUNITY' => 'Only public files can be shared with this community.',
 
 	
 );

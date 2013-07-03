@@ -201,39 +201,11 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     public function deleteFile($document_id)
     {
       	return $this->api->getFilesAPI()->deleteDoc($document_id);
-       /* $client = $this->getClient();
-        $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/object/snx:file!{$document->doc_id}";
-        $GLOBALS['log']->debug("CONNECTIONS REQUEST: $url");
-        $rawResponse = $client->setUri($url)
-            ->request("DELETE");
-        $reply = array('rawResponse' => $rawResponse->getBody());
-        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
-        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
-
-        // Refresh the document cache
-        $this->loadDocCache(true);
-
-        return array('success'=>TRUE);
-        */
     }
     
      public function deleteDoc($document_id)
     {
       	return $this->api->getFilesAPI()->deleteDoc($document_id);
-       /* $client = $this->getClient();
-        $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/object/snx:file!{$document->doc_id}";
-        $GLOBALS['log']->debug("CONNECTIONS REQUEST: $url");
-        $rawResponse = $client->setUri($url)
-            ->request("DELETE");
-        $reply = array('rawResponse' => $rawResponse->getBody());
-        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
-        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
-
-        // Refresh the document cache
-        $this->loadDocCache(true);
-
-        return array('success'=>TRUE);
-        */
     }
 
 
@@ -699,6 +671,40 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		return $this->api->getFilesAPI()->uploadFile($docName, sugar_file_get_contents($fileToUpload),  $mimeType, $visibility);
     }
     
+    public function getMyFolders() 
+	{
+		return $this->getUserFolders($this->api_data['userId']);
+    }
+    public function getUserFolders($userId) 
+	{
+		return $this->api->getFilesAPI()->getUserFolders($userId);
+    }
+    
+    public function getSharedFolders() 
+	{
+		return $this->api->getFilesAPI()->getSharedFolders();
+    }
+    
+    public function getPinnedFolders() 
+	{
+		return $this->api->getFilesAPI()->getPinnedFolders();
+    }
+    
+    public function getPublicFolders() 
+	{
+		return $this->api->getFilesAPI()->getPublicFolders();
+    }
+    
+    public function getFilesFromFolder($folderId, $page = 1) 
+	{
+		return $this->api->getFilesAPI()->getFilesFromFolder($folderId, $page);
+    }
+    
+    public function getFileDetails($fileId, $libraryId = '') 
+	{
+		return $this->api->getFilesAPI()->getFileDetails($fileId, $libraryId);
+    }
+    
     public function getOverviewCounts($communityId)
     {
 		$api = $this->api->getCommunitiesAPI();
@@ -713,18 +719,4 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		return $reply;
     }
 
-
-	public function updateFile($fileToUpload, $docName, $mimeType,$comm_type) 
-	{
-        if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhitelist) ) {
-            $mimeType = 'application/octet-stream';
-        }
-		$urlReq = "files/basic/api/myuserlibrary/document/{$docName}/entry?identifier=label";
-        $client = $this->getClient();
-	    $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
-		$client->setAuth($this->account_name,$this->account_password);
-		$rawResponse = $client->setUri($url)->request("DELETE");
-        $reply = $this->uploadFile($fileToUpload, $docName, $mimeType,$comm_type);
-        return $reply;
-    }
 }
