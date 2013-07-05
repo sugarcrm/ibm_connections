@@ -86,6 +86,25 @@ class ConnectionsViewer
 				
 	}
 	
+	public function subcommunity($arr) 
+	{
+				$members = ($arr['member_count'] > 1) ? $arr['member_count']." ". $this->language['LBL_PEOPLE'] : "1 ". $this->language['LBL_PERSON'];
+				$tag_str = "";
+				if (count($arr['tags']) > 0) $tag_str = "<br/>{$this->language['LBL_TAGS']}: " . implode(', ', $arr['tags']);
+				
+				return "<tr>
+							<td>
+									<img src='{$arr['logo']}' style='width:32px;height:32px;'/> 
+									<a href='{$arr['link']}' target='_blank'><b>{$arr['title']}</b></a>
+									<img src='{$this->img_url}/icons/{$arr['type']}.PNG' />
+									<br/>
+									{$members} | {$this->language['LBL_UPDATED_BY']} ".$this->getBusinesscard($arr['author'])." {$arr['updated']}
+									". $tag_str."
+								<br/>
+							</td>
+						</tr>";
+	}
+	
 	public function activityReply($arr)
 	{
 		return "<tr>
@@ -118,7 +137,6 @@ class ConnectionsViewer
 			
 	}
 	
-	
 	public function community($arr) 
 	{
 				$members = ($arr['member_count'] > 1) ? $arr['member_count']." ". $this->language['LBL_PEOPLE'] : "1 ". $this->language['LBL_PERSON'];
@@ -138,10 +156,6 @@ class ConnectionsViewer
 							</td>
 						</tr>";
 	}
-	
-	
-	
-	
 	
 	public function discussionReply($arr)
 	{
@@ -293,27 +307,45 @@ class ConnectionsViewer
 		return "<button class='ibm_button' onclick='{$click}'> {$img}&nbsp;<div class='button-label'>{$this->language[$label]}</div> </button>&nbsp;";
 	}
 	
-	public function actionsEditCommunity($communityId)
+	public function communityBottomButtons($activeCommunityId)
 	{
-		$res = "<a href='#' onclick='if (document.getElementById(\"community_id_selection\") != null) document.getElementById(\"community_id_selection\").value=\"\";selectCommunity();return false;'>
+		return "<table><tr><td>
+						<input class='button' type='button' value='Select' onclick='selectCommunity();' />
+						<input class='button' type='button' value='Cancel' onclick='closeCommunityPanel();' />
+						<input type='hidden' name='community_id_selection' id='community_id_selection' value='{$activeCommunityId}'>
+						</td></tr></table>";
+	}
+	
+	public function actionsEditCommunity($communityId, $isCommunityOwner = false)
+	{
+		$res = "<li><a href='#' onclick='if (document.getElementById(\"community_id_selection\") != null) document.getElementById(\"community_id_selection\").value=\"\";selectCommunity();return false;'>
 										<div class='ibm_button ico_close'>
 											
 										</div>
 											{$this->language['LBL_CLOSE']}
 									</a>";
-		if (!empty($communityId)) $res .= "
-									<a href='#' onclick='editIBMElement(\"Community\",\"$communityId\");return false;'>
-										<div class='ibm_button ico_edit'>
-											
-										</div>
-											{$this->language['LBL_EDIT']}
-									</a>
-									<a href='#' onclick='deleteCommunity(\"$communityId\");return false;'>
-										<div class='ibm_button ico_delete'>
-											
-										</div>
-										{$this->language['LBL_DELETE']}
-									</a>		";
+		if (!empty($communityId)) {
+			$res .= "<a href='#' onclick='editIBMElement(\"Community\",\"$communityId\");return false;'>
+						<div class='ibm_button ico_edit'></div>
+						{$this->language['LBL_EDIT']}
+					</a>
+					<a href='#' onclick='deleteCommunity(\"$communityId\");return false;'>
+					<div class='ibm_button ico_delete'>	</div>
+						{$this->language['LBL_DELETE']}
+					</a>	
+				";
+								
+			if ($isCommunityOwner){
+				$res .= "</li>
+						<li class='select-community' id='create_subcommunity'>
+							<a href='#' onclick='editIBMElement(\"Subcommunity\",\"$communityId\");return false;'>
+								<div class='ibm_button'>
+									{$this->language['LBL_CREATE_SUBCOMMUNITY_BUTTON']}
+								</div>
+							</a>	";
+			}
+		}
+		$res .= "</li>";
 		return $res;
 	}
 	

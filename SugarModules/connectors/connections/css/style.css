@@ -290,6 +290,13 @@
 			height: 19px;
 			padding: 4px 0px 4px 15px;
         }
+        
+        #connectionsDiv nav ul ul li#create_subcommunity {
+        	background: white;
+        	-moz-border-radius: 0;
+			border-radius: 0;
+			-webkit-border-radius: 0;
+        }
 
 
 	#connectionsDiv nav ul ul ul {

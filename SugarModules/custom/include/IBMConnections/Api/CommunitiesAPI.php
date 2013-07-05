@@ -166,7 +166,47 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
                         array('Content-Type' => 'application/atom+xml',
                                 'Content-Language' => 'en-US',));
     }
+  public function createSubcommunity($communityId, $title, $content, $type, $tags = array(), $logo = '') {
+        $entry = IBMEditableAtomEntry::createEmptyEditableEntry();
+        $entry
+                ->addCategory('community',
+                        'http://www.ibm.com/xmlns/prod/sn/type');
+        $entry->setTitle($title);
+        $entry->setContent($content);
 
+        $communityTypeElt = $entry->getDom()->createElementNS('http://www.ibm.com/xmlns/prod/sn','communityType', $type);
+        $entry->getEntryNode()->appendChild($communityTypeElt);
+        
+        foreach($tags as $tag) {
+        	$tag = trim($tag);
+        	if (!empty($tag))  	$entry->addTag($tag);
+        }
+        if (!empty($logo)){
+			$logoElt = $entry->getDom()->createElement('link');
+			$logoElt->setAttribute('rel', "http://www.ibm.com/xmlns/prod/sn/logo");
+			$logoElt->setAttribute('href', $logo);
+			$entry->getEntryNode()->appendChild($logoElt);	
+        }
+        
+        $parentElt = $entry->getDom()->createElement('link');
+		$parentElt->setAttribute('rel', "http://www.ibm.com/xmlns/prod/sn/parentcommunity");
+		$parentElt->setAttribute('href', $this->url . '/communities/service/atom/community/instance?communityUuid='. $communityId);
+		$entry->getEntryNode()->appendChild($parentElt);
+
+        $this->getHttpClient()->setRawData($entry->getDomString());
+
+        $response = $this->requestForPath('POST',
+                        '/communities/service/atom/communities/my',
+                        array('Content-Type' => 'application/atom+xml',
+                                'Content-Language' => 'en-US',));
+        if (empty($response) || !$this->checkResult($response)){
+         	return;
+        }
+
+        $loc = $response->getHeader('Location');
+        $query = explode('communityUuid=', $loc);
+        return $query[1];
+    }
     /**
      *
      */
@@ -307,6 +347,52 @@ class CommunitiesAPI extends AbstractConnectionsAPI {
         	new ConnectionsResultMetadata($sortBy, $sortOrder, $feed->getItemsPerPage(), $retrievedPageNumber , $feed->getTotalResults())
         );
         return array('communities' => $communities,'metadata' => $this->getLastResultMetadata());
+    }
+    
+    public function getSubCommunities($communityId,$search = null, $filterType = null, $sortBy = null, $sortOrder = null, $pageSize = null, $pageNumber = null) {
+        $this->getHttpClient()->resetParameters();
+        if ($filterType != null) {
+        	$this->getHttpClient()->setParameterGet("filterType", $filterType);
+        }
+        if ($search != null) {
+        	$this->getHttpClient()->setParameterGet("search", $search);
+        }
+        else {
+        	$sortBy = "lastmod";
+        }
+
+		if ($pageSize != null) {
+			$this->getHttpClient()->setParameterGet("ps", $pageSize);
+		}
+
+		if($pageNumber != null) {
+			$this->getHttpClient()->setParameterGet("page", $pageNumber);
+		}
+
+		if($sortBy != null) {
+			$this->getHttpClient()->setParameterGet("sortField", $sortBy);
+		}
+
+		if($sortOrder != null) {
+			if($sortOrder == "asc") {
+				$this->getHttpClient()->setParameterGet("asc", "true");
+			} else {
+				$this->getHttpClient()->setParameterGet("asc", "false");
+			}
+		}
+
+        $result = $this->requestForPath("GET", "/communities/service/atom/community/subcommunities?communityUuid={$communityId}");
+        if (empty($result) || !$this->checkResult($result)){
+         	return array('communities' => array(),'metadata' => array());
+        }
+
+        $communities = array();
+        $feed = IBMAtomFeed::loadFromString($result->getBody());
+        $entries = $feed->getEntries();
+        foreach ($entries as $entry) {
+            $communities[] = new ConnectionsCommunity($entry, null);
+        }
+        return $communities;
     }
 
     /**

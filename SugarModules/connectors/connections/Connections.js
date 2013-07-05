@@ -213,6 +213,49 @@ $('#member_name').autocomplete({
 	$('#member_name').autocomplete("option", "appendTo", "#CreateCommunity");
 }
 
+
+function addMemberInSubcommunityAutocomplete()
+{
+if( typeof(window.$) !== "undefined")
+$('#subcomm_member_name').autocomplete({
+		source: function(request,response) {
+				  $.ajax({
+					url: createURL('method=sourceForAutoCompleteMember&search_in_community=true&search_text='+request.term),
+					dataType: "json",
+					minChars: 2,
+					success: function(data) {
+					  response($.map(data, function(item) {
+						return {
+						  label: item.member_name,
+						  value: item.member_name,
+						  member_id:  item.member_id,
+						  community_id: item.community_id,
+						}
+					  }));
+					},
+					error: function(data) {
+						}
+				  });
+				},
+    select: function(event, ui) {
+    
+      var role = $('#subcomm_member_role option:selected').val();
+      var subcomm_role = "subcomm_" + role;
+      if ($('#subcomm_'+role+'_list option:selected[value="'+ui.item.member_id+'"]').length > 0) return false;
+      $('#subcomm_member_list_div').append('<span style=" border: 1px solid #999999;background-color: #fafafa;padding: 1px 0 1px 5px;display:inline;" id="'+ui.item.member_id+'_'+subcomm_role+'"> <span  style="border-right-style: 1px solid #999999;" onclick="removeMemberFromList(\''+ui.item.member_id+'\', \''+subcomm_role+'\')";> X </span> '+ui.item.value+' ('+role+')</span>&nbsp;');
+      if (role == 'member'){
+      	$('#subcomm_member_list').append('<option value="'+ui.item.member_id+'" selected></option>');
+      }
+      else{
+      	$('#subcomm_owner_list').append('<option value="'+ui.item.member_id+'" selected></option>');
+      }
+      $('#subcomm_member_name').val('');
+    }
+		
+		});
+	$('#subcomm_member_name').autocomplete("option", "appendTo", "#CreateSubcommunity");
+}
+
 function addMemberMembersTabAutocomplete()
 {
 if( typeof(window.$) !== "undefined")
@@ -566,7 +609,6 @@ function getTabView(tab_name) {
 }
 
 function saveNewCommunity() {
-    var createCommunityForm = document.getElementById('CreateCommunity');
     var url = 'index.php';
     YAHOO.util.Connect.setForm('CreateCommunity');
     YAHOO.util.Connect.asyncRequest('POST', url, saveNewCommunityHandler);
@@ -581,6 +623,14 @@ var saveNewCommunityHandler = {
     },
     failure: function(data) {
     }
+}
+
+function saveNewSubcommunity() {
+    var url = 'index.php';
+    YAHOO.util.Connect.setForm('CreateSubcommunityForm');
+    YAHOO.util.Connect.asyncRequest('POST', url, saveNewCommunityHandler);
+    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
+    return false;
 }
 
 function createBookmark() {
@@ -696,6 +746,10 @@ function communityValidation(){
 	addToValidate('CreateCommunity', 'community_name', '', true, "");
 	addToValidate('CreateCommunity', 'access', '', true, 'no access');
 	return check_form('CreateCommunity');
+}
+function subcommunityValidation(){
+	addToValidate('CreateSubcommunityForm', 'community_name', '', true, "");
+	return check_form('CreateSubcommunityForm');
 }
 
 function activityValidation(){
@@ -1313,6 +1367,17 @@ function startSearchInTab(event)
         loadTabData(YAHOO.connections.data.tab_name, 1, tb.value);
     }
      return false;
+}
+function subcommunityParentMembers(elem)
+{
+	$('#member_autocomplete').toggle();
+	$('#subcomm_member_list').children().remove();
+	$('#subcomm_owner_list').children().remove();
+	$('#subcomm_member_list_div span').remove();
+}
+function createSubCommunity()
+{
+
 }
 
 function initCal()

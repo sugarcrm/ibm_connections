@@ -24,6 +24,7 @@
             		<option name="private" value="private" selected>{$language.LBL_PRIVATE}</option>
             		<option name="public" value="public">{$language.LBL_PUBLIC}</option>
             	</select>
+            	{$message}
             </td>
         </tr>
       
