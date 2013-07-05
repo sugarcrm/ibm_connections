@@ -72,6 +72,19 @@ class ConnectionsCommunity extends ConnectionsModel
 		$link = $this->atom->getLink('alternate'); 
 		return $link['href'];
 	}
+	
+	public function getParentCommunityId()
+	{
+		$link = $this->atom->getLink('http://www.ibm.com/xmlns/prod/sn/parentcommunity'); 
+		if (empty($link) || empty($link['href'])) {
+			return false;
+		}
+		$parse = explode('communityUuid=', $link['href']);
+		if (empty($parse[1])){
+			return false;
+		}
+		return $parse[1];
+	}
 	/**
 	 *
 	 * Enter description here ...

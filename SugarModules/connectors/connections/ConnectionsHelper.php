@@ -105,14 +105,27 @@ class ConnectionsHelper
 		else {
 			$community = $this->apiClass->getCommunity($communityId);
 			if (empty($community)) {
-				$head = ($recordOwner) ? $this->view->navWrapStart() ."	<li>{$this->view->actionsEditCommunity('')}</li>". $this->view->selectCommunityMenu() . $this->view->navWrapEnd() : '';
+				$head = ($recordOwner) ? $this->view->navWrapStart() ."	{$this->view->actionsEditCommunity('')}". $this->view->selectCommunityMenu() . $this->view->navWrapEnd() : '';
 				
 				return array('head' => "<div id='community_name'>{$this->language['LBL_PRIVATE_COMMUNITY']}</div>{$head}", 'visibility' => 'denied', 'members' => array());
 			}
 			if ($community == "no_connection") {
 				return array('head' => "<div id='community_name'>{$this->language['LBL_NO_CONNECTION']}</div>", 'visibility' => 'denied', 'members' => array());
 			}
-			$navigation = ($recordOwner) ? $this->view->navWrapStart()."	<li>{$this->view->actionsEditCommunity($communityId)}</li>". $this->view->selectCommunityMenu() .$this->view->navWrapEnd() :"";
+			$isCommunityOwner = false;
+			$parentId = $community->getParentCommunityId();
+			if ( empty($parentId) ) {
+				$members_list = $this->getCommunityMemberArray();
+				foreach($members_list as $member){
+					if($this->apiClass->api_data['userId'] == $member['member_id']){
+						if($member['member_role'] == 'owner'){
+							$isCommunityOwner = true;
+						}
+						break;
+					} 
+				}
+			}
+			$navigation = ($recordOwner) ? $this->view->navWrapStart()."	<li>{$this->view->actionsEditCommunity($communityId, $isCommunityOwner)}</li>". $this->view->selectCommunityMenu() .$this->view->navWrapEnd() :"";
 			$head = "
 			<div id='community_logo'>
 							<img src='{$community->getLogoLink()}'/>
@@ -279,7 +292,8 @@ class ConnectionsHelper
 	public function sourceForAutoCompleteMember() 
 	{
 		$search_text = $this->search_text;
-		$reply = $this->apiClass->getMembers("", $search_text);
+		$this->communityId = (isset($this->search_in_community) && ($this->search_in_community)) ? $this->getCommunityId() : '' ;
+		$reply = $this->apiClass->getMembers($this->communityId, $search_text);
 		$response = new SimpleXMLElement($reply['rawResponse']);
 		$member_list = $this->getMembersArray($response);
 		ob_clean();
@@ -658,7 +672,52 @@ class ConnectionsHelper
 		}
 	}
 
-	
+	public function saveSubcommunity() 
+	{
+		global $current_user;
+		$tags = explode(",", $this->community_tags);
+		$subcommId = $this->apiClass->createSubcommunity($this->ibm_id,$this->community_name, $this->description, $this->access, $tags, $this->logo);
+		$communityId = $this->ibm_id;
+		if(!empty($communityId)) {
+			$members = $this->getCommunityMemberArray();
+			$parent_owner_list = array();
+			$parent_member_list = array();
+			foreach($members as $member){
+				if ($member['member_role'] == 'owner') {
+						$parent_owner_list[] = $member['member_id'];
+				}
+				else if ($member['member_role'] == 'member') {
+						$parent_member_list[] = $member['member_id'];
+				}
+			}
+			if ($this->add_all_parent_members) {
+				$this->owner_list = $parent_owner_list;
+				$this->member_list = $parent_member_list;
+			}
+			else {
+				foreach($parent_owner_list as $member){
+					if (!in_array($member, $this->owner_list)) {
+							$this->owner_list[] = $member;
+					}
+				}			
+			}
+			for($i = 0; $i < count($this->owner_list); $i++) {
+				$member_id = $this->owner_list[$i];
+				if (!in_array($member_id, $parent_member_list) && !in_array($member_id, $parent_owner_list)) {
+					continue;
+				}
+				$this->apiClass->addMemberToCommunity($member_id, $subcommId, 'owner');
+			}
+			
+			for($i = 0; $i < count($this->member_list); $i++) {
+				$member_id = $this->member_list[$i];
+				if (!in_array($member_id, $parent_member_list) || in_array($member_id, $this->owner_list)) {
+					continue;
+				}
+				$this->apiClass->addMemberToCommunity($member_id, $subcommId, 'member');
+			}
+		}
+	}
 
 	public function loadFilesList() 
 	{
@@ -704,6 +763,8 @@ class ConnectionsHelper
 		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab .'_list'));
 	}
 	
+	
+	
 	function getCommunityWikiList($communityId, $page, $searchText)
 	{
 		$entries  = $this->apiClass->getCommunityWiki($communityId, $page, $searchText);
@@ -732,7 +793,38 @@ class ConnectionsHelper
 		
 	}
 	
-	
+	public function getCommunitySubcommunities()
+	{
+		$list = $this->getSubcommunitiesList($this->getCommunityId(), $this->page_number, $this->search_text);
+		$tab = 'subcommunity';
+		$reply = $this->display($tab, 1,'');
+		ob_clean();
+		echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab .'_list'));
+	} 
+	function getSubcommunitiesList($communityId, $page, $search_text)
+	{
+		$entries  = $this->apiClass->getSubCommunities($communityId, $page, $search_text);
+		$reply = '';
+
+		if(!empty($entries)) {
+			foreach($entries as $entry) {
+				$arr  = array();
+				$arr['author'] = $entry->getAuthor();
+				$arr['logo'] = $entry->getLogoLink();
+				$arr['link'] = $entry->getLink();
+				$arr['tags'] = $entry->getTags();
+				$arr['title'] = $entry->getTitle();
+				$arr['member_count'] = $entry->getMemberCount();
+				$arr['type'] = $entry->getCommunityType();
+				$arr['updated'] = $this->formateDate($entry->getUpdatedDate());
+				$reply .= $this->view->subcommunity($arr);
+			}
+		}
+		else {
+			return '';
+		}
+		return $reply;
+	}
 	function getCommunityBlog()
 	{
 		$list = $this->getCommunityBlogList($this->getCommunityId(),$this->page_number, $this_search_text);

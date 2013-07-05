@@ -72,6 +72,14 @@ $tabs_meta = array(
 		"active" => false,
 		"onload" => false,
 	),
+	"Subcommunities" => array(
+		"tabView" => "connectionsTabView",
+		"method" => "getCommunitySubcommunities",
+		"label" => "LBL_SUBCOMMUNITIES_TAB",
+		"order" => 8,
+		"active" => false,
+		"onload" => false,
+	),
 	"CreateCommunity" => array(
 		"tabView" => "communitiesTabView",
 		"method" => "createNewCommunity",

@@ -48,6 +48,9 @@ class CustomConnectorsController extends ConnectorsController {
 				case 'saveActivityEntry':
 					$connectionsHelper->saveActivityEntry();
 					break;
+				case 'saveSubcommunity':
+					$connectionsHelper->saveSubcommunity();
+					break;	
 				case 'saveDiscussion':
 					$connectionsHelper->saveDiscussion();
 					break;
@@ -164,6 +167,9 @@ class CustomConnectorsController extends ConnectorsController {
 					break;
 				case 'getCommunityMembers':
 					$connectionsHelper->getCommunityMembers();
+					break;
+				case 'getCommunitySubcommunities':
+					$connectionsHelper->getCommunitySubcommunities();
 					break;
 			}
 			

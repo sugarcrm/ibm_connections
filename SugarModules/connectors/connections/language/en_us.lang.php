@@ -40,6 +40,7 @@ $connector_strings = array (
 	'LBL_BOOKMARKS_TAB' => 'Bookmarks',
 	'LBL_BLOG_TAB' => 'Blogs',
 	'LBL_WIKI_TAB' => 'Wikis',
+	'LBL_SUBCOMMUNITIES_TAB' => 'Subcommunities',
 	'LBL_MEMBERS_TAB' => 'Members',
 	'LBL_MY_COMMUNITIES_TAB' => 'My Communities',
 	'LBL_MY_ACCOUNT_TAB' => 'My Account',
@@ -66,6 +67,7 @@ $connector_strings = array (
 	
 	'LBL_CREATE_BOOKMARK' => 'New Bookmark',
 	'LBL_CREATE_ACTIVITY' => 'New Activity',
+	'LBL_CREATE_SUBCOMMUNITY_BUTTON' => 'Create Subcommunity',
 
 	'LBL_FILE_UPLOADED_SHARED' => 'File Uploaded and Shared!',
 	'LBL_FILE_UPLOADED_NOT_SHARED' => 'File Uploaded, but not shared.',
@@ -204,6 +206,7 @@ $connector_strings = array (
 	'LBL_ASSIGNED_TO' => 'Assigned to',
 	'LBL_REMOVE' => 'Remove',
 	'LBL_TITLE_NEW_COMMUNITY' => 'New Community',
+	'LBL_TITLE_NEW_SUBCOMMUNITY' => 'New Subcommunity',
 	'LBL_TITLE_NEW_MEMBER' => 'Add Member',
 	'LBL_TITLE_NEW_FILE' => 'New File',
 	'LBL_TITLE_NEW_ACTIVITY' => 'New Activity',
@@ -214,6 +217,7 @@ $connector_strings = array (
 	'LBL_TITLE_NEW_ACTIVITYSECTION' => 'New Section',
 	'LBL_TITLE_NEW_ACTIVITYENTRY' => 'New Entry',
 	'LBL_TITLE_NEW_COMMENTFILE' => 'New Comment',
+	'LBL_EDITION_SUBCOMMUNITY' => 'New Subcommunity',
 	'LBL_ACTIVITY_NODE' => 'Activity Node',
 	'LBL_DISCUSSION' => 'Discussion',
 	'LBL_EDITION_COMMUNITY' => 'Community Edition',
@@ -223,6 +227,9 @@ $connector_strings = array (
 	'LBL_UPDATING' => 'Updating',
 	'LBL_NO_CONNECTION' => 'No Connection',
 	'LBL_FILES_MESSAGE_FOR_PUBLIC_COMMUNITY' => 'Only public files can be shared with this community.',
+	'LBL_PARENT_COMMUNITY_OWNERS' => 'Note: All owners of the parent community become owners of the subcommunity.',
+	'LBL_ALL_PARENT_COMMUNITY_MEMBERS' => 'Add all current members of the parent community to this subcommunity.',
+	'LBL_ADD_MEMBERS_FROM_PARENT_COMMUNITY' => 'Add additional people from the member list of the parent community.',
 
 	
 );

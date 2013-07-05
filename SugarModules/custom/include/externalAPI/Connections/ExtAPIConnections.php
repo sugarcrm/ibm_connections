@@ -465,6 +465,12 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
 	}
 	
+	public function getSubCommunities($cummunityId, $page = 1, $searchText = null) {
+		$searchText = str_ireplace(" ","+",$searchText);
+		$api = $this->api->getCommunitiesAPI();
+		$reply = $api->getSubCommunities($cummunityId, $searchText, null, null, null, 5, $page);
+		return $reply;
+	}
 	public function getActivitiesList($communityId, $page, $searchText)
 	{
 		$searchText = str_ireplace(" ","+",$searchText);
@@ -495,6 +501,10 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 		return $this->api->getActivitiesAPI()->getNode($activityId, $nodeId);
 	}
 
+	public function createSubcommunity($communityId, $title, $content, $type, $tags = array(), $logo = '')     
+	{
+		return $this->api->getCommunitiesAPI()->createSubcommunity($communityId, $title, $content, $type, $tags, $logo);
+	}
 	
 	public function createActivity($communityId, $activityName, $description, $tag, $due_date)     
 	{
