@@ -1,4 +1,5 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,7 +28,15 @@
  ********************************************************************************/
 
 
-$app_list_strings['moduleList']['ibm_connections'] = 'Connections';
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_TITLE'] = "Select Connections File";
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_KEY'] = "";
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_LABEL'] = "Select Connections File";
+if (isset($_REQUEST['connections']) && $_REQUEST['connections'] == 'true'){
+	require_once('custom/modules/Documents/Popup_picker.php');
+}
+else {
+	require_once('modules/Documents/Popup_picker.php');
+}
+
+$popup = new Popup_Picker();
+
+echo $popup->process_page();
+
+?>

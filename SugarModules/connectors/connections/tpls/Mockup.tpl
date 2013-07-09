@@ -50,6 +50,7 @@
 									<li><input type="button" value="{$language.LBL_BOOKMARKS_TAB}" class='ibm_tabs' onclick='loadTabData("Bookmarks", 1, "");'  id = 'ibm_Bookmarks_tab' /></li>
 									<li><input type="button" value="{$language.LBL_BLOG_TAB}" class='ibm_tabs' onclick='loadTabData("Blog", 1, "");'  id = 'ibm_Blog_tab' /></li>
 									<li><input type="button" value="{$language.LBL_WIKI_TAB}" class='ibm_tabs' onclick='loadTabData("Wiki", 1, "");'  id = 'ibm_Wiki_tab'/></li>
+									<li><input type="button" value="{$language.LBL_SUBCOMMUNITIES_TAB}" class='ibm_tabs' onclick='loadTabData("Subcommunities", 1, "");'  id = 'ibm_Subcommunities_tab'/></li>
 								</ul>
 							</li>
 						</ul>
