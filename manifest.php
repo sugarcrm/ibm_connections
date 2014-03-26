@@ -68,12 +68,18 @@ $installdefs = array (
       'path' => 'modules/ibm_connections/ibm_connections.php',
       'tab' => false,
     ),
-      array (
-      'module' => 'ibm_connectionsCommunity',
-      'class' => 'ibm_connectionsCommunity',
-      'path' => 'modules/ibm_connectionsCommunity/ibm_connectionsCommunity.php',
-      'tab' => false,
-    ),
+      array(
+          'module' => 'ibm_connectionsCommunity',
+          'class' => 'ibm_connectionsCommunity',
+          'path' => 'modules/ibm_connectionsCommunity/ibm_connectionsCommunity.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsMembers',
+          'class' => 'ibm_connectionsMembers',
+          'path' => 'modules/ibm_connectionsMembers/ibm_connectionsMembers.php',
+          'tab' => false,
+      ),
   ),
   'layoutdefs' => 
   array (

@@ -1,4 +1,7 @@
 <?php
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -23,14 +26,42 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
 
-$app_list_strings['moduleList']['ibm_connections'] = 'Connections';
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_TITLE'] = "Select Connections File";
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_KEY'] = "";
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_LABEL'] = "Select Connections File";
+$fields =
+    array(
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+            'source' => 'non-db',
+        ),
+        'name' => array(
+            'name' => 'name',
+            'type' => 'varchar',
+            'source' => 'non-db',
+            'unified_search' => true,
+        ),
+        'logo' => array(
+            'name' => 'logo',
+            'type' => 'varchar',
+            'source' => 'non-db',
+        ),
+        'role' => array(
+            'name' => 'role',
+            'type' => 'varchar',
+            'source' => 'non-db',
+        )
+    );
 
-$app_list_strings['moduleList']['ibm_connectionsCommunity'] = 'IBM connections Community';
-$app_list_strings['moduleList']['ibm_connectionsMembers'] = 'IBM connections Community members';
+$dictionary['ibm_connectionsMembers'] =
+    array(
+        'fields' => $fields,
+        'mergedFields' => array('id', 'name'),
+        'activity_enabled' => false,
+        'unified_search' => false,
+        'favorites' => false,
+    );
+
+VardefManager::createVardef('ibm_connectionsMembers', 'ibm_connectionsMembers');
