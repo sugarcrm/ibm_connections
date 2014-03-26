@@ -57,6 +57,42 @@
         this.tbodyTag = 'ul[data-action="pagination-body"]';
     },
 
+    initDashlet: function () {
+        this._super('initDashlet', []);
+        if (this.meta.config) {
+            var communityCollect = app.data.createBeanCollection("ibm_connectionsCommunity", null, {});
+            communityCollect.on('reset', this.fillCommunities, this);
+            communityCollect.fetch();
+        }
+    },
+
+    fillCommunities: function (communityCollect) {
+        this.communityOptions = {};
+        var communityField = _.find(this.fields, function (field) {
+            return field.name == 'community_id';
+        });
+
+        _.each(communityCollect.models, function (community) {
+            this.communityOptions[community.get('id')] = community.get('name');
+        }, this);
+
+        if (communityField) {
+            // set the initial saved_report_id to the first report in the list
+            // if there are reports to show and we have not already saved this
+            // dashlet yet with a community ID
+            if (communityCollect.models && !this.settings.has('community_id')) {
+                this.settings.set({
+                    community_id: _.first(communityCollect.models).id
+                });
+            }
+
+            // set field options and render
+            communityField.items = this.communityOptions;
+            communityField._render();
+        }
+
+    },
+    
 //    /**
 //     * New model related properties are injected into each model.
 //     * Update the picture url's property for model's assigned user.
