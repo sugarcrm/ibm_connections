@@ -38,7 +38,16 @@ class ibm_connectionsCommunity extends SugarBean
 
     function fetchFromQuery(SugarQuery $query, array $fields = array(), array $options = array())
     {
-        $a=1;
+        $beans = array();
+        $beans[0] = new ibm_connectionsCommunity();
+        $beans[0]->name = 'ft2 Account';
+        $beans[0]->id = '39f2ab0a-9370-4269-bc5a-86301a8221ce';
+
+        $beans[1] = new ibm_connectionsCommunity();
+        $beans[1]->name = 'ft1 Community';
+        $beans[1]->id = '8d07e618-75c6-45d0-acab-c9b21fa9356e';
+        
+        return $beans;
     }
     
     
