@@ -44,7 +44,7 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-        
+
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
@@ -52,9 +52,12 @@
         this.plugins = _.union(this.plugins, [
             'Connector'
         ]);
-        
+
         this._super('initialize', [options]);
         this.tbodyTag = 'ul[data-action="pagination-body"]';
+
+
+        this.on('click [data-event="button:link_member2task"]', this.linkMember2task, this);
     },
 
     initDashlet: function () {
@@ -92,7 +95,67 @@
         }
 
     },
-    
+
+    _getFilters: function(index) {
+        return [{'community_id': this.settings.get('community_id') }];
+    },
+
+    /*_render: function()
+     {
+     //        debugger;
+     //        this._super('_render', []);
+     },*/
+
+    /*_initEvents: function() {
+     this._super('_initEvents', []);
+
+     return this;
+     },*/
+
+    addLink:function(event, params){
+//        debugger;
+        var id = this._getIId(event);
+        var str = "addLink\n"+"community_id="+this.settings.get('community_id')+"\n"
+            +"module="+params.module+"\n"
+            +"link="+params.link+"\n"
+            +"iid="+id+"\n";
+        alert(str);
+
+        // $(arguments[0].currentTarget).parents('li:first')
+//        debugger;
+    },
+
+    showMemberTasks: function(event){
+        var id = this._getIId(event);
+        var str = "showMemberTasks\n"
+            + "community_id="+this.settings.get('community_id')+"\n"
+            +"member id="+id+"\n";
+        alert(str);
+    },
+
+    showMemberProfile: function(event){
+        var id = this._getIId(event);
+        var str = "showMemberProfile\n"
+            + "community_id="+this.settings.get('community_id')+"\n"
+            +"member id="+id+"\n";
+        alert(str);
+    },
+
+    rmLink: function(event, opt)
+    {
+        var id = this._getIId(event);
+        var str = "rmLink\n"+"community_id="+this.settings.get('community_id')+"\n"
+            +"module="+opt.module+"\n"
+            +"link="+opt.link+"\n"
+            +"iid="+id+"\n";
+        alert(str);
+    },
+
+    _getIId:function(event){
+        return this.$(event.currentTarget).parents('li:first').attr("iid");
+    }
+
+
 //    /**
 //     * New model related properties are injected into each model.
 //     * Update the picture url's property for model's assigned user.
@@ -144,5 +207,5 @@
 //            }
 //        });
 //    }
-    
+
 })

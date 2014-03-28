@@ -1,0 +1,46 @@
+{{!
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
+
+}}
+<div class="tab-pane active">
+    {{#if collection.length}}
+    <ul class="unstyled listed" data-action="pagination-body">
+        {{#each collection.models}}
+        <li iid="{{getFieldValue this "id"}}" >
+
+            <div class="actions pull-right">
+                {{#each ../../row_actions}}
+                    {{field ../../../this model=../this}}
+                {{/each}}
+            </div>
+
+            <p>
+                <a href="{{getFieldValue this "url"}}" class="pull-left avatar avatar-md" data-title="{{getFieldValue this "name"}}">
+                    <img src="{{getFieldValue this "picture"}}" alt="{{getFieldValue this "name"}}">
+                    </a>
+                    <a href="{{getFieldValue this "url"}}">{{getFieldValue this "name"}}</a>
+                </p>
+
+               {{!-- <div class="details">
+                    {{relativeTime attributes.record_date class="date"}}
+                </div> --}}
+
+            </li>
+        {{/each}}
+    </ul>
+    {{else}}
+        <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</div>
+    {{/if}}
+</div>
+   

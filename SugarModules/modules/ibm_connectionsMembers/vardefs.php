@@ -43,14 +43,34 @@ $fields =
             'source' => 'non-db',
             'unified_search' => true,
         ),
-        'logo' => array(
+        /*'logo' => array(
             'name' => 'logo',
             'type' => 'varchar',
             'source' => 'non-db',
-        ),
+        ), */
+        'picture' => array(
+            'name' => 'picture',
+            'vname' => 'LBL_PICTURE_FILE',
+            'source' => 'non-db',
+            'type' => 'varchar',
+            /*'len' => '255',
+            'width' => '42',
+            'height' => '42',
+            'border' => '', */
+        ) ,
         'role' => array(
             'name' => 'role',
             'type' => 'varchar',
+            'source' => 'non-db',
+        ),
+        'url' => array(
+            'name' => 'role',
+            'type' => 'varchar',
+            'source' => 'non-db',
+        ),
+        'community_id' => array(
+            'name' => 'community_id',
+            'type' => 'id',
             'source' => 'non-db',
         )
     );

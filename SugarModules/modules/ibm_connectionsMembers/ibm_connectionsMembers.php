@@ -47,15 +47,17 @@ class ibm_connectionsMembers extends SugarBean
         $beans[0]->name = 'Alexander Razumenko';
         $beans[0]->id = '0bb7a4c0-4523-1033-8f73-df1a4e1805dc';
         $beans[0]->role = 'member';
-        $beans[0]->logo = 'https://greenhouse.lotus.com/profiles/photo.do?userid=0bb7a4c0-4523-1033-8f73-df1a4e1805dc';
+        $beans[0]->picture = 'http://fox.local/img/1.png';
+        $beans[0]->url = 'http://fox.local/img/1.png';
 
         $beans[1] = new ibm_connectionsMembers();
         $beans[1]->name = 'Andrii Fedyk';
         $beans[1]->id = '79ae9cc0-4520-1033-8f60-df1a4e1805dc';
         $beans[1]->role = 'owner';
-        $beans[1]->logo = 'https://greenhouse.lotus.com/profiles/photo.do?userid=79ae9cc0-4520-1033-8f60-df1a4e1805dc';        
+        $beans[1]->picture = 'http://fox.local/img/2.png';
+        $beans[1]->url = 'http://fox.local/img/2.png';
 
         return $beans;
-    }    
+    }
 
 } 
