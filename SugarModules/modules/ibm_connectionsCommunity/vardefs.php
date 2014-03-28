@@ -32,6 +32,26 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $fields =
     array(
+        'community_id' => array(
+            'name' => 'community_id',
+            'type' => 'varchar',
+            'source' => 'non-db',
+        ),
+        'members' => array(
+            'name' => 'members',
+            'type' => 'array',
+            'source' => 'non-db',
+        ),
+        'files' => array(
+            'name' => 'files',
+            'type' => 'array',
+            'source' => 'non-db',
+        ),
+        'activities' => array(
+            'name' => 'activities',
+            'type' => 'array',
+            'source' => 'non-db',
+        ),
         'id' => array(
             'name' => 'id',
             'type' => 'id',
