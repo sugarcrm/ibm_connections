@@ -36,6 +36,11 @@ $fields = array(
         'type' => 'id',
         'source' => 'non-db',
     ),
+    'community_id' => array(
+        'name' => 'community_id',
+        'type' => 'varchar',
+        'source' => 'non-db',
+    ),
     'name' => array(
         'name' => 'name',
         'type' => 'varchar',
@@ -59,11 +64,6 @@ $fields = array(
     ),
     'contributor_email' => array(
         'name' => 'author_email',
-        'type' => 'varchar',
-        'source' => 'non-db',
-    ),
-    'last_updated' => array(
-        'name' => 'author_name',
         'type' => 'varchar',
         'source' => 'non-db',
     ),

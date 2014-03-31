@@ -26,30 +26,21 @@
  * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/ibm_connectionsCommunity/ibm_connectionsCommunity.php';
+require_once 'modules/ibm_connectionsMembers/ibm_connectionsMembers.php';
 require_once 'clients/base/api/FilterApi.php';
 require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
 
-class ibm_connectionsCommunityFilterApi extends FilterApi
+class ibm_connectionsMembersFilterApi extends FilterApi
 {
 
     public function registerApiRest()
     {
         return array(
-            'communitiesList' => array(
-                'reqType' => 'GET',
-                'path' => array('ibm_connectionsCommunity'), //, 'filter'
-                'pathVars' => array(''),
-                'method' => 'communitiesList',
-                'jsonParams' => array(),
-                'shortHelp' => 'Filter records from a single module',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
-            ),
             'filterList' => array(
                 'reqType' => 'GET',
-                'path' => array('ibm_connectionsCommunity', 'filter'), //, 'filter'
+                'path' => array('ibm_connectionsMembers', 'filter'), //, 'filter'
                 'pathVars' => array(''),
-                'method' => 'communitiesList',
+                'method' => 'filterList',
                 'jsonParams' => array('filter'),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
@@ -57,46 +48,22 @@ class ibm_connectionsCommunityFilterApi extends FilterApi
         );
     }
 
-    public function communitiesList(ServiceBase $api, array $args)
-    {
-
-        $helper = new ConnectionsHelper();
-        $returnData = $helper->getCommunityList('MyCommunities', 1, '');
-
-        $beans = array();
-        foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsCommunity();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->name = $item['name'];
-            $beans[$key]->members = $item['members_list'];
-            $beans[$key]->files = $item['files_list'];
-            $beans[$key]->activities = $item['activities_list'];
-        }
-
-        $data = array(
-            'next_offset' => -1,
-            'records' => $this->formatBeans($api, $args, $beans)
-        );
-
-        return $data;
-    }
-
     public function filterList(ServiceBase $api, array $args)
     {
+
         $helper = new ConnectionsHelper();
-        $returnData = $helper->getCommunityList('MyCommunities', 1, '');
 
-        //return $returnData;
-
+        $returnData = $helper->getCommunityMemberArray($args['filter'][0]['community_id']);
 
         $beans = array();
         foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsCommunity();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->name = $item['name'];
-            $beans[$key]->members = $item['members_list'];
-            $beans[$key]->files = $item['files_list'];
-            $beans[$key]->activities = $item['activities_list'];
+            $beans[$key] = new ibm_connectionsMembers();
+            $beans[$key]->id = $item['member_id'];
+            $beans[$key]->community_id = $args['filter'][0]['community_id'];
+            $beans[$key]->name = $item['member_name'];
+            $beans[$key]->role = $item['member_role'];
+            $beans[$key]->picture = 'https://greenhouse.lotus.com//profiles/photo.do?userid=' . $item['member_id'];
+            $beans[$key]->url = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid=' . $item['member_id'];
         }
 
         $data = array(

@@ -26,30 +26,21 @@
  * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/ibm_connectionsCommunity/ibm_connectionsCommunity.php';
+require_once 'modules/ibm_connectionsFiles/ibm_connectionsFiles.php';
 require_once 'clients/base/api/FilterApi.php';
 require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
 
-class ibm_connectionsCommunityFilterApi extends FilterApi
+class ibm_connectionsFilesFilterApi extends FilterApi
 {
 
     public function registerApiRest()
     {
         return array(
-            'communitiesList' => array(
-                'reqType' => 'GET',
-                'path' => array('ibm_connectionsCommunity'), //, 'filter'
-                'pathVars' => array(''),
-                'method' => 'communitiesList',
-                'jsonParams' => array(),
-                'shortHelp' => 'Filter records from a single module',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
-            ),
             'filterList' => array(
                 'reqType' => 'GET',
-                'path' => array('ibm_connectionsCommunity', 'filter'), //, 'filter'
+                'path' => array('ibm_connectionsFiles', 'filter'), //, 'filter'
                 'pathVars' => array(''),
-                'method' => 'communitiesList',
+                'method' => 'filterList',
                 'jsonParams' => array('filter'),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
@@ -57,46 +48,30 @@ class ibm_connectionsCommunityFilterApi extends FilterApi
         );
     }
 
-    public function communitiesList(ServiceBase $api, array $args)
-    {
-
-        $helper = new ConnectionsHelper();
-        $returnData = $helper->getCommunityList('MyCommunities', 1, '');
-
-        $beans = array();
-        foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsCommunity();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->name = $item['name'];
-            $beans[$key]->members = $item['members_list'];
-            $beans[$key]->files = $item['files_list'];
-            $beans[$key]->activities = $item['activities_list'];
-        }
-
-        $data = array(
-            'next_offset' => -1,
-            'records' => $this->formatBeans($api, $args, $beans)
-        );
-
-        return $data;
-    }
-
     public function filterList(ServiceBase $api, array $args)
     {
+
         $helper = new ConnectionsHelper();
-        $returnData = $helper->getCommunityList('MyCommunities', 1, '');
 
-        //return $returnData;
-
+        $returnData = $helper->getFilesList($args['filter'][0]['community_id']);
 
         $beans = array();
         foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsCommunity();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->name = $item['name'];
-            $beans[$key]->members = $item['members_list'];
-            $beans[$key]->files = $item['files_list'];
-            $beans[$key]->activities = $item['activities_list'];
+            $beans[$key] = new ibm_connectionsFiles();
+            $beans[$key]->id = $item['member_id'];
+            $beans[$key]->community_id = $args['filter'][0]['community_id'];
+            $beans[$key]->author_id = $item['author']['id'];
+            $beans[$key]->author_name = $item['author']['name'];
+            $beans[$key]->author_email = $item['author']['email'];
+            $beans[$key]->author_status = $item['author']['status'];
+            $beans[$key]->uploaded = $item['uploaded'];
+            $beans[$key]->fileVisibility = $item['visibility'];
+            $beans[$key]->commentsCount = $item['commentsCount'];
+            $beans[$key]->recomendationsCount = $item['recomendationsCount'];
+            $beans[$key]->viewLink = $item['viewLink'];
+            $beans[$key]->downloadsCount = $item['downloadsCount'];
+            $beans[$key]->version = $item['version'];
+            $beans[$key]->fileSize = $item['fileSize'];
         }
 
         $data = array(

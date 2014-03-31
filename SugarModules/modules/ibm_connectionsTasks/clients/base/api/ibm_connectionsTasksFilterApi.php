@@ -26,30 +26,21 @@
  * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/ibm_connectionsCommunity/ibm_connectionsCommunity.php';
+require_once 'modules/ibm_connectionsTasks/ibm_connectionsTasks.php';
 require_once 'clients/base/api/FilterApi.php';
 require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
 
-class ibm_connectionsCommunityFilterApi extends FilterApi
+class ibm_connectionsTasksFilterApi extends FilterApi
 {
 
     public function registerApiRest()
     {
         return array(
-            'communitiesList' => array(
-                'reqType' => 'GET',
-                'path' => array('ibm_connectionsCommunity'), //, 'filter'
-                'pathVars' => array(''),
-                'method' => 'communitiesList',
-                'jsonParams' => array(),
-                'shortHelp' => 'Filter records from a single module',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
-            ),
             'filterList' => array(
                 'reqType' => 'GET',
-                'path' => array('ibm_connectionsCommunity', 'filter'), //, 'filter'
+                'path' => array('ibm_connectionsTasks', 'filter'), //, 'filter'
                 'pathVars' => array(''),
-                'method' => 'communitiesList',
+                'method' => 'filterList',
                 'jsonParams' => array('filter'),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
@@ -57,46 +48,31 @@ class ibm_connectionsCommunityFilterApi extends FilterApi
         );
     }
 
-    public function communitiesList(ServiceBase $api, array $args)
-    {
-
-        $helper = new ConnectionsHelper();
-        $returnData = $helper->getCommunityList('MyCommunities', 1, '');
-
-        $beans = array();
-        foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsCommunity();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->name = $item['name'];
-            $beans[$key]->members = $item['members_list'];
-            $beans[$key]->files = $item['files_list'];
-            $beans[$key]->activities = $item['activities_list'];
-        }
-
-        $data = array(
-            'next_offset' => -1,
-            'records' => $this->formatBeans($api, $args, $beans)
-        );
-
-        return $data;
-    }
-
     public function filterList(ServiceBase $api, array $args)
     {
+
         $helper = new ConnectionsHelper();
-        $returnData = $helper->getCommunityList('MyCommunities', 1, '');
 
-        //return $returnData;
-
+        $returnData = $helper->getActivitiesList($args['filter'][0]['community_id']);
 
         $beans = array();
         foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsCommunity();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->name = $item['name'];
-            $beans[$key]->members = $item['members_list'];
-            $beans[$key]->files = $item['files_list'];
-            $beans[$key]->activities = $item['activities_list'];
+            $beans[$key] = new ibm_connectionsTasks();
+            $beans[$key]->id = $item['member_id'];
+            $beans[$key]->community_id = $args['filter'][0]['community_id'];
+            $beans[$key]->title = $item['title'];
+            $beans[$key]->content = $item['content'];
+            $beans[$key]->contributor_id = $item['contributor']['id'];
+            $beans[$key]->contributor_name = $item['contributor']['name'];
+            $beans[$key]->contributor_status = $item['contributor']['status'];
+            $beans[$key]->contributor_email = $item['contributor']['email'];
+            $beans[$key]->last_updated = $item['last_updated'];
+            $beans[$key]->content = $item['content'];
+            $beans[$key]->commentsCount = $item['commentsCount'];
+            $beans[$key]->webEditUrl = $item['webEditUrl'];
+            $beans[$key]->dueDate = $item['dueDate'];
+            $beans[$key]->completion = $item['completion'];
+            $beans[$key]->completed = $item['completed'];
         }
 
         $data = array(

@@ -36,11 +36,6 @@ $fields = array(
         'type' => 'id',
         'source' => 'non-db',
     ),
-    'community_id' => array(
-        'name' => 'id',
-        'type' => 'id',
-        'source' => 'non-db',
-    ),
     'name' => array(
         'name' => 'name',
         'type' => 'varchar',
@@ -76,7 +71,7 @@ $fields = array(
         'source' => 'non-db',
         'unified_search' => false,
     ),
-    "visibility" => array(
+    "fileVisibility" => array(
         'name' => 'name',
         'type' => 'varchar',
         'source' => 'non-db',
@@ -124,6 +119,12 @@ $fields = array(
         'source' => 'non-db',
         'unified_search' => false,
     ),
+    'community_id' => array(
+        'name' => 'community_id',
+        'type' => 'varchar',
+        'source' => 'non-db',
+    )
+
 
 );
 

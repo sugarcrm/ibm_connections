@@ -32,7 +32,8 @@ $manifest = array (
   array (
     'acceptable_sugar_versions' => 
     array (
-      0 => '7.1.x',
+      0 => '7.0.x',
+      1 => '7.1.x',
     ),
   ),
   1 => 

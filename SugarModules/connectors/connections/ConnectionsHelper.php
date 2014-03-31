@@ -1265,9 +1265,9 @@ class ConnectionsHelper
                 $arr['updated'] = $this->formateDate($entry->getUpdatedDate());
                 $arr['type'] = $entry->getCommunityType();
                 $arr['member_count'] = $entry->getMemberCount();
-                $arr['members_list'] = $this->getCommunityMemberArray($arr['id']);
-                $arr['files_list'] = $this->getFilesList($arr['id']);
-                $arr['activities_list'] = $this->getActivitiesList($arr['id']);
+                //$arr['members_list'] = $this->getCommunityMemberArray($arr['id']);
+                //$arr['files_list'] = $this->getFilesList($arr['id']);
+                //$arr['activities_list'] = $this->getActivitiesList($arr['id']);
 
                 $returnArray[] = $arr;
             }
@@ -1773,7 +1773,7 @@ class ConnectionsHelper
                 $arr['last_updated'] = $this->formateDate($entry->getFormattedUpdatedDate());
                 $arr['id'] = $entry->getId();
                 $arr['title'] = $entry->getTitle();
-                //$arr['content'] = $entry->getContent();
+                $arr['content'] = $entry->getContent();
                 $arr['commentsCount'] = $this_activity->getCommentsCount();
                 $arr['webEditUrl'] = $entry->getWebEditUrl();
                 $arr['dueDate'] = $entry->getDueDate();
