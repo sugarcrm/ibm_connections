@@ -31,4 +31,22 @@ class ibm_connectionsFiles extends SugarBean
     public $module_dir = "ibm_connectionsFiles";
     public $object_name = "ibm_connectionsFiles";
 
+    function fetchFromQuery(SugarQuery $query, array $fields = array(), array $options = array())
+    {
+        $beans = array();
+        $beans[0] = new ibm_connectionsFiles();
+        $beans[0]->id = '48de826e-2d01-491e-9c8f-140520aca72b';
+        $beans[0]->name = '1.png';
+        $beans[0]->url = 'https://greenhouse.lotus.com/communities/service/html/communityview?communityUuid=39f2ab0a-9370-4269-bc5a-86301a8221ce#fullpageWidgetId=W27eb67932aff_4f39_b053_4f9d5598c0d6&file=48de826e-2d01-491e-9c8f-140520aca72b';
+        $beans[0]->picture = 'http://ult.sc.loc/custom/modules/Connectors/connectors/sources/ext/eapm/connections/images/file_types/img.PNG';
+
+        $beans[1] = new ibm_connectionsFiles();
+        $beans[1]->id = '947e6dcd-787a-45dd-8092-c8138baaeec4';
+        $beans[1]->name = '2.png ';
+        $beans[1]->url = 'https://greenhouse.lotus.com/communities/service/html/communityview?communityUuid=39f2ab0a-9370-4269-bc5a-86301a8221ce#fullpageWidgetId=W27eb67932aff_4f39_b053_4f9d5598c0d6&file=947e6dcd-787a-45dd-8092-c8138baaeec4';
+        $beans[1]->picture = 'http://ult.sc.loc/custom/modules/Connectors/connectors/sources/ext/eapm/connections/images/file_types/img.PNG';
+
+        return $beans;
+    }
+
 } 
