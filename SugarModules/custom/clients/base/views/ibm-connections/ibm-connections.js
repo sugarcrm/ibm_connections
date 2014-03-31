@@ -153,6 +153,14 @@
 
     _getIId:function(event){
         return this.$(event.currentTarget).parents('li:first').attr("iid");
+    },
+
+
+    _renderHtml: function() {
+        var tab = this.tabs[this.settings.get('activeTab')];
+        this.row_actions = tab.row_actions;
+        debugger;
+        this._super('_renderHtml');
     }
 
 

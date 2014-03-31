@@ -36,6 +36,11 @@ $fields = array(
         'type' => 'id',
         'source' => 'non-db',
     ),
+    'community_id' => array(
+        'name' => 'id',
+        'type' => 'id',
+        'source' => 'non-db',
+    ),
     'name' => array(
         'name' => 'name',
         'type' => 'varchar',
@@ -48,17 +53,17 @@ $fields = array(
         'source' => 'non-db',
     ),
     "author_name" => array(
-    'name' => 'name',
-    'type' => 'varchar',
-    'source' => 'non-db',
-    'unified_search' => false,
-),
+        'name' => 'name',
+        'type' => 'varchar',
+        'source' => 'non-db',
+        'unified_search' => false,
+    ),
     "author_email" => array(
-    'name' => 'name',
-    'type' => 'varchar',
-    'source' => 'non-db',
-    'unified_search' => false,
-),
+        'name' => 'name',
+        'type' => 'varchar',
+        'source' => 'non-db',
+        'unified_search' => false,
+    ),
     "author_status" => array(
         'name' => 'name',
         'type' => 'varchar',
@@ -89,7 +94,7 @@ $fields = array(
         'source' => 'non-db',
         'unified_search' => false,
     ),
-    "viewLink" => array(
+    "url" => array(
         'name' => 'name',
         'type' => 'varchar',
         'source' => 'non-db',
@@ -108,6 +113,12 @@ $fields = array(
         'unified_search' => false,
     ),
     "fileSize" => array(
+        'name' => 'name',
+        'type' => 'varchar',
+        'source' => 'non-db',
+        'unified_search' => false,
+    ),
+    "picture" => array(
         'name' => 'name',
         'type' => 'varchar',
         'source' => 'non-db',

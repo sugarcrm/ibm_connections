@@ -16,42 +16,49 @@
 <div class="tab-pane active">
     {{#if collection.length}}
     <ul class="unstyled listed" data-action="pagination-body">
+        {{#eq this.module "ibm_connectionsMembers"}}
+            <div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;" >
+                <div class="bar" style="width: 60%;"></div>
+            </div>
+        {{/eq}}
+
+
+
         {{#each collection.models}}
-        <li>
-            {{#if ../../row_actions}}
-                <div class="actions pull-right">
-                    {{#each ../../row_actions}}
-                        {{field ../../../this model=../this}}
-                    {{/each}}
-                </div>
-            {{/if}}
+        <li iid="{{getFieldValue this "id"}}" >
+            <div class="pull-right{{!-- actions  --}}">
+                {{#eq this.module "ibm_connectionsMembers"}}
+                    <div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;" >
+                        <div class="bar" style="width: 60%;"></div>
+                    </div>
+                {{/eq}}
+
+                {{#each ../../row_actions}}
+
+                    {{field ../../../this model=../this}}
+                    {{log this}}
+                {{/each}}
+            </div>
+
             <p>
 
                 <a href="{{getFieldValue this "url"}}" class="pull-left avatar avatar-md" data-title="{{getFieldValue this "name"}}">
                     <img src="{{getFieldValue this "picture"}}" alt="{{getFieldValue this "name"}}">
                     </a>
-
-                    {{!--#if attributes.assigned_user_id}}
-                        <a href="#{{buildRoute module="Employees" id=attributes.assigned_user_id action="detail"}}" class="pull-left avatar avatar-md" data-title="{{getFieldValue this "assigned_user_name"}}">
-                            <img src="{{getFieldValue this "picture_url"}}" alt="{{getFieldValue this "assigned_user_name"}}">
-                        </a>
-                    {{else}}
-                        <span class="icon-stack pull-left">
-                            <i class="icon-user icon-stack-base"></i>
-                            <i class="icon-question-sign icon-light"></i>
-                        </span>
-                    {{/if --}}
-
-                    <a href="#{{buildRoute model=this action="detail"}}">{{this.module}}{{getFieldValue this "name"}}</a>
+                    <a href="{{getFieldValue this "url"}}">{{getFieldValue this "name"}}</a>
                 </p>
-                <div class="details">
-                    {{#if attributes.assigned_user_id}}
-                        <a href="#{{buildRoute module="Employees" id=attributes.assigned_user_id action="detail"}}">{{getFieldValue this "assigned_user_name"}}</a>&#44;
-                    {{else}}
-                        {{str "LBL_UNASSIGNED" this.module}}&#44;
-                    {{/if}}
-                    {{relativeTime attributes.record_date class="date"}}
-                </div>
+
+                {{#eq this.module "ibm_connectionsFiles"}}
+                    <div class="details">
+                    Version: {{getFieldValue this "version" "No version"}}
+                    Size: {{getFieldValue this "fileSize" "0"}}
+                    </div>
+                {{/eq}}
+
+                {{!-- <div class="details">
+                     {{relativeTime attributes.record_date class="date"}}
+                 </div> --}}
+
             </li>
         {{/each}}
     </ul>
