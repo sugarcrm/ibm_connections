@@ -46,9 +46,6 @@ class ibm_connectionsCommunity extends SugarBean
         $beans[1] = new ibm_connectionsCommunity();
         $beans[1]->name = 'ft1 Community';
         $beans[1]->id = '8d07e618-75c6-45d0-acab-c9b21fa9356e';
-        
         return $beans;
     }
-    
-    
-} 
+}
