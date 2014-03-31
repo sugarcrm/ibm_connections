@@ -80,6 +80,18 @@ $installdefs = array (
           'path' => 'modules/ibm_connectionsMembers/ibm_connectionsMembers.php',
           'tab' => false,
       ),
+      array(
+          'module' => 'ibm_connectionsFiles',
+          'class' => 'ibm_connectionsFiles',
+          'path' => 'modules/ibm_connectionsFiles/ibm_connectionsFiles.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsTasks',
+          'class' => 'ibm_connectionsTasks',
+          'path' => 'modules/ibm_connectionsTasks/ibm_connectionsTasks.php',
+          'tab' => false,
+      ),
   ),
   'layoutdefs' => 
   array (
