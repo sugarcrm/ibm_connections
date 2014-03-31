@@ -19,7 +19,13 @@
         {{#each collection.models}}
         <li iid="{{getFieldValue this "id"}}" >
 
-            <div class="actions pull-right">
+            <div class="pull-right{{!-- actions  --}}">
+
+                <div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;" >
+                    <div class="bar" style="width: 60%;"></div>
+                </div>
+                
+                
                 {{#each ../../row_actions}}
                     {{field ../../../this model=../this}}
                 {{/each}}
