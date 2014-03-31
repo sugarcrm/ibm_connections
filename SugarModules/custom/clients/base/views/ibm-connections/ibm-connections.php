@@ -118,32 +118,88 @@ $viewdefs['base']['view']['ibm-connections'] = array(
     'tabs' => array(
         array(
             'active' => true,
-            'filter_applied_to' => 'date_start',
+//            'filter_applied_to' => 'date_start',
             'filters' => array(
-                'status' => array('$equals' => 'Held'),
+//                'status' => array('$equals' => 'Held'),
             ),
             'labels' => array(
                 'singular' => 'LBL_HISTORY_DASHLET_EMAIL_SINGULAR',
                 'plural' => 'Team',
             ),
-            'link' => 'meetings',
-            'module' => 'Meetings',
-            'order_by' => 'date_start:desc',
-            'record_date' => 'date_start',
+//            'link' => 'meetings',
+            'module' => 'ibm_connectionsMembers',
+//            'order_by' => 'date_start:desc',
+//            'record_date' => 'date_start',
             'row_actions' => array(
                 array(
-                    'type' => 'unlink-action',
-                    'icon' => 'icon-unlink',
-                    'css_class' => 'btn btn-mini',
-                    'event' => 'tabbed-dashlet:unlink-record:fire',
-                    'target' => 'view',
-                    'tooltip' => 'LBL_UNLINK_BUTTON',
-                    'acl_action' => 'edit',
+                    'type' => 'actiondropdown',
+                    'buttons' => array(
+                        array(
+                            'type' => 'dashletaction',
+                            'action' => 'addLink',
+                            'params' => array(
+                                'module' => 'ibm_connectionsMembers',
+                                'link' => 'member_task',
+                            ),
+                            'name' => 'edit_button',
+                            'label' => 'New Task',
+                        ),
+                        array(
+                            'type' => 'dashletaction',
+//                            'event' => 'button:show_members_tasks:click',
+                            'name' => 'edit_button',
+                            'label' => 'View Tasks',
+                            'action' => 'showMemberTasks',
+                        ),
+                        array(
+                            'type' => 'dashletaction',
+//                            'event' => 'button:show:member_profile:click',
+                            'name' => 'edit_button',
+                            'label' => 'Profile',
+                            'action' => 'showMemberProfile',
+                        ),
+
+                        array(
+                            'type' => 'dashletaction',
+//                            'event' => 'button:unlink:member2community:click',
+                            'name' => 'edit_button',
+                            'label' => 'Remove',
+                            'action' => 'rmLink',
+                            'params' => array(
+                                'module' => 'ibm_connectionsMembers',
+                                'link' => 'community_member',
+                            ),
+                        ),
+
+                    ),
                 ),
+
+
+                /*array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-remove-circle',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'active-tasks:close-task:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK',
+                   // 'acl_action' => 'edit',
+                ),*/
+                /*  array(
+                      'type' => 'unlink-action',
+                      'icon' => 'icon-unlink',
+                      'css_class' => 'btn btn-mini',
+                      'event' => 'tabbed-dashlet:unlink-record:fire',
+                      'target' => 'view',
+                      'tooltip' => 'LBL_UNLINK_BUTTON',
+                   //   'acl_action' => 'edit',
+                  ), */
+
+
+
             ),
             'include_child_items' => true,
         ),
-        array(
+        /*array(
             'filter_applied_to' => 'date_entered',
             'filters' => array(
                 'type' => array('$in' => array('out', 'inbound', 'archived')),
@@ -192,7 +248,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                 ),
             ),
             'include_child_items' => true,
-        ),
+        ), */
     ),
     'visibility_labels' => array(
         'user' => 'LBL_HISTORY_DASHLET_USER_BUTTON_LABEL',

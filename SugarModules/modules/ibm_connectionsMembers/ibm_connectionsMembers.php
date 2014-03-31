@@ -1,4 +1,8 @@
 <?php
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -23,16 +27,37 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
 
-$app_list_strings['moduleList']['ibm_connections'] = 'Connections';
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_TITLE'] = "Select Connections File";
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_KEY'] = "";
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_LABEL'] = "Select Connections File";
 
-$app_list_strings['moduleList']['ibm_connectionsCommunity'] = 'IBM connections Community';
-$app_list_strings['moduleList']['ibm_connectionsMembers'] = 'IBM connections Community members';
-$app_list_strings['moduleList']['ibm_connectionsFiles'] = 'IBM connections Community Files';
-$app_list_strings['moduleList']['ibm_connectionsTasks'] = 'IBM connections Community tasks';
+
+class ibm_connectionsMembers extends SugarBean
+{
+
+    public $module_dir = "ibm_connectionsMembers";
+    public $object_name = "ibm_connectionsMembers";
+
+
+    function fetchFromQuery(SugarQuery $query, array $fields = array(), array $options = array())
+    {
+        $beans = array();
+        $beans[0] = new ibm_connectionsMembers();
+        $beans[0]->name = 'Alexander Razumenko';
+        $beans[0]->id = '0bb7a4c0-4523-1033-8f73-df1a4e1805dc';
+        $beans[0]->role = 'member';
+        $beans[0]->picture = 'http://fox.local/img/1.png';
+        $beans[0]->url = 'http://fox.local/img/1.png';
+
+        $beans[1] = new ibm_connectionsMembers();
+        $beans[1]->name = 'Andrii Fedyk';
+        $beans[1]->id = '79ae9cc0-4520-1033-8f60-df1a4e1805dc';
+        $beans[1]->role = 'owner';
+        $beans[1]->picture = 'http://fox.local/img/2.png';
+        $beans[1]->url = 'http://fox.local/img/2.png';
+
+        return $beans;
+    }
+
+} 

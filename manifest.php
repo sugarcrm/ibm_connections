@@ -32,7 +32,7 @@ $manifest = array (
   array (
     'acceptable_sugar_versions' => 
     array (
-      0 => '7.0.0',
+      0 => '7.1.x',
     ),
   ),
   1 => 
@@ -68,12 +68,30 @@ $installdefs = array (
       'path' => 'modules/ibm_connections/ibm_connections.php',
       'tab' => false,
     ),
-      array (
-      'module' => 'ibm_connectionsCommunity',
-      'class' => 'ibm_connectionsCommunity',
-      'path' => 'modules/ibm_connectionsCommunity/ibm_connectionsCommunity.php',
-      'tab' => false,
-    ),
+      array(
+          'module' => 'ibm_connectionsCommunity',
+          'class' => 'ibm_connectionsCommunity',
+          'path' => 'modules/ibm_connectionsCommunity/ibm_connectionsCommunity.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsMembers',
+          'class' => 'ibm_connectionsMembers',
+          'path' => 'modules/ibm_connectionsMembers/ibm_connectionsMembers.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsFiles',
+          'class' => 'ibm_connectionsFiles',
+          'path' => 'modules/ibm_connectionsFiles/ibm_connectionsFiles.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsTasks',
+          'class' => 'ibm_connectionsTasks',
+          'path' => 'modules/ibm_connectionsTasks/ibm_connectionsTasks.php',
+          'tab' => false,
+      ),
   ),
   'layoutdefs' => 
   array (
