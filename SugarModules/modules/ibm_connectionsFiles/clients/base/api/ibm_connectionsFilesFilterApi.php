@@ -60,6 +60,7 @@ class ibm_connectionsFilesFilterApi extends FilterApi
             $beans[$key] = new ibm_connectionsFiles();
             $beans[$key]->id = $item['member_id'];
             $beans[$key]->community_id = $args['filter'][0]['community_id'];
+            $beans[$key]->name = $item['title'];            
             $beans[$key]->author_id = $item['author']['id'];
             $beans[$key]->author_name = $item['author']['name'];
             $beans[$key]->author_email = $item['author']['email'];
