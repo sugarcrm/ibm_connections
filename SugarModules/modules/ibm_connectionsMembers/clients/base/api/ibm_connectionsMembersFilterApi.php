@@ -62,7 +62,7 @@ class ibm_connectionsMembersFilterApi extends FilterApi
             $beans[$key]->community_id = $args['filter'][0]['community_id'];
             $beans[$key]->name = $item['member_name'];
             $beans[$key]->role = $item['member_role'];
-            $beans[$key]->picture = 'https://greenhouse.lotus.com//profiles/photo.do?userid=' . $item['member_id'];
+            $beans[$key]->picture = 'https://greenhouse.lotus.com/profiles/photo.do?userid=' . $item['member_id'];
             $beans[$key]->url = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid=' . $item['member_id'];
         }
 
