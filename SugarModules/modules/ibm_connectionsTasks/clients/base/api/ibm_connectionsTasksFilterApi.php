@@ -58,9 +58,9 @@ class ibm_connectionsTasksFilterApi extends FilterApi
         $beans = array();
         foreach ($returnData as $key => $item) {
             $beans[$key] = new ibm_connectionsTasks();
-            $beans[$key]->id = $item['member_id'];
+            $beans[$key]->id = $item['id'];
             $beans[$key]->community_id = $args['filter'][0]['community_id'];
-            $beans[$key]->title = $item['title'];
+            $beans[$key]->name = $item['title'];
             $beans[$key]->content = $item['content'];
             $beans[$key]->contributor_id = $item['contributor']['id'];
             $beans[$key]->contributor_name = $item['contributor']['name'];
@@ -69,7 +69,7 @@ class ibm_connectionsTasksFilterApi extends FilterApi
             $beans[$key]->last_updated = $item['last_updated'];
             $beans[$key]->content = $item['content'];
             $beans[$key]->commentsCount = $item['commentsCount'];
-            $beans[$key]->webEditUrl = $item['webEditUrl'];
+            $beans[$key]->url = $item['webEditUrl'];
             $beans[$key]->dueDate = $item['dueDate'];
             $beans[$key]->completion = $item['completion'];
             $beans[$key]->completed = $item['completed'];

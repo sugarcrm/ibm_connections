@@ -82,8 +82,8 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
     ),
-    'webEditUrl' => array(
-        'name' => 'author_name',
+    'url' => array(
+        'name' => 'url',
         'type' => 'varchar',
         'source' => 'non-db',
     ),
