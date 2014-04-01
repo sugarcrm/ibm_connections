@@ -199,6 +199,60 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             ),
             'include_child_items' => true,
         ),
+        array(
+            'active' => false,
+//            'filter_applied_to' => 'date_start',
+            'filters' => array(
+//                'status' => array('$equals' => 'Held'),
+            ),
+            'labels' => array(
+                'singular' => 'File',
+                'plural' => 'Files',
+            ),
+//            'link' => 'meetings',
+            'module' => 'ibm_connectionsFiles',
+//            'order_by' => 'date_start:desc',
+//            'record_date' => 'date_start',
+            'row_actions' => array(
+                array(
+                    'type' => 'dashletaction',
+//                            'event' => 'button:unlink:member2community:click',
+                    'name' => 'edit_button',
+                    'label' => 'Remove',
+                    'action' => 'rmLink',
+                    'params' => array(
+                        'module' => 'ibm_connectionsFiles',
+                        'link' => 'community_files',
+                    ),
+                ),
+
+                /*array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-remove-circle',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'active-tasks:close-task:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK',
+                   // 'acl_action' => 'edit',
+                ),*/
+                /*  array(
+                      'type' => 'unlink-action',
+                      'icon' => 'icon-unlink',
+                      'css_class' => 'btn btn-mini',
+                      'event' => 'tabbed-dashlet:unlink-record:fire',
+                      'target' => 'view',
+                      'tooltip' => 'LBL_UNLINK_BUTTON',
+                   //   'acl_action' => 'edit',
+                  ), */
+
+
+
+            ),
+            'include_child_items' => true,
+        ),
+
+
+
         /*array(
             'filter_applied_to' => 'date_entered',
             'filters' => array(
