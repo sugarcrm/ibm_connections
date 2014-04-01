@@ -26,7 +26,7 @@
 
         {{#each collection.models}}
         <li iid="{{getFieldValue this "id"}}" >
-            <div class="pull-right{{!-- actions  --}}">
+            <div class="pull-right  actions ">
                 {{#eq this.module "ibm_connectionsMembers"}}
                     <div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;" >
                         <div class="bar" style="width: 60%;"></div>
@@ -34,31 +34,30 @@
                 {{/eq}}
 
                 {{#each ../../row_actions}}
-
                     {{field ../../../this model=../this}}
                     {{log this}}
                 {{/each}}
             </div>
 
-            <p>
-
-                <a href="{{getFieldValue this "url"}}" class="pull-left avatar avatar-md" data-title="{{getFieldValue this "name"}}">
+            <p {{#eq this.module "ibm_connectionsTasks"}} style="padding-left:0" {{/eq}} >
+                {{#notEq this.module "ibm_connectionsTasks"}}
+                <a href="{{getFieldValue this "url"}}" class="pull-left avatar42" data-title="{{getFieldValue this "name"}}">
                     <img src="{{getFieldValue this "picture"}}" alt="{{getFieldValue this "name"}}">
                     </a>
-                    <a href="{{getFieldValue this "url"}}">{{getFieldValue this "name"}}</a>
-                </p>
-
-                {{#eq this.module "ibm_connectionsFiles"}}
-                    <div class="details">
+                {{/notEq}}
+                <a href="{{getFieldValue this "url"}}">{{getFieldValue this "name"}}</a>
+            </p>
+                <div class="details">
+                    {{#eq this.module "ibm_connectionsFiles"}}
                     Version: {{getFieldValue this "version" "No version"}}
                     Size: {{getFieldValue this "fileSize" "0"}}
-                    </div>
-                {{/eq}}
+                    {{/eq}}
+                &nbsp;
+                </div>
 
                 {{!-- <div class="details">
                      {{relativeTime attributes.record_date class="date"}}
                  </div> --}}
-
             </li>
         {{/each}}
     </ul>
