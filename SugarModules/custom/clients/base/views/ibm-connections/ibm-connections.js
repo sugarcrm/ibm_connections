@@ -157,9 +157,10 @@
 
 
     _renderHtml: function() {
-        var tab = this.tabs[this.settings.get('activeTab')];
-        this.row_actions = tab.row_actions;
-        debugger;
+        if (!this.meta.config) {
+            var tab = this.tabs[this.settings.get('activeTab')];
+            this.row_actions = tab.row_actions;
+        }
         this._super('_renderHtml');
     }
 
