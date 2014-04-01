@@ -1742,6 +1742,7 @@ class ConnectionsHelper
                 $arr['downloadsCount'] = $entry->getDownloadsCount();
                 $arr['version'] = $entry->getVersion();
                 $arr['fileSize'] = $entry->getFileSize();
+                $arr['picture'] = $this->view->getFilePicture($arr['title']);
 
                 $returnData[] = $arr;
             }

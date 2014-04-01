@@ -90,7 +90,7 @@ $fields = array(
         'unified_search' => false,
     ),
     "url" => array(
-        'name' => 'name',
+        'name' => 'url',
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => false,
