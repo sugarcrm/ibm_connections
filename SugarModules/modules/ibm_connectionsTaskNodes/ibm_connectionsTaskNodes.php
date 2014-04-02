@@ -23,17 +23,13 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+class ibm_connectionsTaskNodes extends SugarBean
+{
+    public $module_dir = "ibm_connectionsTaskNodes";
+    public $object_name = "ibm_connectionsTaskNodes";
 
-$app_list_strings['moduleList']['ibm_connections'] = 'Connections';
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_TITLE'] = "Select Connections File";
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_KEY'] = "";
-$app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_LABEL'] = "Select Connections File";
-
-$app_list_strings['moduleList']['ibm_connectionsCommunity'] = 'IBM connections Community';
-$app_list_strings['moduleList']['ibm_connectionsMembers'] = 'IBM connections Community members';
-$app_list_strings['moduleList']['ibm_connectionsFiles'] = 'IBM connections Community Files';
-$app_list_strings['moduleList']['ibm_connectionsTasks'] = 'IBM connections Community tasks';
-$app_list_strings['moduleList']['ibm_connectionsTaskNodes'] = 'IBM connections Community task nodes';
+}
+ 

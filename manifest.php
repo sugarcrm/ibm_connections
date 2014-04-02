@@ -93,6 +93,12 @@ $installdefs = array (
           'path' => 'modules/ibm_connectionsTasks/ibm_connectionsTasks.php',
           'tab' => false,
       ),
+      array(
+          'module' => 'ibm_connectionsTaskNodes',
+          'class' => 'ibm_connectionsTaskNodes',
+          'path' => 'modules/ibm_connectionsTaskNodes/ibm_connectionsTaskNodes.php',
+          'tab' => false,
+      ),
   ),
   'layoutdefs' => 
   array (
