@@ -216,9 +216,10 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'dashletaction',
-//                            'event' => 'button:unlink:member2community:click',
-                    'name' => 'edit_button',
-                    'label' => 'Remove',
+//                   'event' => 'button:unlink:member2community:click',
+//                   'name' => 'edit_button',
+                    'icon' => 'icon-remove-circle',
+                    'css_class' => 'btn btn-mini',
                     'action' => 'rmLink',
                     'params' => array(
                         'module' => 'ibm_connectionsTasks',
@@ -267,9 +268,10 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'dashletaction',
-//                            'event' => 'button:unlink:member2community:click',
-                    'name' => 'edit_button',
-                    'label' => 'Remove',
+//                  'event' => 'button:unlink:member2community:click',
+//                  'name' => 'edit_button',
+                    'icon' => 'icon-remove-circle',
+                    'css_class' => 'btn btn-mini',
                     'action' => 'rmLink',
                     'params' => array(
                         'module' => 'ibm_connectionsFiles',
