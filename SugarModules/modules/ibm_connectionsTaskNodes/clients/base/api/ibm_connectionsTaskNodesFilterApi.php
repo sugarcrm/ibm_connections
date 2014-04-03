@@ -26,12 +26,13 @@
  * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/ibm_connectionsTasks/ibm_connectionsTasks.php';
+require_once 'modules/ibm_connectionsTaskNodes/ibm_connectionsTaskNodes.php';
 require_once 'clients/base/api/FilterApi.php';
 require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
 
 class ibm_connectionsTaskNodesFilterApi extends FilterApi
 {
+    const NAME_SEPARATOR = ' :: ';
 
     public function registerApiRest()
     {
@@ -50,32 +51,47 @@ class ibm_connectionsTaskNodesFilterApi extends FilterApi
 
     public function filterList(ServiceBase $api, array $args)
     {
-       $beans = array();
-
-
-            $key = 0;
-        
-            $beans[$key] = new ibm_connectionsTaskNodes();
-            $beans[$key]->id = 'd3bc1008-0485-4edc-826a-2c5482bd0965';
-            $beans[$key]->task_id = $args['filter'][0]['task_id'];
-            $beans[$key]->name = 'ft2 Community Activity 1 todo 1';
-            $beans[$key]->completed = false;
-        
-            $key++;
-            $beans[$key] = new ibm_connectionsTaskNodes();
-            $beans[$key]->id = 'dbbc539b-ccc2-4312-ae0e-1336966a462e';
-            $beans[$key]->task_id = $args['filter'][0]['task_id'];
-            $beans[$key]->name = 'ft2 Community Activity 1 todo 2';
-            $beans[$key]->completed = true;
-        
+        //$beans = $this->buildBeansList('3e9fa159-5752-4a95-a9ba-bf34065b9f70'); //root
+        //$beans = $this->buildBeansList('206fadff-9778-4dba-b589-a6f90d340f6c'); //section
+        $beans = $this->buildBeansList($args['filter'][0]['activity_id']);
 
         $data = array(
             'next_offset' => -1,
             'records' => $this->formatBeans($api, $args, $beans)
         );
-
         return $data;
     }
 
+    private function buildBeansList($id)
+    {
+        $helper = new ConnectionsHelper();
+        $returnData = $helper->getActivity($id);
 
-} 
+        $beans = array();
+        foreach ($returnData as $item) {
+            $beans[] = $this->buildBean($item);
+            if (is_array($item['content']) && sizeof($item['content']) > 0) {
+                foreach ($item['content'] as $subItem) {
+                    $subItem['title'] = $item['title'] . self::NAME_SEPARATOR . $subItem['title'];
+                    $beans[] = $this->buildBean($subItem);
+                }
+            }
+        }
+        return $beans;
+    }
+
+    private function buildBean($data)
+    {
+        $data['name'] = $data['title'];
+        $data['contributor_id'] = $data['contributor']['id'];
+        $data['contributor_name'] = $data['contributor']['name'];
+        $data['contributor_status'] = $data['contributor']['status'];
+        $data['contributor_email'] = $data['contributor']['email'];
+        $data['url'] = $data['webEditUrl'];
+
+        $bean = new ibm_connectionsTaskNodes();
+        $bean->fromArray($data);
+        return $bean;
+    }
+
+}

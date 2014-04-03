@@ -309,12 +309,15 @@ class ConnectionsHelper
 
     public function getCommunityId()
     {
+        return $this->communityId;
+        /*
         if (isset($this->parent_id) && !empty($this->parent_id)) {
             $connections = new ibm_connections();
             $connections->retrieve_by_string_fields(array('parent_id' => $this->parent_id));
 
             return $connections->community_id;
         }
+        */
     }
 
     private function getMembersArray($response)
@@ -605,18 +608,15 @@ class ConnectionsHelper
         echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => 'discussion_list'));
     }
 
-    public function getCommunityActivities()
+    public function getCommunityActivities($communityId)
     {
         $search_text = $this->search_text;
         $page = $this->page_number;
         global $beanList, $current_user;
-        $communityId = $this->getCommunityId();
+        //$communityId = $this->getCommunityId();
 
         $list = $this->getActivitiesList($communityId, $search_text, $page);
-        $tab = 'activity';
-        $reply = $this->display($tab, 2, '', '');
-        ob_clean();
-        echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab . '_list'));
+        return $list;
     }
 
     private function display($tab, $col_count, $col1 = "", $col2 = "")
@@ -1401,51 +1401,29 @@ class ConnectionsHelper
     }
 
 
-    public function getActivity()
+    public function getActivity($id = null)
     {
-        $id = $this->activity_id;
+        //$id = $this->activity_id;
         $entries = $this->apiClass->getActivityNodes($id);
 
-        $reply = $this->view->table_start;
-        $reply .= '<div class="ibm_buttons">';
-        $reply .= $this->view->button(
-            'LBL_ADD_SECTION',
-            'createIBMElement("ActivitySection","&ibm_parent_id=' . $id . '");',
-            'add'
-        );
-        $reply .= $this->view->button(
-            'LBL_ADD_TODO',
-            'createIBMElement("ActivityToDo","&ibm_parent_id=' . $id . '");',
-            'add'
-        );
-        $reply .= $this->view->button(
-            'LBL_ADD_ENTRY',
-            'createIBMElement("ActivityEntry","&ibm_parent_id=' . $id . '");',
-            'add'
-        );
-        $reply .= "</div>";
+        $returnData = array();
         if (!empty($entries)) {
             foreach ($entries as $entry) {
                 $type = $entry->getType();
                 switch ($type) {
                     case 'todo':
-                        $reply .= $this->getToDoView($entry);
+                        $returnData[] = $this->getToDoView($entry);
                         break;
                     case 'entry':
-                        $reply .= $this->getEntryView($entry);
+                        $returnData[] = $this->getEntryView($entry);
                         break;
                     case 'section':
-                        $reply .= $this->getSectionView($entry);
+                        $returnData[] = $this->getSectionView($entry);
                         break;
                 }
             }
-        } else {
-            $reply .= "<tr><td>{$this->language['LBL_NO_DATA']}</td></tr>";
         }
-        $reply .= $this->view->table_end;
-        $content = array("content" => $reply);
-        ob_clean();
-        echo json_encode($content);
+        return $returnData;
     }
 
     private function getToDoView($entry)
@@ -1478,7 +1456,7 @@ class ConnectionsHelper
         $arr['completed'] = $entry->getCompleted();
         $arr['assignedTo'] = $entry->getAssignee();
 
-        return $this->view->activityToDo($arr);
+        return $arr;
     }
 
     private function getToDoViewModal($entry)
@@ -1541,7 +1519,7 @@ class ConnectionsHelper
         $arr['contributor'] = $entry->getContributor();
         $arr['updated'] = $this->formateDate($entry->getFormattedUpdatedDate());
 
-        return $this->view->activityEntry($arr);
+        return $arr;
 
     }
 
@@ -1582,20 +1560,20 @@ class ConnectionsHelper
         $arr['id'] = $entry->getId();
         $arr['title'] = $entry->getTitle();
         $arr['parent_id'] = $this->activity_id;
-        $arr['content'] = '';
+        $arr['content'] = array();
         $nodes = $entry->listNodes();
 
         foreach ($nodes as $node) {
             $node_type = $node->getType();
             if ($node_type == "todo") {
-                $arr['content'] .= $this->getToDoView($node);
+                $arr['content'][] = $this->getToDoView($node);
             } else {
                 if ($node_type == "entry") {
-                    $arr['content'] .= $this->getEntryView($node);
+                    $arr['content'][] = $this->getEntryView($node);
                 }
             }
         }
-        return $this->view->activitySection($arr);
+        return $arr;
     }
 
     private function getChildForParent($arr, $id)
