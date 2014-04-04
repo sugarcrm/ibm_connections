@@ -44,7 +44,7 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-
+        this.events['show #'+this.cid] = 'showtaskNodes';
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
@@ -98,6 +98,36 @@
 
     _getFilters: function(index) {
         return [{'community_id': this.settings.get('community_id') }];
+    },
+
+    showtaskNodes: function(ev){
+        var tastEl = $(ev.target);
+        if (tastEl.attr('subTaskShown')){
+            return ;
+        }
+        tastEl.attr('subTaskShown', 1);
+        debugger;
+
+
+        var collection = app.data.createBeanCollection('ibm_connectionsTaskNodes');
+        collection.filterDef = [{'task_id':  tastEl.attr('id')  }]
+        var recordsTpl = app.template.getView('ibm-connections.reports-task-node');
+
+        collection.fetch({
+            complete: function() {
+                collection.dataFetched = true;
+                tastEl.find('.subTaskHold').html(recordsTpl({collection:collection}));
+//                callback(null);
+            }
+        });
+
+
+        /*
+         var recordsTpl = app.template.getView('ibm-connections.reports-task-node');
+         this.recordsHtml = recordsTpl(this);
+
+         debugger;
+         */
     },
 
     /*_render: function()
