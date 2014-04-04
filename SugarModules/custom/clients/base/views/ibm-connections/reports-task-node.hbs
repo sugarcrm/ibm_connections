@@ -1,0 +1,8 @@
+{{#each collection.models}}
+    <div  {{#if attributes.completed }} style="text-decoration: line-through;" {{/if}} >
+
+        <i class="icon-check"></i>
+        <!-- i class="icon-file-alt"></i -->    {{getFieldValue this "name"}}
+    </div>
+{{/each}}
+{{!-- log this --}}
