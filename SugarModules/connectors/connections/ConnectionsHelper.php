@@ -1430,6 +1430,7 @@ class ConnectionsHelper
     {
         $arr = array();
         $arr['id'] = $entry->getId();
+        $arr['node_type'] = $entry->getType();
         $arr['title'] = $entry->getTitle();
         $arr['parent_id'] = $this->activity_id;
         $arr['dueDate'] = $entry->getDueDate();
@@ -1496,6 +1497,7 @@ class ConnectionsHelper
     {
         $arr = array();
         $arr['id'] = $entry->getId();
+        $arr['node_type'] = $entry->getType();
         $arr['title'] = $entry->getTitle();
         $arr['parent_id'] = $this->activity_id;
         $nodes = $entry->listNodes();
@@ -1558,6 +1560,7 @@ class ConnectionsHelper
     {
         $arr = array();
         $arr['id'] = $entry->getId();
+        $arr['node_type'] = $entry->getType();
         $arr['title'] = $entry->getTitle();
         $arr['parent_id'] = $this->activity_id;
         $arr['content'] = array();

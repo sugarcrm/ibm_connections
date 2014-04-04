@@ -47,9 +47,9 @@ $fields = array(
         'source' => 'non-db',
         'unified_search' => true,
     ),
-    
-    'type' => array(
-        'name' => 'type',
+
+    'node_type' => array(
+        'name' => 'node_type',
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => true,

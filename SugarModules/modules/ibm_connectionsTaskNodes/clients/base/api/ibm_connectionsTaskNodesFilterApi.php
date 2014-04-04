@@ -53,7 +53,7 @@ class ibm_connectionsTaskNodesFilterApi extends FilterApi
     {
         //$beans = $this->buildBeansList('3e9fa159-5752-4a95-a9ba-bf34065b9f70'); //root
         //$beans = $this->buildBeansList('206fadff-9778-4dba-b589-a6f90d340f6c'); //section
-        $beans = $this->buildBeansList($args['filter'][0]['activity_id']);
+        $beans = $this->buildBeansList($args['filter'][0]['task_id']);
 
         $data = array(
             'next_offset' => -1,
@@ -69,12 +69,13 @@ class ibm_connectionsTaskNodesFilterApi extends FilterApi
 
         $beans = array();
         foreach ($returnData as $item) {
-            $beans[] = $this->buildBean($item);
             if (is_array($item['content']) && sizeof($item['content']) > 0) {
                 foreach ($item['content'] as $subItem) {
                     $subItem['title'] = $item['title'] . self::NAME_SEPARATOR . $subItem['title'];
                     $beans[] = $this->buildBean($subItem);
                 }
+            }else{
+                $beans[] = $this->buildBean($item);
             }
         }
         return $beans;
