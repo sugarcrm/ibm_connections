@@ -262,15 +262,40 @@ $viewdefs['base']['view']['ibm-connections'] = array(
 //            'record_date' => 'date_start',
             'row_actions' => array(
                 array(
-                    'type' => 'dashletaction',
-//                   'event' => 'button:unlink:member2community:click',
-//                   'name' => 'edit_button',
-                    'icon' => 'icon-remove-circle',
-                    'css_class' => 'btn btn-mini',
-                    'action' => 'rmLink',
-                    'params' => array(
-                        'module' => 'ibm_connectionsTasks',
-                        'link' => 'community_tasks',
+                    'type' => 'actiondropdown',
+                    'buttons' => array(
+                        array(
+                            'type' => 'dashletaction',
+                            'action' => 'addItem',
+                            'params' => array(
+                                'module' => 'ibm_connectionsTodos',
+//                                'link' => 'member_task',
+                            ),
+                            'name' => 'edit_button',
+                            'label' => 'New To do',
+                        ),
+                        array(
+                            'type' => 'dashletaction',
+                            'action' => 'addItem',
+                            'params' => array(
+                                'module' => 'ibm_connectionsEntries',
+//                                'link' => 'member_task',
+                            ),
+                            'name' => 'edit_button',
+                            'label' => 'New Entry',
+                        ),
+                        array(
+                            'type' => 'dashletaction',
+//                            'event' => 'button:unlink:member2community:click',
+                            'name' => 'edit_button',
+                            'label' => 'Remove',
+                            'action' => 'rmLink',
+                            'params' => array(
+                                'module' => 'ibm_connectionsMembers',
+                                'link' => 'community_member',
+                            ),
+                        ),
+
                     ),
                 ),
 
