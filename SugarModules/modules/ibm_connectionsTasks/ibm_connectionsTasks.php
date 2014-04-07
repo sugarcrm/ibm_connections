@@ -31,4 +31,23 @@ class ibm_connectionsTasks extends SugarBean
     public $module_dir = "ibm_connectionsTasks";
     public $object_name = "ibm_connectionsTasks";
 
+    public function save()
+    {
+        $_SESSION['bean'][__CLASS__][$this->id] = array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'community_id' => $this->community_id,
+        );
+
+    }
+
+    public function retrieve($id)
+    {
+        $this->id = $id;
+        $this->name = $_SESSION['bean'][__CLASS__][$id]['name'];
+        $this->community_id = $_SESSION['bean'][__CLASS__][$id]['community_id'];
+
+        return $this;
+    }
+
 } 
