@@ -44,20 +44,22 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-        this.events['show #'+this.cid] = 'showtaskNodes';
+//        this.events['show #'+this.cid] = 'showtaskNodes';
+//        this.events['show'] = 'showtaskNodes';
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
 
-        this.plugins = _.union(this.plugins, [
-            'Connector'
-        ]);
+        /*this.plugins = _.union(this.plugins, [
+         'Connector'
+         ]);*/
 
         this._super('initialize', [options]);
         this.tbodyTag = 'ul[data-action="pagination-body"]';
 
-
-        this.on('click [data-event="button:link_member2task"]', this.linkMember2task, this);
+        //this.on('click [data-event="button:link_member2task"]', this.linkMember2task, this);
+        //this.events['show #'+this.cid] = 'showtaskNodes';
+        this.$el.on('show', _.bind(this.showtaskNodes, this));
     },
 
     initDashlet: function () {
@@ -106,7 +108,7 @@
             return ;
         }
         tastEl.attr('subTaskShown', 1);
-        debugger;
+        // debugger;
 
 
         var collection = app.data.createBeanCollection('ibm_connectionsTaskNodes');
@@ -142,14 +144,74 @@
      return this;
      },*/
 
+
+    /**
+     *
+     * @param event
+     * @param {Object} params Optional params to getaration create form
+     * @param {String} params.module
+     */
+    addItem:function(event, params){
+        var self = this;
+        var model = app.data.createBean(params.module, {community_id: this.settings.get('community_id')});
+        app.drawer.open({
+            layout: 'create-actions',
+            context: {
+                create: true,
+                module: params.module,
+                model: model
+            }
+        }, function(model) {
+            debugger;
+            if (model) {
+                self.layout.reloadDashlet();
+//                self.context.trigger('panel-top:refresh', 'emails');
+            }
+        });
+
+    },
+
+
+
+
+
+
+
     addLink:function(event, params){
-//        debugger;
-        var id = this._getIId(event);
-        var str = "addLink\n"+"community_id="+this.settings.get('community_id')+"\n"
-            +"module="+params.module+"\n"
-            +"link="+params.link+"\n"
-            +"iid="+id+"\n";
-        alert(str);
+        /*
+         //        debugger;
+         var id = this._getIId(event);
+         var str = "addLink\n"+"community_id="+this.settings.get('community_id')+"\n"
+         +"module="+params.module+"\n"
+         +"link="+params.link+"\n"
+         +"iid="+id+"\n";
+         alert(str);
+         */
+
+        var self = this;
+        debugger;
+        var model = app.data.createBean("ibm_connectionsTasks", {community_id: this.settings.get('community_id') })
+        app.drawer.open({
+            layout: 'create-actions',
+            context: {
+                create: true,
+                module: 'ibm_connectionsTasks',
+                model: model
+                /*prepopulate: {
+                 related: this.model,
+                 to_addresses: [{bean: this.model}],
+                 community_id:this.settings.get('community_id')
+                 }*/
+            }
+        }, function(model) {
+            /*if (model) {
+             self.layout.reloadDashlet();
+             self.context.trigger('panel-top:refresh', 'emails');
+             }*/
+        });
+
+
+
 
         // $(arguments[0].currentTarget).parents('li:first')
 //        debugger;

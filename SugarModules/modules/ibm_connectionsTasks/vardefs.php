@@ -46,6 +46,8 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => true,
+        'vname' => 'LBL_NAME',
+        'required' => true,
     ),
     'contributor_id' => array(
         'name' => 'author_id',

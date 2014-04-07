@@ -44,6 +44,53 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             ),
         ),
     ),
+    'custom_toolbar' => array(
+        'buttons' => array(
+            array(
+                'type' => 'actiondropdown',
+                'no_default_action' => true,
+                'icon' => 'icon-plus',
+                'buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'addItem',
+                        'params' => array(
+                            'module' => 'ibm_connectionsTasks',
+                        ),
+                        'label' => 'Add Activity',
+//                        'acl_action' => 'create',
+//                        'acl_module' => 'Emails',
+                    ),
+                )
+            ),
+            array(
+                'dropdown_buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'editClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'refreshClicked',
+                        'label' => 'LBL_DASHLET_REFRESH_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'toggleClicked',
+                        'label' => 'LBL_DASHLET_MINIMIZE',
+                        'event' => 'minimize',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'removeClicked',
+                        'label' => 'LBL_DASHLET_REMOVE_LABEL',
+                    ),
+                ),
+            ),
+        ),
+
+    ),
     /*'custom_toolbar' => array(
         'buttons' => array(
             array(
