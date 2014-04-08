@@ -56,13 +56,20 @@ class ibm_connectionsTasks extends SugarBean
             $tag = array();
         }
 
-        $connectionsApi->createActivity(
+        $result = $connectionsApi->createActivity(
             $this->community_id,
             $this->name,
             $goal,
             $tag,
             null
         );
+
+        $activityData = IBMAtomEntry::loadFromString($result);
+        $item = new ConnectionsActivity($activityData);
+        $activityId = $item->getId();
+
+        $this->id = $activityId;
+        return $activityId;
 
         /*
         $_SESSION['bean'][__CLASS__][$this->id] = array(
@@ -76,9 +83,26 @@ class ibm_connectionsTasks extends SugarBean
 
     public function retrieve($id)
     {
+        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
+        $connectionsApi = new ExtAPIConnections();
+        $eapmBean = EAPM::getLoginInfo('Connections');
+        if (!empty($eapmBean)) {
+            $connectionsApi->loadEAPM($eapmBean);
+        }
+
+        $activity = $connectionsApi->getActivity($id);
+
+
         $this->id = $id;
+        $this->name = $activity->getTitle();
+        $this->goal = $activity->getSummary();
+        $this->tags = $activity->getTags();
+        $this->due_date = $activity->getDueDate();
+
+        /*
         $this->name = $_SESSION['bean'][__CLASS__][$id]['name'];
         $this->community_id = $_SESSION['bean'][__CLASS__][$id]['community_id'];
+        */
 
         return $this;
     }

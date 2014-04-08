@@ -31,5 +31,94 @@ class ibm_connectionsTaskNodes extends SugarBean
     public $module_dir = "ibm_connectionsTaskNodes";
     public $object_name = "ibm_connectionsTaskNodes";
 
+    public function save()
+    {
+
+        $goal = ''; // Temporary! Need to add form field
+
+        //Create and setup Connections API object
+        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
+        $connectionsApi = new ExtAPIConnections();
+        $eapmBean = EAPM::getLoginInfo('Connections');
+        if (!empty($eapmBean)) {
+            $connectionsApi->loadEAPM($eapmBean);
+        }
+
+        if (!empty($this->due_date)) {
+            $this->due_date = $GLOBALS['timedate']->asDbDate(
+                $GLOBALS['timedate']->fromUserDate($this->due_date)
+            );
+        }
+        $tag_str = str_replace(' ', ',', $this->activity_tags);
+        if (!empty($tag_str)) {
+            $tag = explode(',', $tag_str);
+        } else {
+            $tag = array();
+        }
+
+        $connectionsApi->createActivityToDo(
+            $activityId,
+            $this->name,
+            $goal,
+            null,
+            $tag,
+            array('name' => null, 'id' => null)
+        );
+
+
+        $result = $connectionsApi->createActivity(
+            $this->community_id,
+            $this->name,
+            $goal,
+            $tag,
+            null
+        );
+
+        $activityData = IBMAtomEntry::loadFromString($result);
+        $item = new ConnectionsActivity($activityData);
+        $activityId = $item->getId();
+
+        $this->id = $activityId;
+        return $activityId;
+
+
+        /*
+        $_SESSION['bean'][__CLASS__][$this->id] = array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'community_id' => $this->community_id,
+        );
+        */
+
+    }
+
+    public function retrieve($id)
+    {
+
+        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
+        $connectionsApi = new ExtAPIConnections();
+        $eapmBean = EAPM::getLoginInfo('Connections');
+        if (!empty($eapmBean)) {
+            $connectionsApi->loadEAPM($eapmBean);
+        }
+
+        $activity = $connectionsApi->getActivity($id);
+
+
+        $this->id = $id;
+        $this->name = $activity->getTitle();
+        $this->goal = $activity->getSummary();
+        $this->tags = $activity->getTags();
+        $this->due_date = $activity->getDueDate();
+
+        /*
+        $this->name = $_SESSION['bean'][__CLASS__][$id]['name'];
+        $this->community_id = $_SESSION['bean'][__CLASS__][$id]['community_id'];
+        */
+
+        return $this;
+    }
+
+
 }
  

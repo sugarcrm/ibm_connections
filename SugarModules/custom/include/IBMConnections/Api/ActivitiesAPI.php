@@ -14,7 +14,6 @@
 /* ***************************************************************** */
 
 
-
 require_once 'custom/include/IBMConnections/Api/AbstractConnectionsAPI.php';
 require_once 'custom/include/IBMConnections/Api/CommunitiesAPI.php';
 require_once 'custom/include/IBMConnections/FeedApi/IBMAtomFeed.php';
@@ -40,26 +39,29 @@ class ActivitiesAPI extends AbstractConnectionsAPI
      * Enter description here ...
      */
 
-    public function listCommunityActivities($communityId, $page, $searchText ) {
+    public function listCommunityActivities($communityId, $page, $searchText)
+    {
         //      	$commApi = new CommunitiesAPI($this->getHttpClient());
 //        	$commApi->activateActivities($communityId); 
         $feed = $this->getRemoteAppFeed($communityId);
-        if(empty($feed)){
+        if (empty($feed)) {
             return array();
         }
         $entries = array();
         $entries = $feed->getEntries();
-        for($i = 0; $i < sizeof($entries); $i++) {
+        for ($i = 0; $i < sizeof($entries); $i++) {
             $entry = $entries[$i];
             $retArray = $entry->getCategories("http://www.ibm.com/xmlns/prod/sn/type");
-            for($k = 0; $k < sizeof($retArray); $k++) {
-                if(strcmp($retArray[$k]['term'],"Activities") == 0) {
+            for ($k = 0; $k < sizeof($retArray); $k++) {
+                if (strcmp($retArray[$k]['term'], "Activities") == 0) {
                     $link = $entry->getLink("http://www.ibm.com/xmlns/prod/sn/remote-application/feed");
                     $path = $this->extractRelativeUrlPath($link['href']);
                 }
             }
         }
-        if (empty($path)) return array('message' => 'widget_is_not_activated');
+        if (empty($path)) {
+            return array('message' => 'widget_is_not_activated');
+        }
 
 
         $this->getHttpClient()->resetParameters();
@@ -71,11 +73,11 @@ class ActivitiesAPI extends AbstractConnectionsAPI
             $this->getHttpClient()->setParameterGet("search", $searchText);
 
         }
-        $this->getHttpClient()->setParameterGet("completed","yes");
+        $this->getHttpClient()->setParameterGet("completed", "yes");
 
         //$this->getHttpClient()->setParameterGet("tunedout","yes");
         $result = $this->requestForPath("GET", "/activities/service/atom2/everything");
-        if (empty($result) || !$this->checkResult($result)){
+        if (empty($result) || !$this->checkResult($result)) {
             return array();
         }
         $activities = array();
@@ -90,31 +92,50 @@ class ActivitiesAPI extends AbstractConnectionsAPI
     /**
      *
      */
-    public function getActivity($id) {
+    public function getActivity($id)
+    {
         $this->getHttpClient()->resetParameters();
         $this->getHttpClient()->setParameterGet("activityUuid", $id);
         $result = $this->requestForPath("GET", "/activities/service/atom2/activity");
-        if (empty($result) || !$this->checkResult($result)){
+        if (empty($result) || !$this->checkResult($result)) {
             return;
         }
         $feed = IBMAtomFeed::loadFromString($result->getBody());
         return new ConnectionsActivity($feed);
     }
 
+    public function getActivityNode($id)
+    {
+        $this->getHttpClient()->resetParameters();
+        $this->getHttpClient()->setParameterGet("activityNodeUuid", $id);
+        $result = $this->requestForPath("GET", "/activities/service/atom2/activitynode");
+        if (empty($result) || !$this->checkResult($result)) {
+            return;
+        }
+        $entry = IBMAtomEntry::loadFromString($result->getBody());
+        return new ConnectionsActivity($entry);
+    }
+
     public function getNode($activityId, $nodeId)
     {
-        $feedLink = "/activities/service/atom2/activity?activityUuid=".$activityId."&ps=150";
+        $feedLink = "/activities/service/atom2/activity?activityUuid=" . $activityId . "&ps=150";
         $this->getHttpClient()->resetParameters();
         $result = $this->requestForPath("GET", $feedLink);
-        if (empty($result) || !$this->checkResult($result)){
+        if (empty($result) || !$this->checkResult($result)) {
             return;
         }
         $feed = IBMAtomFeed::loadFromString($result->getBody());
 
         $nodeEntries = $feed->getEntries();
         $nodes = array();
-        foreach ( $nodeEntries as $nodeEntry) {
-            if (substr($nodeEntry->getId(), -1 * strlen($nodeId)) == $nodeId) return ConnectionsActivity::createActivityNodeFromEntry($nodeEntry, $feed);
+        foreach ($nodeEntries as $nodeEntry) {
+            if (substr(
+                    $nodeEntry->getId(),
+                    -1 * strlen($nodeId)
+                ) == $nodeId
+            ) {
+                return ConnectionsActivity::createActivityNodeFromEntry($nodeEntry, $feed);
+            }
         }
         return null;
     }
@@ -123,19 +144,20 @@ class ActivitiesAPI extends AbstractConnectionsAPI
      *
      * Enter description here ...
      */
-    public function listActivityNodes($activityId) {
-        $feedLink = "/activities/service/atom2/activity?activityUuid=".$activityId."&ps=150";//.AbstractConnectionsAPI::MAX_PAGE_SIZE;
+    public function listActivityNodes($activityId)
+    {
+        $feedLink = "/activities/service/atom2/activity?activityUuid=" . $activityId . "&ps=150"; //.AbstractConnectionsAPI::MAX_PAGE_SIZE;
         $this->getHttpClient()->resetParameters();
         $result = $this->requestForPath("GET", $feedLink);
-        if (empty($result) || !$this->checkResult($result)){
+        if (empty($result) || !$this->checkResult($result)) {
             return array();
         }
         $feed = IBMAtomFeed::loadFromString($result->getBody());
 
         $activityNodeEntries = $feed->getReplies();
         $activityNodes = array();
-        foreach ( $activityNodeEntries as $activityNodeEntry) {
-            $activityNodes[] =  ConnectionsActivity::createActivityNodeFromEntry($activityNodeEntry, $feed);
+        foreach ($activityNodeEntries as $activityNodeEntry) {
+            $activityNodes[] = ConnectionsActivity::createActivityNodeFromEntry($activityNodeEntry, $feed);
         }
         return $activityNodes;
     }
@@ -144,17 +166,18 @@ class ActivitiesAPI extends AbstractConnectionsAPI
      *
      * Enter description here ...
      */
-    public function getActivityHistory($activityId) {
-        $link = "/activities/service/atom2/activity/history?activityUuid=".$activityId;
+    public function getActivityHistory($activityId)
+    {
+        $link = "/activities/service/atom2/activity/history?activityUuid=" . $activityId;
         $this->getHttpClient()->resetParameters();
         $result = $this->requestForPath("GET", $link);
-        if (empty($result) || !$this->checkResult($result)){
+        if (empty($result) || !$this->checkResult($result)) {
             return array();
         }
         $historyFeed = IBMAtomFeed::loadFromString($result->getBody());
         $entries = $historyFeed->getEntries();
         $changeLog = array();
-        for($i = 0; ($i < count($entries)) && $i < 3; $i++) {
+        for ($i = 0; ($i < count($entries)) && $i < 3; $i++) {
             $changeLog[] = new ConnectionsHistoryEntry($entries[$i]);
         }
         return $changeLog;
@@ -172,7 +195,8 @@ class ActivitiesAPI extends AbstractConnectionsAPI
      * $templateUuid - the uuid of the template. This template must already exist in
      * Connections
      */
-    public function createActivityFromTemplate($communityId, $templateUuid, $activityName)     {
+    public function createActivityFromTemplate($communityId, $templateUuid, $activityName)
+    {
 
         $nonce = $this->requestNonce();
         $client = $this->getHttpClient(true);
@@ -181,9 +205,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         //$activityUrl = "/activities/service/html/post/activity";
         //$client->setRequestPath($activityUrl);
 
-        $cvmHeaders = array (
+        $cvmHeaders = array(
             'Pragma' => 'WWW-Authenticate=XHR',
-            'X-Requested-With' =>  'XMLHttpRequest',
+            'X-Requested-With' => 'XMLHttpRequest',
             'Content-Type' => 'application/x-www-form-urlencoded',
             'X-Update-Nonce' => $nonce
         );
@@ -215,7 +239,8 @@ class ActivitiesAPI extends AbstractConnectionsAPI
      * @param $type
      * @return mixed
      */
-    public function createCommunityActivity($communityId, $title, $content = '', $tags = array(), $due_date = null) {
+    public function createCommunityActivity($communityId, $title, $content = '', $tags = array(), $due_date = null)
+    {
 
         $feed = $this->getRemoteAppFeed($communityId);
         if (empty($feed)) {
@@ -224,18 +249,18 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $path = "";
         //$entries = array();
         $entries = $feed->getEntries();
-        for($i = 0; $i < sizeof($entries); $i++) {
+        for ($i = 0; $i < sizeof($entries); $i++) {
             $entry = $entries[$i];
             $retArray = $entry->getCategories("http://www.ibm.com/xmlns/prod/sn/type");
-            for($k = 0; $k < sizeof($retArray); $k++) {
-                if(strcmp($retArray[$k]['term'],"Activities") == 0) {
+            for ($k = 0; $k < sizeof($retArray); $k++) {
+                if (strcmp($retArray[$k]['term'], "Activities") == 0) {
                     $link = $entry->getLink("http://www.ibm.com/xmlns/prod/sn/remote-application/feed");
                     $path = $this->extractRelativeUrlPath($link['href']);
                 }
             }
         }
         //echo "path1". $path;
-        if (empty($path)){
+        if (empty($path)) {
             $commApi = new CommunitiesAPI($this->getHttpClient());
             $commApi->activateActivities($communityId);
             $feed = $this->getRemoteAppFeed($communityId);
@@ -245,11 +270,11 @@ class ActivitiesAPI extends AbstractConnectionsAPI
             $path = "";
             $entries = array();
             $entries = $feed->getEntries();
-            for($i = 0; $i < sizeof($entries); $i++) {
+            for ($i = 0; $i < sizeof($entries); $i++) {
                 $entry = $entries[$i];
                 $retArray = $entry->getCategories("http://www.ibm.com/xmlns/prod/sn/type");
-                for($k = 0; $k < sizeof($retArray); $k++) {
-                    if(strcmp($retArray[$k]['term'],"Activities") == 0) {
+                for ($k = 0; $k < sizeof($retArray); $k++) {
+                    if (strcmp($retArray[$k]['term'], "Activities") == 0) {
                         $link = $entry->getLink("http://www.ibm.com/xmlns/prod/sn/remote-application/feed");
                         $path = $this->extractRelativeUrlPath($link['href']);
                     }
@@ -257,7 +282,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
             }
         }
         // echo "path2". $path;
-        if (empty($path)) return array('message' => 'widget_is_not_activated');
+        if (empty($path)) {
+            return array('message' => 'widget_is_not_activated');
+        }
         $entry = IBMEditableAtomEntry::createEmptyEditableEntry();
         $entry->addCategory('activity', 'http://www.ibm.com/xmlns/prod/sn/type', 'Activity');
         $entry->addCategory('community_activity', 'http://www.ibm.com/xmlns/prod/sn/type', 'Community Activity');
@@ -265,25 +292,32 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $entry->setTitle($title);
         $entry->setContent($content);
 
-        if (!empty($due_date)){
+        if (!empty($due_date)) {
             $dueDateElt = $entry->getDom()->createElement('snx:duedate', $due_date);
             $entry->getEntryNode()->appendChild($dueDateElt);
         }
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $entry->addTag($tag);
         }
         $this->httpClient = $this->getHttpClient();
         $this->httpClient->resetParameters();
         $this->httpClient->setParameterPost("commUuid", $communityId);
         $this->httpClient->setRawData($entry->getDomString());
-        $response = $this->requestForPath('POST',$path,
-            array('Content-Type' => 'application/atom+xml',
-                'Content-Language' => 'en-US',));
+        $response = $this->requestForPath(
+            'POST',
+            $path,
+            array(
+                'Content-Type' => 'application/atom+xml',
+                'Content-Language' => 'en-US',
+            )
+        );
+        return $response->getBody();
         //echo $response->getStatus();
 
     }
 
-    public function createSection($activityId, $name) {
+    public function createSection($activityId, $name)
+    {
         $parent = $this->getActivity($activityId);
         $path = $this->extractRelativeUrlPath($parent->getCollectionLink());
 
@@ -294,13 +328,19 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $this->httpClient = $this->getHttpClient();
         $this->httpClient->resetParameters();
         $this->httpClient->setRawData($entry->getDomString());
-        $response = $this->requestForPath('POST',$path,
-            array('Content-Type' => 'application/atom+xml',
-                'Content-Language' => 'en-US',));
+        $response = $this->requestForPath(
+            'POST',
+            $path,
+            array(
+                'Content-Type' => 'application/atom+xml',
+                'Content-Language' => 'en-US',
+            )
+        );
 
     }
 
-    public function createEntry($activityId, $title, $description, $tags = array()) {
+    public function createEntry($activityId, $title, $description, $tags = array())
+    {
         $parent = $this->getActivity($activityId);
         $path = $this->extractRelativeUrlPath($parent->getCollectionLink());
 
@@ -308,48 +348,73 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $entry->addCategory('entry', 'http://www.ibm.com/xmlns/prod/sn/type', 'Entry');
         $entry->setTitle($title);
         $entry->setContent($description);
-        foreach($tags as $tag) {
-            if (empty($tag)) continue;
+        foreach ($tags as $tag) {
+            if (empty($tag)) {
+                continue;
+            }
             $entry->addTag($tag);
         }
         $this->httpClient = $this->getHttpClient();
         $this->httpClient->resetParameters();
         $this->httpClient->setRawData($entry->getDomString());
-        $response = $this->requestForPath('POST',$path,
-            array('Content-Type' => 'application/atom+xml',
-                'Content-Language' => 'en-US',));
+        $response = $this->requestForPath(
+            'POST',
+            $path,
+            array(
+                'Content-Type' => 'application/atom+xml',
+                'Content-Language' => 'en-US',
+            )
+        );
 
     }
 
-    public function createSectionEntry($activityId, $sectionId, $title, $description, $tags = array()) {
+    public function createSectionEntry($activityId, $sectionId, $title, $description, $tags = array())
+    {
         $parent = $this->getActivity($activityId);
         $path = $this->extractRelativeUrlPath($parent->getCollectionLink());
         $entry = IBMEditableAtomEntry::createEmptyEditableEntry();
         $entry->addCategory('entry', 'http://www.ibm.com/xmlns/prod/sn/type', 'Entry');
         $entry->setTitle($title);
         $entry->setContent($description);
-        foreach($tags as $tag) {
-            if (empty($tag)) continue;
+        foreach ($tags as $tag) {
+            if (empty($tag)) {
+                continue;
+            }
             $entry->addTag($tag);
         }
-        $elt =$entry->getDom()->createElement('thr:in-reply-to');
+        $elt = $entry->getDom()->createElement('thr:in-reply-to');
         $elt->setAttribute('ref', "urn:lsid:ibm.com:oa:" . $sectionId);
-        $elt->setAttribute('href', $this->url . "/activities/service/atom2/activitynode?activityNodeUuid=" . $sectionId);
-        $elt->setAttribute('type' , "application/atom+xml");
-        $elt->setAttribute('source', "urn:lsid:ibm.com:oa:". $sectionId);
+        $elt->setAttribute(
+            'href',
+            $this->url . "/activities/service/atom2/activitynode?activityNodeUuid=" . $sectionId
+        );
+        $elt->setAttribute('type', "application/atom+xml");
+        $elt->setAttribute('source', "urn:lsid:ibm.com:oa:" . $sectionId);
 
         $entry->getEntryNode()->appendChild($elt);
 
         $this->httpClient = $this->getHttpClient();
         $this->httpClient->resetParameters();
         $this->httpClient->setRawData($entry->getDomString());
-        $response = $this->requestForPath('POST',$path,
-            array('Content-Type' => 'application/atom+xml',
-                'Content-Language' => 'en-US',));
+        $response = $this->requestForPath(
+            'POST',
+            $path,
+            array(
+                'Content-Type' => 'application/atom+xml',
+                'Content-Language' => 'en-US',
+            )
+        );
 
     }
 
-    public function createToDo($activityId, $title, $description, $due_date,$tags = array(), $assigned = array('name' => null, 'id' => null)) {
+    public function createToDo(
+        $activityId,
+        $title,
+        $description,
+        $due_date,
+        $tags = array(),
+        $assigned = array('name' => null, 'id' => null)
+    ) {
         $parent = $this->getActivity($activityId);
         $path = $this->extractRelativeUrlPath($parent->getCollectionLink());
 
@@ -357,12 +422,14 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $entry->addCategory('todo', 'http://www.ibm.com/xmlns/prod/sn/type', 'To Do');
         $entry->setTitle($title);
         $entry->setContent($description);
-        foreach($tags as $tag) {
-            if (empty($tag)) continue;
+        foreach ($tags as $tag) {
+            if (empty($tag)) {
+                continue;
+            }
             $entry->addTag($tag);
         }
-        if (!empty($due_date)){
-            $dueDateElt = $entry->getDom()->createElement('snx:duedate', $due_date);;
+        if (!empty($due_date)) {
+            $dueDateElt = $entry->getDom()->createElement('snx:duedate', $due_date);
             $entry->getEntryNode()->appendChild($dueDateElt);
         }
         //2008-04-23T04:00:00Z
@@ -378,13 +445,27 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $this->httpClient = $this->getHttpClient();
         $this->httpClient->resetParameters();
         $this->httpClient->setRawData($entry->getDomString());
-        $response = $this->requestForPath('POST',$path,
-            array('Content-Type' => 'application/atom+xml',
-                'Content-Language' => 'en-US',));
+        $response = $this->requestForPath(
+            'POST',
+            $path,
+            array(
+                'Content-Type' => 'application/atom+xml',
+                'Content-Language' => 'en-US',
+            )
+        );
+        return $response->getBody();
 
     }
 
-    public function createSectionToDo($activityId, $sectionId, $title, $description, $due_date,$tags = array(), $assigned = array('name' => null, 'id' => null)) {
+    public function createSectionToDo(
+        $activityId,
+        $sectionId,
+        $title,
+        $description,
+        $due_date,
+        $tags = array(),
+        $assigned = array('name' => null, 'id' => null)
+    ) {
         $parent = $this->getActivity($activityId);
         $path = $this->extractRelativeUrlPath($parent->getCollectionLink());
 
@@ -392,12 +473,14 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $entry->addCategory('todo', 'http://www.ibm.com/xmlns/prod/sn/type', 'To Do');
         $entry->setTitle($title);
         $entry->setContent($description);
-        foreach($tags as $tag) {
-            if (empty($tag)) continue;
+        foreach ($tags as $tag) {
+            if (empty($tag)) {
+                continue;
+            }
             $entry->addTag($tag);
         }
 
-        if (!empty($due_date)){
+        if (!empty($due_date)) {
             $dueDateElt = $entry->getDom()->createElement('snx:duedate', $due_date);;
             $entry->getEntryNode()->appendChild($dueDateElt);
         }
@@ -410,48 +493,60 @@ class ActivitiesAPI extends AbstractConnectionsAPI
             $entry->getEntryNode()->appendChild($assignedElt);
         }
 
-        $elt =$entry->getDom()->createElement('thr:in-reply-to');
+        $elt = $entry->getDom()->createElement('thr:in-reply-to');
         $elt->setAttribute('ref', "urn:lsid:ibm.com:oa:" . $sectionId);
-        $elt->setAttribute('href', $this->url . "/activities/service/atom2/activitynode?activityNodeUuid=" . $sectionId);
-        $elt->setAttribute('type' , "application/atom+xml");
-        $elt->setAttribute('source', "urn:lsid:ibm.com:oa:". $sectionId);
+        $elt->setAttribute(
+            'href',
+            $this->url . "/activities/service/atom2/activitynode?activityNodeUuid=" . $sectionId
+        );
+        $elt->setAttribute('type', "application/atom+xml");
+        $elt->setAttribute('source', "urn:lsid:ibm.com:oa:" . $sectionId);
 
         $entry->getEntryNode()->appendChild($elt);
 
         $this->httpClient = $this->getHttpClient();
         $this->httpClient->resetParameters();
         $this->httpClient->setRawData($entry->getDomString());
-        $response = $this->requestForPath('POST',$path,
-            array('Content-Type' => 'application/atom+xml',
-                'Content-Language' => 'en-US',));
+        $response = $this->requestForPath(
+            'POST',
+            $path,
+            array(
+                'Content-Type' => 'application/atom+xml',
+                'Content-Language' => 'en-US',
+            )
+        );
 
     }
 
     public function markToDoCompleted($id, $completed = true)
     {
         $this->httpClient = $this->getHttpClient();
-        $newEntry  = IBMEditableAtomEntry::createEmptyEditableEntry();
+        $newEntry = IBMEditableAtomEntry::createEmptyEditableEntry();
         $newEntry->addCategory('todo', 'http://www.ibm.com/xmlns/prod/sn/type', 'To Do');
-        if ($completed){
+        if ($completed) {
             $newEntry->addCategory('completed', 'http://www.ibm.com/xmlns/prod/sn/flags', 'Completed');
         }
         $this->httpClient->resetParameters();
         $this->httpClient->setRawData($newEntry->getDomString());
         $this->httpClient->setParameterPost("activityNodeUuid", $id);
-        $result = $this->requestForPath('PUT',"/activities/service/atom2/activitynode?activityNodeUuid={$id}",
+        $result = $this->requestForPath(
+            'PUT',
+            "/activities/service/atom2/activitynode?activityNodeUuid={$id}",
             array(
                 'Content-Type' => 'application/atom+xml',
                 'Content-Language' => 'en-US'
             )
         );
-        if (empty($result) || !$this->checkResult($result)){
+        if (empty($result) || !$this->checkResult($result)) {
             return false;
         }
-        switch ($result->getStatus())
-        {
+        switch ($result->getStatus()) {
             case '200':
-            case '201': return true; break;
-            default : return false;
+            case '201':
+                return true;
+                break;
+            default :
+                return false;
         }
     }
 }
