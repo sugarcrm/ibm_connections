@@ -282,6 +282,9 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                             'params' => array(
                                 'module' => 'ibm_connectionsEntries',
 //                                'link' => 'member_task',
+                                'fieldMap' => array(
+                                    'task_id' => 'id'
+                                )
                             ),
                             'name' => 'edit_button',
                             'label' => 'New Entry',

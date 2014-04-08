@@ -57,6 +57,14 @@ $fields = array(
         'vname' => 'LBL_NAME',
         'required' => true,
     ),
+    'description' => array(
+        'name' => 'description',
+        'type' => 'text',
+        'source' => 'non-db',
+        'unified_search' => true,
+        'vname' => 'LBL_DESCRIPTION',
+        'required' => true,
+    ),
     
 /*  'assigned_user_name' => array(
         'name' => 'assigned_user_name',
