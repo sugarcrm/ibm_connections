@@ -1,4 +1,5 @@
 <div class="tab-pane active">
+{{#if collection.length}}    
     <ul class="unstyled listed  accordion" data-action="pagination-body" id="{{this.cid}}">
         {{#each collection.models}}
             <li  class="accordion-group" iid="{{getFieldValue this "id"}}"  >
@@ -31,4 +32,7 @@
             </li>
         {{/each}}
     </ul>
+{{else}}
+    <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</div>
+{{/if}}    
 </div>
