@@ -248,7 +248,7 @@
     },
 
     _getIId:function(event){
-        return this.$(event.currentTarget).parents('li:first').attr("iid");
+        return this.$(event.currentTarget).parents('li:first[iid]').attr("iid");
     },
 
 
