@@ -46,7 +46,7 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
     ),
-    
+
     'name' => array(
         'name' => 'name',
         'type' => 'varchar',
@@ -61,29 +61,38 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => true,
+        'vname' => 'LBL_ASSIGNED_TO_NAME',        
     ),
-    
+
     'assigned_user_id' => array(
         'name' => 'assigned_user_id',
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => true,
+        'vname' => 'LBL_ASSIGNED_TO_ID',
     ),
-    
+
     'assigned_user_email' => array(
         'name' => 'assigned_user_email',
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => true,
     ),
-    
+
     'completed' => array(
         'name' => 'completed',
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => true,
     ),
- 
+
+    'duedate' => array(
+        'name' => 'completed',
+        'type' => 'varchar',
+        'source' => 'non-db',
+        'type' => 'date',
+    ),
+
 );
 
  

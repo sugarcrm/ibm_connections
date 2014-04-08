@@ -152,8 +152,15 @@
      * @param {String} params.module
      */
     addItem:function(event, params){
+        var parentId = this._getIId(event);
+        var parent = this.collection.get(parentId);
+        var defVals = {community_id: this.settings.get('community_id')};
+        _.each(params.fieldMap, function(pName, chName){
+            defVals[chName] = parent.get(pName);
+        });
+
         var self = this;
-        var model = app.data.createBean(params.module, {community_id: this.settings.get('community_id')});
+        var model = app.data.createBean(params.module, defVals);
         app.drawer.open({
             layout: 'create-actions',
             context: {
@@ -170,9 +177,6 @@
         });
 
     },
-
-
-
 
 
 

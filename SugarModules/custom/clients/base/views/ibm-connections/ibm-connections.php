@@ -164,7 +164,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
     ),
     'tabs' => array(
         array(
-            'active' => true,
+            'active' => false,
 //            'filter_applied_to' => 'date_start',
             'filters' => array(
 //                'status' => array('$equals' => 'Held'),
@@ -247,7 +247,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             'include_child_items' => true,
         ),
         array(
-            'active' => false,
+            'active' => true,
 //            'filter_applied_to' => 'date_start',
             'filters' => array(
 //                'status' => array('$equals' => 'Held'),
@@ -269,7 +269,9 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                             'action' => 'addItem',
                             'params' => array(
                                 'module' => 'ibm_connectionsTodos',
-//                                'link' => 'member_task',
+                                'fieldMap' => array(
+                                    'task_id' => 'id'
+                                )
                             ),
                             'name' => 'edit_button',
                             'label' => 'New To do',
