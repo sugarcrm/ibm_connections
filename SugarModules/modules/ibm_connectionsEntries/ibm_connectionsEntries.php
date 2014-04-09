@@ -31,5 +31,80 @@ class ibm_connectionsEntries extends SugarBean
     public $module_dir = "ibm_connectionsEntries";
     public $object_name = "ibm_connectionsEntries";
 
+
+    public function save()
+    {
+
+        $goal = ''; // Temporary! Need to add form field
+
+        //Create and setup Connections API object
+        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
+        $connectionsApi = new ExtAPIConnections();
+        $eapmBean = EAPM::getLoginInfo('Connections');
+        if (!empty($eapmBean)) {
+            $connectionsApi->loadEAPM($eapmBean);
+        }
+
+        if (!empty($this->due_date)) {
+            $this->due_date = $GLOBALS['timedate']->asDbDate(
+                $GLOBALS['timedate']->fromUserDate($this->due_date)
+            );
+        }
+        $tag_str = str_replace(' ', ',', $this->activity_tags);
+        if (!empty($tag_str)) {
+            $tag = explode(',', $tag_str);
+        } else {
+            $tag = array();
+        }
+
+        $result = $connectionsApi->createActivityEntry($this->task_id, $this->name, $this->description, $tag);
+
+        $activityData = IBMAtomEntry::loadFromString($result);
+        $item = new ConnectionsActivity($activityData);
+        //$item = new ConnectionsActivityTodo($activityData);
+        $activityId = $item->getId();
+
+        $this->id = $activityId;
+        return $activityId;
+
+
+        /*
+        $_SESSION['bean'][__CLASS__][$this->id] = array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'community_id' => $this->community_id,
+        );
+        */
+
+    }
+
+    public function retrieve($id)
+    {
+
+        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
+        $connectionsApi = new ExtAPIConnections();
+        $eapmBean = EAPM::getLoginInfo('Connections');
+        if (!empty($eapmBean)) {
+            $connectionsApi->loadEAPM($eapmBean);
+        }
+
+        $activity = $connectionsApi->getActivityNode($id);
+
+
+        $this->id = $id;
+        $this->name = $activity->getTitle();
+        $this->goal = $activity->getSummary();
+        $this->tags = $activity->getTags();
+        $this->due_date = $activity->getDueDate();
+        $this->description = $activity->getContent();
+
+        /*
+        $this->name = $_SESSION['bean'][__CLASS__][$id]['name'];
+        $this->community_id = $_SESSION['bean'][__CLASS__][$id]['community_id'];
+        */
+
+        return $this;
+    }
+
+
 }
- 

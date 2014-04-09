@@ -540,7 +540,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
     public function createActivityEntry($activityId, $title, $description, $tags)
     {
-        $this->api->getActivitiesAPI()->createEntry($activityId, $title, $description, $tags);
+        return $this->api->getActivitiesAPI()->createEntry($activityId, $title, $description, $tags);
     }
 
     public function deleteCommunity($communityId) {

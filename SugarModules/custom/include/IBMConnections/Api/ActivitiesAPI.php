@@ -365,6 +365,7 @@ class ActivitiesAPI extends AbstractConnectionsAPI
                 'Content-Language' => 'en-US',
             )
         );
+        return $response->getBody();
 
     }
 
