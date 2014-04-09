@@ -41,6 +41,7 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => true,
+        'required' => true,        
     ),
     'author_id' => array(
         'name' => 'id',
@@ -123,8 +124,14 @@ $fields = array(
         'name' => 'community_id',
         'type' => 'varchar',
         'source' => 'non-db',
-    )
-
+    ),
+    'filename' => array (
+    'name' => 'filename',
+    'vname' => 'File',
+    'type' => 'file',
+    'source' => 'non-db',
+    'required' => true,
+),
 
 );
 

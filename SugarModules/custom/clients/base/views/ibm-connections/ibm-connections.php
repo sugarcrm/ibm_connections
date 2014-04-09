@@ -61,6 +61,16 @@ $viewdefs['base']['view']['ibm-connections'] = array(
 //                        'acl_action' => 'create',
 //                        'acl_module' => 'Emails',
                     ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'addItem',
+                        'params' => array(
+                            'module' => 'ibm_connectionsFiles',
+                        ),
+                        'label' => 'Add File',
+//                        'acl_action' => 'create',
+//                        'acl_module' => 'Emails',
+                    ),                    
                 )
             ),
             array(
