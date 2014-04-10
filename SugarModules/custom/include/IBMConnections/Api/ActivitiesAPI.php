@@ -68,6 +68,8 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $this->getHttpClient()->setParameterGet("commUuid", $communityId);
         $this->getHttpClient()->setParameterGet("page", $page);
         $this->getHttpClient()->setParameterGet("ps", '10');
+        $this->getHttpClient()->setParameterGet("sortBy", 'title');
+        $this->getHttpClient()->setParameterGet("sortOrder", 'asc');
         if (!empty($searchText)) {
             $this->getHttpClient()->setParameterGet("nodetype", 'community_activity');
             $this->getHttpClient()->setParameterGet("search", $searchText);
@@ -96,6 +98,8 @@ class ActivitiesAPI extends AbstractConnectionsAPI
     {
         $this->getHttpClient()->resetParameters();
         $this->getHttpClient()->setParameterGet("activityUuid", $id);
+        $this->getHttpClient()->setParameterGet("sortBy", 'title');
+        $this->getHttpClient()->setParameterGet("sortOrder", 'asc');
         $result = $this->requestForPath("GET", "/activities/service/atom2/activity");
         if (empty($result) || !$this->checkResult($result)) {
             return;
@@ -120,6 +124,8 @@ class ActivitiesAPI extends AbstractConnectionsAPI
     {
         $feedLink = "/activities/service/atom2/activity?activityUuid=" . $activityId . "&ps=150";
         $this->getHttpClient()->resetParameters();
+        $this->getHttpClient()->setParameterGet("sortBy", 'title');
+        $this->getHttpClient()->setParameterGet("sortOrder", 'asc');
         $result = $this->requestForPath("GET", $feedLink);
         if (empty($result) || !$this->checkResult($result)) {
             return;
@@ -147,6 +153,8 @@ class ActivitiesAPI extends AbstractConnectionsAPI
     public function listActivityNodes($activityId)
     {
         $feedLink = "/activities/service/atom2/activity?activityUuid=" . $activityId . "&ps=150"; //.AbstractConnectionsAPI::MAX_PAGE_SIZE;
+        $this->getHttpClient()->setParameterGet("sortBy", 'title');
+        $this->getHttpClient()->setParameterGet("sortOrder", 'asc');
         $this->getHttpClient()->resetParameters();
         $result = $this->requestForPath("GET", $feedLink);
         if (empty($result) || !$this->checkResult($result)) {
