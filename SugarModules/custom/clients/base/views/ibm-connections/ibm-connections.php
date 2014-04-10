@@ -193,13 +193,15 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                     'buttons' => array(
                         array(
                             'type' => 'dashletaction',
-                            'action' => 'addLink',
+                            'action' => 'addItem',
                             'params' => array(
-                                'module' => 'ibm_connectionsMembers',
-                                'link' => 'member_task',
+                                'module' => 'ibm_connectionsTodos',
+                                'fieldMap' => array(
+                                    'assigned_user_id' => 'id'
+                                )
                             ),
                             'name' => 'edit_button',
-                            'label' => 'New Task',
+                            'label' => 'New To do',
                         ),
                         array(
                             'type' => 'dashletaction',
