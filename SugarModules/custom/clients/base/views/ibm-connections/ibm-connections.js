@@ -22,6 +22,8 @@
 ({
     extendsFrom: 'TabbedDashletView',
 
+    taskNodeCache: {},
+
     /**
      * {@inheritDoc}
      *
@@ -44,8 +46,6 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
-//        this.events['show #'+this.cid] = 'showtaskNodes';
-//        this.events['show'] = 'showtaskNodes';
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
@@ -58,8 +58,9 @@
         this.tbodyTag = 'ul[data-action="pagination-body"]';
 
         //this.on('click [data-event="button:link_member2task"]', this.linkMember2task, this);
-        //this.events['show #'+this.cid] = 'showtaskNodes';
-        this.$el.on('show', _.bind(this.showtaskNodes, this));
+
+
+        this.$el.on('show', _.bind(function(ev){ this.openTaskNodes($(ev.target).attr('id')); } , this));
     },
 
     initDashlet: function () {
@@ -102,48 +103,60 @@
         return [{'community_id': this.settings.get('community_id') }];
     },
 
-    showtaskNodes: function(ev){
-        var tastEl = $(ev.target);
-        if (tastEl.attr('subTaskShown')){
-            return ;
+    openTaskNodes:function(task_id, force){
+//        debugger;
+//        var task_id = $(ev.target).attr('id');
+        this.settings.set('task_id', task_id);
+        var taskNodeView = this.getTaskNodeView(task_id);
+        this.$el.find('#'+task_id).append(taskNodeView.el);
+        taskNodeView.loadData({task_id:task_id});
+        taskNodeView.render();
+
+        if (force){
+            $('#'+task_id).collapse('show');
         }
-        tastEl.attr('subTaskShown', 1);
-        // debugger;
 
 
-        var collection = app.data.createBeanCollection('ibm_connectionsTaskNodes');
-        collection.filterDef = [{'task_id':  tastEl.attr('id')  }]
-        var recordsTpl = app.template.getView('ibm-connections.reports-task-node');
-
-        collection.fetch({
-            complete: function() {
-                collection.dataFetched = true;
-                tastEl.find('.subTaskHold').html(recordsTpl({collection:collection}));
-//                callback(null);
-            }
-        });
-
-
-        /*
-         var recordsTpl = app.template.getView('ibm-connections.reports-task-node');
-         this.recordsHtml = recordsTpl(this);
-
-         debugger;
-         */
     },
 
-    /*_render: function()
-     {
-     //        debugger;
-     //        this._super('_render', []);
-     },*/
+    getTaskNodeView:function(task_id)
+    {
+        if (!this.taskNodeCache[task_id] ){
+            var view = app.view.createView(
+                {
+                    context: this.context,
+                    name: 'ibm-connections-records',
+                    module: 'ibm_connectionsTaskNodes',
+                    layout: this,
+                }
+            );
 
-    /*_initEvents: function() {
-     this._super('_initEvents', []);
+            this.taskNodeCache[task_id] = view;
+        }
 
-     return this;
-     },*/
+        return this.taskNodeCache[task_id];
+    },
 
+    getTaskNodeCollect:function(task_id)
+    {
+        if (!this.taskNodeCache[task_id] ){
+            var collection = app.data.createBeanCollection('ibm_connectionsTaskNodes');
+            collection.filterDef = [{task_id: task_id}];
+            this.taskNodeCache[task_id] = collection;
+        }
+
+        return this.taskNodeCache[task_id];
+    },
+
+    filterDefToObject:function(pairs){
+        var obj = {};
+        _.each(pairs, function(condition){
+            obj[ _.keys(condition)[0] ] = _.values(condition)[0];
+
+        });
+
+        return obj;
+    },
 
     /**
      *
@@ -160,26 +173,69 @@
         });
 
         var self = this;
-        var model = app.data.createBean(params.module, defVals);
         app.drawer.open({
-            layout: 'create-actions',
-            context: {
-                create: true,
-                module: params.module,
-                model: model
+                layout: 'create-actions',
+                context: {
+                    create: true,
+                    module: params.module,
+                    model: app.data.createBean(params.module, defVals)
+                }
+            }, function(context, model) {
+                debugger;
+                if (!model) {
+                    return;
+                }
+                if (-1 != _.indexOf(['ibm_connectionsTodos', 'ibm_connectionsEntries'], model.module) ){
+                    var task_id = model.get('task_id');
+                    self.taskNodeCache[task_id] = null;
+//                self.settings.set('task_id', task_id);
+                    self.render();
+                    self.$el.find('#'+task_id).collapse('show');
+                }else{
+                    self.settings.unset('task_id');
+                    self.layout.reloadDashlet();
+                }
+
+
+
+
+                /*
+                 self.context.resetLoadFlag();
+                 self.context.set('skipFetch', false);
+                 if (_.isFunction(self.loadData)) {
+                 self.loadData();
+                 } else {
+                 self.context.loadData();
+                 }*/
+
+
+
+                /*
+                 * 
+                 * function(model) {
+                 debugger;
+                 if (model) {
+                 self.layout.reloadDashlet();
+                 //                self.context.trigger('panel-top:refresh', 'emails');
+                 }
+                 }
+
+                 * 
+                 * 
+                 * */
+
             }
-        }, function(model) {
-            debugger;
-            if (model) {
-                self.layout.reloadDashlet();
-//                self.context.trigger('panel-top:refresh', 'emails');
-            }
-        });
+
+
+
+        );
 
     },
 
 
-
+    rk: function(){
+        this.layout.reloadDashlet();
+    },
 
     addLink:function(event, params){
         /*
@@ -193,7 +249,7 @@
          */
 
         var self = this;
-        debugger;
+        //debug//ger;
         var model = app.data.createBean("ibm_connectionsTasks", {community_id: this.settings.get('community_id') })
         app.drawer.open({
             layout: 'create-actions',
@@ -213,12 +269,6 @@
              self.context.trigger('panel-top:refresh', 'emails');
              }*/
         });
-
-
-
-
-        // $(arguments[0].currentTarget).parents('li:first')
-//        debugger;
     },
 
     showMemberTasks: function(event){
@@ -258,7 +308,34 @@
             this.row_actions = tab.row_actions;
         }
         this._super('_renderHtml');
+    },
+
+    loadData: function(options) {
+        var self = this;
+        options = options || {};
+        if (!_.isFunction(options.complete)) {
+            options.complete = function(){};
+        }
+
+        options.complete = _.wrap(options.complete, function(func) {
+            func();
+            var task_id = this.settings.get('task_id');
+            if (!_.isEmpty(task_id)){
+                this.$el.find('#'+task_id).collapse('show');
+            }
+            //deb//ugger;
+        });
+
+
+        this._super('loadData', [options]);
     }
+
+
+
+
+
+
+
 
 
 //    /**

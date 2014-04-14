@@ -53,6 +53,15 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                 'buttons' => array(
                     array(
                         'type' => 'dashletaction',
+                        'action' => 'rk',
+                        'params' => array(
+                            'module' => 'ibm_connectionsTasks',
+                        ),
+                        'label' => 'rk',
+//                        'acl_action' => 'create',
+//                        'acl_module' => 'Emails',
+                    ),                    array(
+                        'type' => 'dashletaction',
                         'action' => 'addItem',
                         'params' => array(
                             'module' => 'ibm_connectionsTasks',
@@ -70,7 +79,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                         'label' => 'Add File',
 //                        'acl_action' => 'create',
 //                        'acl_module' => 'Emails',
-                    ),                    
+                    ),
                 )
             ),
             array(
@@ -191,6 +200,17 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                 array(
                     'type' => 'actiondropdown',
                     'buttons' => array(
+                        /*array(
+                            'type' => 'dashletaction',
+                            'action' => 'addLink',
+                            'params' => array(
+                                'module' => 'ibm_connectionsMembers',
+                                'link' => 'member_task',
+                            ),
+                            'name' => 'edit_button',
+                            'label' => 'New Task',
+                        ),*/
+
                         array(
                             'type' => 'dashletaction',
                             'action' => 'addItem',
@@ -203,6 +223,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                             'name' => 'edit_button',
                             'label' => 'New To do',
                         ),
+
                         array(
                             'type' => 'dashletaction',
 //                            'event' => 'button:show_members_tasks:click',
