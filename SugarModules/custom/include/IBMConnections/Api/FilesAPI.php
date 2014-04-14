@@ -31,12 +31,13 @@ require_once 'custom/include/IBMConnections/Models/ConnectionsFolder.php';
  * @author Gearoid O'Treasaigh
  *
  */
-class FilesAPI extends AbstractConnectionsAPI {
+class FilesAPI extends AbstractConnectionsAPI
+{
 
     private $LOGGER;
     var $profilesAPI;
 
-    function __construct($httpClient = null) 
+    function __construct($httpClient = null)
     {
         parent::__construct($httpClient);
     }
@@ -60,15 +61,15 @@ class FilesAPI extends AbstractConnectionsAPI {
      * returns the response of the file upload to Connections with the
      * Connections file ID and URL added to response
      */
-     
-     
-     /**
+
+
+    /**
      * Method retrieving a list of connections files shared with the community.
      * @param $cid
      * @return array of ConnectionsFile
      * @throws IBMConnectionsApiException
      */
-    public function getCommunityFiles($cid, $page = 1, $search = '') 
+    public function getCommunityFiles($cid, $page = 1, $search = '')
     {
         $path = '/files/basic/api/communitycollection/' . $cid . '/feed';
         $client = $this->getHttpClient();
@@ -77,52 +78,60 @@ class FilesAPI extends AbstractConnectionsAPI {
         $client->setParameterGet('sO', 'dsc');
         $client->setParameterGet('acls', 'true');
         $client->setParameterGet('collectionAcls', 'true');
-        $client->setParameterGet('pageSize',  5);
-         $client->setParameterGet('page',  $page);
+        $client->setParameterGet('pageSize', 5);
+        $client->setParameterGet('page', $page);
         $client->setParameterGet('includeTags', 'true');
+        //$client->setParameterGet("sortBy", 'title');
+        //$client->setParameterGet("sortOrder", 'asc');
+
         if (!empty($search)) {
-			$client->setParameterGet("component", 'files');
-			$client->setParameterGet("query", $search);
-			$path = "/search/atom/mysearch/results";
-		}
+            $client->setParameterGet("component", 'files');
+            $client->setParameterGet("query", $search);
+            $path = "/search/atom/mysearch/results";
+        }
         $this->setHttpClient($client);
         $response = $this
-                ->requestForPath('GET', $path,
-                        array('Content-Type' => self::CONTENT_TYPE,
-                                'Content-Language' => 'en-US'));
+            ->requestForPath(
+                'GET',
+                $path,
+                array(
+                    'Content-Type' => self::CONTENT_TYPE,
+                    'Content-Language' => 'en-US'
+                )
+            );
 
         if (empty($response) || !$this->checkResult($response)) {
-         	return array();
+            return array();
         }
-		$files = array();
+        $files = array();
         $feed = IBMAtomFeed::loadFromString($response->getBody());
         $entries = $feed->getEntries();
         foreach ($entries as $entry) {
-             	$files[] = new ConnectionsFile($entry);
+            $files[] = new ConnectionsFile($entry);
         }
         switch ($response->getStatus()) {
             case 200:
-            //Files retrieved.
-               
+                //Files retrieved.
+
                 break;
 
             default:
                 $message = 'Unexpected httpResponse code  = '
-                        . $response->getStatus()
-                        . ' while attempting to list Files from community ['
-                        . $cid . ']';
-                //$this->LOGGER->fatal($message);
-               /* require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
-                throw new IBMConnectionsApiException($message,
-                        CONNECTIONS_SERVICE_GENERIC, $response);
-                        */
+                    . $response->getStatus()
+                    . ' while attempting to list Files from community ['
+                    . $cid . ']';
+            //$this->LOGGER->fatal($message);
+            /* require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
+             throw new IBMConnectionsApiException($message,
+                     CONNECTIONS_SERVICE_GENERIC, $response);
+                     */
         }
-		return $files;
+        return $files;
     }
-  
 
-	public function uploadFile($fileName, $content, $mimeType, $visibility) 
-	{
+
+    public function uploadFile($fileName, $content, $mimeType, $visibility)
+    {
         $path = '/files/basic/api/myuserlibrary/feed';
         $nonce = $this->requestNonce();
         $client = $this->getClient();
@@ -131,45 +140,53 @@ class FilesAPI extends AbstractConnectionsAPI {
         $client->setFileUpload($fileName, 'file', $content, $mimeType);
         //$client->setIgnoreResponseContentLength();
         $curlOpts = array(
-                                    CURLOPT_SSL_VERIFYHOST => false,
-                                    CURLOPT_SSL_VERIFYPEER => false,
-                                    CURLOPT_VERBOSE => true, // Display communication with server
-                                    CURLOPT_RETURNTRANSFER => true, // Return data instead of display to std out
-                                    CURLOPT_HEADER => true, // Display headers
-                                    CURLOPT_USERPWD => $this->account_name. ":" . $this->account_password,//$client->username . ":" . $client->password,
-                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0
-                                    
-                                );
-       $config = array(
-                        'persistent'   => true,
-                        'adapter'   => 'Zend_Http_Client_Adapter_Curl',
-                        'curloptions' => $curlOpts,
-                        'ssltransport' => 'sslv3',
-                        'strictredirects' => true,
-                        'maxredirects' => 0
-                    );
-        $client->setConfig( $config );
-		$this->setHttpClient($client);
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_VERBOSE => true,
+            // Display communication with server
+            CURLOPT_RETURNTRANSFER => true,
+            // Return data instead of display to std out
+            CURLOPT_HEADER => true,
+            // Display headers
+            CURLOPT_USERPWD => $this->account_name . ":" . $this->account_password,
+            //$client->username . ":" . $client->password,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0
+
+        );
+        $config = array(
+            'persistent' => true,
+            'adapter' => 'Zend_Http_Client_Adapter_Curl',
+            'curloptions' => $curlOpts,
+            'ssltransport' => 'sslv3',
+            'strictredirects' => true,
+            'maxredirects' => 0
+        );
+        $client->setConfig($config);
+        $this->setHttpClient($client);
         $response = $this
-                ->requestForPath('POST', $path,
-                        array('Content-Type' => 'multipart/form-data',
-                                'Content-Language' => 'en-US',
-                                'X-Update-Nonce' => $nonce,));
-		if (empty($response) || !$this->checkResult($response)) {
-         	return;
+            ->requestForPath(
+                'POST',
+                $path,
+                array(
+                    'Content-Type' => 'multipart/form-data',
+                    'Content-Language' => 'en-US',
+                    'X-Update-Nonce' => $nonce,
+                )
+            );
+        if (empty($response) || !$this->checkResult($response)) {
+            return;
         }
         switch ($response->getStatus()) {
             case 200:
-                if (strstr($response->getStatus(),
-                        '<meta name="status" content="409"/>') === false) {
+                if (strstr($response->getStatus(), '<meta name="status" content="409"/>') === false) {
                     //File has been uploaded
                     break;
                 }
             // Error with response and falling through to the default error message.
             default:
                 $message = 'The file - ' . $fileName . ' - couldn\'t be'
-                        . ' successfully uploaded at this time, the response returned'
-                        . ' with an unexpected HTTP error code.';
+                    . ' successfully uploaded at this time, the response returned'
+                    . ' with an unexpected HTTP error code.';
         }
 
         if (strstr($response->getBody(), '<body class="X-LConn-API-Response">') != false) {
@@ -179,71 +196,83 @@ class FilesAPI extends AbstractConnectionsAPI {
             $jsonResponse = json_decode($json);
 
             $fullId = $jsonResponse->{'id'};
-            preg_match('/[a-zA-Z|0-9]{8}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{12}/', $fullId, $id);
+            preg_match(
+                '/[a-zA-Z|0-9]{8}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{12}/',
+                $fullId,
+                $id
+            );
             $response->docId = $id[0];
             $response->docUrl = $jsonResponse->{'links'}[3]->{'href'};
             $response->fileSize = $jsonResponse->{'links'}[4]->{'length'};
 
 
-
-
-
         }
 
         if (!empty($response)) {
-        	$message = '';
-            preg_match('/<meta name="status" content="409"\/>/',  $response->getBody(), $conflict);
+            $message = '';
+            preg_match('/<meta name="status" content="409"\/>/', $response->getBody(), $conflict);
             if (sizeof($conflict) >= 1) {
                 $message = 'The file - ' . $fileName . ' - couldn\'t be'
-                        . ' successfully uploaded at this time, a file with the same'
-                        . ' name already exists in Connections.';
+                    . ' successfully uploaded at this time, a file with the same'
+                    . ' name already exists in Connections.';
             }
 
             if (empty($response->docId) || empty($response->docUrl) || !isset($response->fileSize)) {
                 $message = 'The file - ' . $fileName . ' - couldn\'t be'
-                        . ' successfully uploaded at this time, the Connections'
-                        . ' ID, url, and filesize could not be set.';
-               // require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
-              //  $connEx = new IBMConnectionsApiException($message,
-               //         FILES_API_UPLOAD_FILENAME_ALREADY_EXISTS, $response);
-               // $this->LOGGER->error($connEx->__toString());
-              //  throw $connEx;
+                    . ' successfully uploaded at this time, the Connections'
+                    . ' ID, url, and filesize could not be set.';
+                // require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
+                //  $connEx = new IBMConnectionsApiException($message,
+                //         FILES_API_UPLOAD_FILENAME_ALREADY_EXISTS, $response);
+                // $this->LOGGER->error($connEx->__toString());
+                //  throw $connEx;
             }
-            if (isset($message) && !empty($message))
-			{
-				$path = "files/basic/api/myuserlibrary/document/". basename($fileName) ."/entry?identifier=label&createVersion=true";
-				$client = $this->getClient();
-		    	$client->setFileUpload($fileName, 'file', $content, $mimeType);
-		    	$client->setConfig( $config );
-				$this->setHttpClient($client);
-		    	$response = $this
-		            ->requestForPath('POST', $path,
-		                    array('Content-Type' => 'multipart/form-data',
-		                            'Content-Language' => 'en-US',
-		                            'X-Update-Nonce' => $nonce,
-		                            'X-Method-Override' => 'PUT',));
-		        if (strstr($response->getBody(), '<body class="X-LConn-API-Response">') != false) {
-				    // removing the html wrapping the json
-				    $json = $this->decodeXml(substr($response->getBody(), 134, -16));
+            if (isset($message) && !empty($message)) {
+                $path = "files/basic/api/myuserlibrary/document/" . basename(
+                        $fileName
+                    ) . "/entry?identifier=label&createVersion=true";
+                $client = $this->getClient();
+                $client->setFileUpload($fileName, 'file', $content, $mimeType);
+                $client->setConfig($config);
+                $this->setHttpClient($client);
+                $response = $this
+                    ->requestForPath(
+                        'POST',
+                        $path,
+                        array(
+                            'Content-Type' => 'multipart/form-data',
+                            'Content-Language' => 'en-US',
+                            'X-Update-Nonce' => $nonce,
+                            'X-Method-Override' => 'PUT',
+                        )
+                    );
+                if (strstr($response->getBody(), '<body class="X-LConn-API-Response">') != false) {
+                    // removing the html wrapping the json
+                    $json = $this->decodeXml(substr($response->getBody(), 134, -16));
 
-				    $jsonResponse = json_decode($json);
+                    $jsonResponse = json_decode($json);
 
-				    $fullId = $jsonResponse->{'id'};
-				    preg_match('/[a-zA-Z|0-9]{8}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{12}/', $fullId, $id);
-				    $response->docId = $id[0];
-				    $response->docUrl = $jsonResponse->{'links'}[3]->{'href'};
-				    $response->fileSize = $jsonResponse->{'links'}[4]->{'length'};
-				}
-			}
-          //  $bean->doc_id = $response->docId;
-          //  $bean->doc_url = $response->docUrl;
-          //  $bean->doc_direct_url = $response->docUrl;
-          //  $bean->file_size = $response->fileSize;
+                    $fullId = $jsonResponse->{'id'};
+                    preg_match(
+                        '/[a-zA-Z|0-9]{8}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{4}-[a-zA-Z|0-9]{12}/',
+                        $fullId,
+                        $id
+                    );
+                    $response->docId = $id[0];
+                    $response->docUrl = $jsonResponse->{'links'}[3]->{'href'};
+                    $response->fileSize = $jsonResponse->{'links'}[4]->{'length'};
+                }
+            }
+            //  $bean->doc_id = $response->docId;
+            //  $bean->doc_url = $response->docUrl;
+            //  $bean->doc_direct_url = $response->docUrl;
+            //  $bean->file_size = $response->fileSize;
         }
-		
-		
+
+
         return $response;
     }
+
     /**
      * Method to update File visibility in MyFiles
      *
@@ -252,61 +281,67 @@ class FilesAPI extends AbstractConnectionsAPI {
      * @return bool
      * @throws IBMConnectionsApiException
      */
-    public function updateMyFileVisibility($myFileId, $isPublic = false) 
+    public function updateMyFileVisibility($myFileId, $isPublic = false)
     {
         $path = '/files/basic/api/myuserlibrary/document/' . $myFileId
-                . '/feed';
-       $path .= ($isPublic ? '?visibility=public' : '?visibility=private');
+            . '/feed';
+        $path .= ($isPublic ? '?visibility=public' : '?visibility=private');
         $nonce = $this->requestNonce();
-       // $this->LOGGER->info($path);
+        // $this->LOGGER->info($path);
         $client = $this->getHttpClient();
         $client
-                ->setParameterPost('visibility',
-                        ($isPublic ? 'public' : 'private'));
+            ->setParameterPost(
+                'visibility',
+                ($isPublic ? 'public' : 'private')
+            );
         $client
-                ->setRawData(
-                        '<feed xmlns="http://www.w3.org/2005/Atom"></feed>');
+            ->setRawData(
+                '<feed xmlns="http://www.w3.org/2005/Atom"></feed>'
+            );
         $this->setHttpClient($client);
         $response = $this
-                ->requestForPath('POST', $path,
-                        array('Content-Type' => self::CONTENT_TYPE,
-                                'Content-Language' => 'en-US',
-                                'X-Update-Nonce' => $nonce));
+            ->requestForPath(
+                'POST',
+                $path,
+                array(
+                    'Content-Type' => self::CONTENT_TYPE,
+                    'Content-Language' => 'en-US',
+                    'X-Update-Nonce' => $nonce
+                )
+            );
 
         if (empty($response) || !$this->checkResult($response)) {
-         	return;
+            return;
         }
         switch ($response->getStatus()) {
             case 204:
-            //File visibility Updated
+                //File visibility Updated
                 return true;
                 break;
 
             default:
                 $message = 'The Connections file with id - ' . $myFileId
-                        . 'failed to update' . ' it\'s visibility to '
-                        . $isPublic ? 'public' : 'private';
-               // require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
-              //  $connEx = new IBMConnectionsApiException($message,
-                 //       FILES_API_UPDATE_VISIBILITY_FAILED, $response);
-               // $this->LOGGER->error($connEx->__toString());
-               // throw $connEx;
+                . 'failed to update' . ' it\'s visibility to '
+                . $isPublic ? 'public' : 'private';
+            // require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
+            //  $connEx = new IBMConnectionsApiException($message,
+            //       FILES_API_UPDATE_VISIBILITY_FAILED, $response);
+            // $this->LOGGER->error($connEx->__toString());
+            // throw $connEx;
         }
     }
-    
-     /**
-     * Method to update File visibility in MyFiles
 
+    /**
+     * Method to update File visibility in MyFiles
      *
      * @param $myFileId
      * @param bool $isPublic
      * @return bool
-
      * @throws IBMConnectionsApiException
      */
-    public function updateMyFileName($myFileId, $newFilename) 
+    public function updateMyFileName($myFileId, $newFilename)
     {
-        $path = '/files/basic/api/myuserlibrary/document/' . $myFileId . '/media'; 
+        $path = '/files/basic/api/myuserlibrary/document/' . $myFileId . '/media';
         $path .= "?identifier={$newFilename}";
         $nonce = $this->requestNonce();
         $client = $this->getHttpClient();
@@ -315,11 +350,15 @@ class FilesAPI extends AbstractConnectionsAPI {
         //$client->setRawData('<feed xmlns="http://www.w3.org/2005/Atom"></feed>');
         $this->setHttpClient($client);
         $response = $this
-                ->requestForPath('POST', $path,
-                        array(//'Content-Type' => self::CONTENT_TYPE,
-                                //'Content-Language' => 'en-US',
-                                'X-Update-Nonce' => $nonce,
-                                'X-Method-Override' => 'PUT',));
+            ->requestForPath(
+                'POST',
+                $path,
+                array( //'Content-Type' => self::CONTENT_TYPE,
+                    //'Content-Language' => 'en-US',
+                    'X-Update-Nonce' => $nonce,
+                    'X-Method-Override' => 'PUT',
+                )
+            );
 
     }
 
@@ -330,116 +369,118 @@ class FilesAPI extends AbstractConnectionsAPI {
      *
      * returns true if File sucessfully shared - else throws Sharing Exception
      */
-     
-     
-    public function getFileDetails($documentId, $libraryId = '') {
-    	$this->httpClient = $this->getHttpClient();
-    	if (empty($libraryId)){
-    		$path = "files/basic/api/myuserlibrary/document/{$documentId}/entry";
-    	}
-    	else {
-    		$path = "files/basic/api/library/{$libraryId}/document/{$documentId}/entry";
-    	}
-		$result = $this->requestForPath("GET", $path);
-		try	{
-			$entry = IBMAtomEntry::loadFromString($result->getBody());
-        	return new ConnectionsFile($entry);
+
+
+    public function getFileDetails($documentId, $libraryId = '')
+    {
+        $this->httpClient = $this->getHttpClient();
+        if (empty($libraryId)) {
+            $path = "files/basic/api/myuserlibrary/document/{$documentId}/entry";
+        } else {
+            $path = "files/basic/api/library/{$libraryId}/document/{$documentId}/entry";
         }
-        catch (Exception $e)
-        {return;}
-		
-	}
-	
-	 public function downloadFile($documentId) {
-    	$this->httpClient = $this->getHttpClient();
-		$result = $this->requestForPath("GET","/files/basic/anonymous/api/document/{$documentId}/media");
-		return $result->getBody();
-	}
-	
-    public function shareMyFileWithIndividuals($emails = array(), $myFileId) {
+        $result = $this->requestForPath("GET", $path);
+        try {
+            $entry = IBMAtomEntry::loadFromString($result->getBody());
+            return new ConnectionsFile($entry);
+        } catch (Exception $e) {
+            return;
+        }
+
+    }
+
+    public function downloadFile($documentId)
+    {
+        $this->httpClient = $this->getHttpClient();
+        $result = $this->requestForPath("GET", "/files/basic/anonymous/api/document/{$documentId}/media");
+        return $result->getBody();
+    }
+
+    public function shareMyFileWithIndividuals($emails = array(), $myFileId)
+    {
 
         // Retrieve User Ids..
-     /*   $userIdsMap = $this->profilesAPI->getUserIds($emails);
-        $authenticatedUser = $this->profilesAPI->whoAmI();
+        /*   $userIdsMap = $this->profilesAPI->getUserIds($emails);
+           $authenticatedUser = $this->profilesAPI->whoAmI();
 
-        if (empty($emails)
-                || (count($emails) == 1
-                        && strcasecmp($userIdsMap[strtolower($emails[0])],
-                                $authenticatedUser) == 0))
-            return false;
+           if (empty($emails)
+                   || (count($emails) == 1
+                           && strcasecmp($userIdsMap[strtolower($emails[0])],
+                                   $authenticatedUser) == 0))
+               return false;
 
-        $dom = new DOMDocument();
-        $feedElt = $dom->createElementNS(self::ATOM_NS, 'feed');
-        $dom->appendChild($feedElt);
+           $dom = new DOMDocument();
+           $feedElt = $dom->createElementNS(self::ATOM_NS, 'feed');
+           $dom->appendChild($feedElt);
 
-        $entryElt = $dom->createElement('entry');
+           $entryElt = $dom->createElement('entry');
 
-        $categoryElt = $dom->createElement('category');
-        $categoryElt->setAttribute('term', 'share');
-        $categoryElt->setAttribute('label', 'share');
-        $categoryElt->setAttribute('scheme', 'tag:ibm.com,2006:td/type');
-        $entryElt->appendChild($categoryElt);
+           $categoryElt = $dom->createElement('category');
+           $categoryElt->setAttribute('term', 'share');
+           $categoryElt->setAttribute('label', 'share');
+           $categoryElt->setAttribute('scheme', 'tag:ibm.com,2006:td/type');
+           $entryElt->appendChild($categoryElt);
 
-        $sharedWhatElt = $dom
-                ->createElementNS('urn:ibm.com/td', 'shareWhat', $myFileId);
-        $entryElt->appendChild($sharedWhatElt);
+           $sharedWhatElt = $dom
+                   ->createElementNS('urn:ibm.com/td', 'shareWhat', $myFileId);
+           $entryElt->appendChild($sharedWhatElt);
 
-        $sharedWithElt = $dom->createElementNS('urn:ibm.com/td', 'sharedWith');
-        $entryElt->appendChild($sharedWithElt);
+           $sharedWithElt = $dom->createElementNS('urn:ibm.com/td', 'sharedWith');
+           $entryElt->appendChild($sharedWithElt);
 
-        $sharePermissionElt = $dom->createElement('sharePermission', 'Edit'); //TODO: Reader/ Writer privilege ?
-        $sharedWithElt->appendChild($sharePermissionElt);
+           $sharePermissionElt = $dom->createElement('sharePermission', 'Edit'); //TODO: Reader/ Writer privilege ?
+           $sharedWithElt->appendChild($sharePermissionElt);
 
-        foreach ($emails as $email) {
-            $userId = $userIdsMap[strtolower($email)];
+           foreach ($emails as $email) {
+               $userId = $userIdsMap[strtolower($email)];
 
-            // Email doesnt map to any valid user ID in connections
-            if (!$userId)
-                continue;
+               // Email doesnt map to any valid user ID in connections
+               if (!$userId)
+                   continue;
 
-            // Do not attempt to share with self.
-            if (strcasecmp($userId, $authenticatedUser) == 0)
-                continue;
+               // Do not attempt to share with self.
+               if (strcasecmp($userId, $authenticatedUser) == 0)
+                   continue;
 
-            $userElt = $dom->createElement('user');
-            $userIdElt = $dom
-                    ->createElementNS('http://www.ibm.com/xmlns/prod/sn',
-                            'userid', $userId);
-            $userElt->appendChild($userIdElt);
-            $sharedWithElt->appendChild($userElt);
-        }
+               $userElt = $dom->createElement('user');
+               $userIdElt = $dom
+                       ->createElementNS('http://www.ibm.com/xmlns/prod/sn',
+                               'userid', $userId);
+               $userElt->appendChild($userIdElt);
+               $sharedWithElt->appendChild($userElt);
+           }
 
-        $feedElt->appendChild($entryElt);
-        $client = $this->getClient();
-        $client->setRawData($dom->saveXML());
-        echo ($dom->saveXML());
-        $response = $client
-                ->requestForPath('POST',
-                        '/files/basic/api/myuserlibrary/document/' . $myFileId
-                                . '/feed',
-                        array('Content-Type' => self::CONTENT_TYPE,
-                                'Content-Language' => 'en-US',));
+           $feedElt->appendChild($entryElt);
+           $client = $this->getClient();
+           $client->setRawData($dom->saveXML());
+           echo ($dom->saveXML());
+           $response = $client
+                   ->requestForPath('POST',
+                           '/files/basic/api/myuserlibrary/document/' . $myFileId
+                                   . '/feed',
+                           array('Content-Type' => self::CONTENT_TYPE,
+                                   'Content-Language' => 'en-US',));
 
-        //$this->LOGGER->debug( $response->getBody() );
-        //$this->LOGGER->debug( $client->getUri(true) );
+           //$this->LOGGER->debug( $response->getBody() );
+           //$this->LOGGER->debug( $client->getUri(true) );
 
-        switch ($response->getStatus()) {
-            case 204:
-            //File has been shared
-                return true;
-                break;
+           switch ($response->getStatus()) {
+               case 204:
+               //File has been shared
+                   return true;
+                   break;
 
-            default:
-                $message = 'Unable to share the Connections file with ID - '
-                        . $myFileId . ' with the following users - '
-                        . implode(', ', $emails);
-                //require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
-                //$connEx = new IBMConnectionsApiException($message,
-               //         FILES_API_SHARE_WITH_USERS_FAILED, $response);
-               // $this->LOGGER->error($connEx->__toString());
-              //  throw $connEx;
-        }
-*/
+               default:
+                   $message = 'Unable to share the Connections file with ID - '
+                           . $myFileId . ' with the following users - '
+                           . implode(', ', $emails);
+                   //require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
+                   //$connEx = new IBMConnectionsApiException($message,
+                  //         FILES_API_SHARE_WITH_USERS_FAILED, $response);
+                  // $this->LOGGER->error($connEx->__toString());
+                 //  throw $connEx;
+           }
+   */
     }
 
     /**
@@ -450,35 +491,40 @@ class FilesAPI extends AbstractConnectionsAPI {
      *
      * returns true if File sucessfully unshared - false, if File is not shared to anyone (already unshared)
      */
-    public function unshareMyFileFromAllIndividuals($myFileId) {
+    public function unshareMyFileFromAllIndividuals($myFileId)
+    {
 
-        $response = $this->requestForPath('DELETE',
-                        '/files/basic/api/shares/feed?sharedWhat=' . $myFileId,
-                        array('Content-Type' => self::CONTENT_TYPE,
-                                'Content-Language' => 'en-US',));
-		if (empty($response) || !$this->checkResult($response)) {
-         	return false;
+        $response = $this->requestForPath(
+            'DELETE',
+            '/files/basic/api/shares/feed?sharedWhat=' . $myFileId,
+            array(
+                'Content-Type' => self::CONTENT_TYPE,
+                'Content-Language' => 'en-US',
+            )
+        );
+        if (empty($response) || !$this->checkResult($response)) {
+            return false;
         }
         switch ($response->getStatus()) {
             case 204:
-            //File has been shared
+                //File has been shared
                 return true;
                 break;
 
             case 404:
-            //File already unshared.
-               // $this->LOGGER->warn('File is already unshared.');
+                //File already unshared.
+                // $this->LOGGER->warn('File is already unshared.');
                 return false;
                 break;
 
             default:
                 $message = 'The unsharing of the file with Connections ID - '
-                        . $myFileId . ', failed';
-               // require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
-               // $connEx = new IBMConnectionsApiException($message,
-               //         FILES_API_UNSHARE_WITH_ALL_USERS_FAILED, $response);
-                //$this->LOGGER->error($connEx->__toString());
-                //throw $connEx;
+                    . $myFileId . ', failed';
+            // require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
+            // $connEx = new IBMConnectionsApiException($message,
+            //         FILES_API_UNSHARE_WITH_ALL_USERS_FAILED, $response);
+            //$this->LOGGER->error($connEx->__toString());
+            //throw $connEx;
         }
     }
 
@@ -490,70 +536,84 @@ class FilesAPI extends AbstractConnectionsAPI {
      *
      * returns true if the Connections File is successfully deleted
      */
-    public function deleteDoc($documentId) 
+    public function deleteDoc($documentId)
     {
         $path = '/files/basic/api/myuserlibrary/document/' . $documentId
-                . '/entry';
+            . '/entry';
         $client = $this->getHttpClient();
         $nonce = $this->requestNonce();
         $response = $this
-                ->requestForPath('DELETE', $path,
-                        array('X-Update-Nonce' => $nonce));
+            ->requestForPath(
+                'DELETE',
+                $path,
+                array('X-Update-Nonce' => $nonce)
+            );
         if (empty($response) || !$this->checkResult($response)) {
-         	return false;
+            return false;
         }
 
         switch ($response->getStatus()) {
             case 204:
-            //File has been deleted
+                //File has been deleted
                 break;
             default:
                 return false;
         }
-        return TRUE;
+        return true;
     }
-	public function commentFile($userId, $documentId, $content)
-	{
-		$this->getHttpClient()->resetParameters();
-		
-		$entry = IBMEditableAtomEntry::createEmptyEditableEntry();
-		$entry->addCategory('comment', 'tag:ibm.com,2006:td/type');
-		$cdata = $entry->getDom()->createCDATASection($content);
-		$contentElt = $entry->getDom()->createElement('content');
+
+    public function commentFile($userId, $documentId, $content)
+    {
+        $this->getHttpClient()->resetParameters();
+
+        $entry = IBMEditableAtomEntry::createEmptyEditableEntry();
+        $entry->addCategory('comment', 'tag:ibm.com,2006:td/type');
+        $cdata = $entry->getDom()->createCDATASection($content);
+        $contentElt = $entry->getDom()->createElement('content');
         $contentElt->setAttribute('type', 'text');
         $contentElt->appendChild($cdata);
         $entry->getEntryNode()->appendChild($contentElt);
-		
-		$this->getHttpClient()->setParameterPost("identifier", $documentId);
-		$this->getHttpClient()->setRawData($entry->getDomString());
-		$result = $this->requestForPath('POST', "files/basic/api/userlibrary/{$userId}/document/{$documentId}/feed",
-			array(
-				'Content-Type' => 'application/atom+xml',
-				'Content-Language' => 'en-US',
-			));
-		if ($result->getStatus() == 201) return true;
-		return false;
-	
-	}
-	
-	public function likeFile($userId, $documentId)
-	{
-		$this->getHttpClient()->resetParameters();
-		
-		$entry = IBMEditableAtomEntry::createEmptyEditableEntry();
-		
-		$entry->addCategory('recommendation', 'tag:ibm.com,2006:td/type');
-		
-		$this->getHttpClient()->setParameterPost("identifier", $documentId);
-		$this->getHttpClient()->setRawData($entry->getDomString());
-		$result = $this->requestForPath('POST', "files/basic/api/userlibrary/{$userId}/document/{$documentId}/feed",
-			array(
-				'Content-Type' => 'application/atom+xml',
-				'Content-Language' => 'en-US',
-			));
-		if ($result->getStatus() == 201) return true;
-		return false;	
-	}
+
+        $this->getHttpClient()->setParameterPost("identifier", $documentId);
+        $this->getHttpClient()->setRawData($entry->getDomString());
+        $result = $this->requestForPath(
+            'POST',
+            "files/basic/api/userlibrary/{$userId}/document/{$documentId}/feed",
+            array(
+                'Content-Type' => 'application/atom+xml',
+                'Content-Language' => 'en-US',
+            )
+        );
+        if ($result->getStatus() == 201) {
+            return true;
+        }
+        return false;
+
+    }
+
+    public function likeFile($userId, $documentId)
+    {
+        $this->getHttpClient()->resetParameters();
+
+        $entry = IBMEditableAtomEntry::createEmptyEditableEntry();
+
+        $entry->addCategory('recommendation', 'tag:ibm.com,2006:td/type');
+
+        $this->getHttpClient()->setParameterPost("identifier", $documentId);
+        $this->getHttpClient()->setRawData($entry->getDomString());
+        $result = $this->requestForPath(
+            'POST',
+            "files/basic/api/userlibrary/{$userId}/document/{$documentId}/feed",
+            array(
+                'Content-Type' => 'application/atom+xml',
+                'Content-Language' => 'en-US',
+            )
+        );
+        if ($result->getStatus() == 201) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Update the metadata (tags and description) of the Connections document,
@@ -563,11 +623,11 @@ class FilesAPI extends AbstractConnectionsAPI {
      * @param DocumentDecorator $docDecorator
      * @throws IBMConnectionsApiException
      */
-    public function updateMetadata(DocumentDecorator $docDecorator) 
+    public function updateMetadata(DocumentDecorator $docDecorator)
     {
         $bean = $docDecorator->getBean();
         $path = '/files/basic/api/myuserlibrary/document/' . $bean->doc_id
-                . '/entry';
+            . '/entry';
         $nonce = $this->requestNonce();
         $client = $this->getClient();
 
@@ -613,12 +673,16 @@ class FilesAPI extends AbstractConnectionsAPI {
 
         if (!empty($bean->description)) {
             $descriptionElt = $dom
-                    ->createElement('summary',
+                ->createElement(
+                    'summary',
+                    $this
+                        ->encodeXml(
                             $this
-                                    ->encodeXml(
-                                            $this
-                                                    ->decodeXml(
-                                                            $bean->description)));
+                                ->decodeXml(
+                                    $bean->description
+                                )
+                        )
+                );
             $descriptionElt->setAttribute('type', 'text');
             $entryElt->appendChild($descriptionElt);
         }
@@ -627,31 +691,36 @@ class FilesAPI extends AbstractConnectionsAPI {
 
         // $this->LOGGER->info($path);
         $response = $this
-                ->requestForPath('POST', $path,
-                        array('Content-Type' => self::CONTENT_TYPE,
-                                'Content-Language' => 'en-US',
-                                'X-Update-Nonce' => $nonce,
-                                'X-Method-Override' => 'PUT',));
-		if (empty($response) || !$this->checkResult($response)) {
-         	return;
+            ->requestForPath(
+                'POST',
+                $path,
+                array(
+                    'Content-Type' => self::CONTENT_TYPE,
+                    'Content-Language' => 'en-US',
+                    'X-Update-Nonce' => $nonce,
+                    'X-Method-Override' => 'PUT',
+                )
+            );
+        if (empty($response) || !$this->checkResult($response)) {
+            return;
         }
         switch ($response->getStatus()) {
             case 200:
-            //File metadata has been updated
+                //File metadata has been updated
                 break;
             default:
                 $message = 'The file metadata update to the Connections file - '
-                        . $bean->doc_id . ' failed.  It tried to removed the'
-                        . ' following tags - ' . implode(',', $tagsRemoved)
-                        . '.' . ' It tried to add the following tags - '
-                        . implode(',', $tagsAdded) . '.'
-                        . ' It tried to add the' . ' following description - '
-                        . $bean->description;
+                    . $bean->doc_id . ' failed.  It tried to removed the'
+                    . ' following tags - ' . implode(',', $tagsRemoved)
+                    . '.' . ' It tried to add the following tags - '
+                    . implode(',', $tagsAdded) . '.'
+                    . ' It tried to add the' . ' following description - '
+                    . $bean->description;
             //    require_once 'custom/include/IBMConnections/Exceptions/IBMConnectionsApiException.php';
             // //   $connEx = new IBMConnectionsApiException($message,
             //            FILES_API_METADATA_UPDATE_FAILED, $response);
-             //   $this->LOGGER->error($connEx->__toString());
-             //   throw $connEx;
+            //   $this->LOGGER->error($connEx->__toString());
+            //   throw $connEx;
         }
         // $this->LOGGER->debug($response->getBody());
 
@@ -660,89 +729,97 @@ class FilesAPI extends AbstractConnectionsAPI {
         $bean->file_size = $enclosure['length'];
         $docDecorator->save();
     }
-	
-	
-	public function getUserFolders($userId)
-	{
-		$path = '/files/basic/api/collections/feed?creator=' . $userId;
+
+
+    public function getUserFolders($userId)
+    {
+        $path = '/files/basic/api/collections/feed?creator=' . $userId;
         return $this->getFolders($path);
-	}
-	
-	public function getPinnedFolders()
-	{
-		$path = '/files/basic/api/myfavorites/collections/feed';
+    }
+
+    public function getPinnedFolders()
+    {
+        $path = '/files/basic/api/myfavorites/collections/feed';
         return $this->getFolders($path);
-	}
-	
-	public function getPublicFolders()
-	{
-		$path = '/files/basic/anonymous/api/collections/feed';
+    }
+
+    public function getPublicFolders()
+    {
+        $path = '/files/basic/anonymous/api/collections/feed';
         return $this->getFolders($path);
-	}
-	
-	public function getSharedFolders()
-	{
-		$path = '/files/basic/api/collections/feed?sharedWithMe=true';
+    }
+
+    public function getSharedFolders()
+    {
+        $path = '/files/basic/api/collections/feed?sharedWithMe=true';
         return $this->getFolders($path);
-	}
-	
-	private function getFolders($path)
-	{
+    }
+
+    private function getFolders($path)
+    {
         $page = 1;
         $folders = array();
         $this->getHttpClient()->resetParameters();
         $this->getHttpClient()->setParameterGet('ps', 500);
         $total = 500;
         do {
-		    $this->getHttpClient()->setParameterGet('page', $page);
-		    $response = $this
-		            ->requestForPath('GET', $path,
-		                    array('Content-Type' => self::CONTENT_TYPE,
-		                            'Content-Language' => 'en-US'));
-		          
+            $this->getHttpClient()->setParameterGet('page', $page);
+            $response = $this
+                ->requestForPath(
+                    'GET',
+                    $path,
+                    array(
+                        'Content-Type' => self::CONTENT_TYPE,
+                        'Content-Language' => 'en-US'
+                    )
+                );
 
-		    if (empty($response) || !$this->checkResult($response)) {
-		     	return $folders;
-		    }
-			$page++;
-		    $feed = IBMAtomFeed::loadFromString($response->getBody());
-		    $total = $feed->getTotalResults();
-		    $entries = $feed->getEntries();
-		    foreach ($entries as $entry) {
-		         	$folders[] = new ConnectionsFolder($entry);
-		    }
-        }
-        while (count($folders) < $total);
-		return $folders;
-	}
-	
-	public function getFilesFromFolder($folderId, $page = '1')
-	{
-		$path = '/files/basic/api/collection/' . $folderId . '/feed';
+
+            if (empty($response) || !$this->checkResult($response)) {
+                return $folders;
+            }
+            $page++;
+            $feed = IBMAtomFeed::loadFromString($response->getBody());
+            $total = $feed->getTotalResults();
+            $entries = $feed->getEntries();
+            foreach ($entries as $entry) {
+                $folders[] = new ConnectionsFolder($entry);
+            }
+        } while (count($folders) < $total);
+        return $folders;
+    }
+
+    public function getFilesFromFolder($folderId, $page = '1')
+    {
+        $path = '/files/basic/api/collection/' . $folderId . '/feed';
         $this->getHttpClient()->resetParameters();
         $this->getHttpClient()->setParameterGet('page', $page);
         $this->getHttpClient()->setParameterGet('ps', 10);
-        $response = $this->requestForPath('GET', $path, array('Content-Type' => self::CONTENT_TYPE, 'Content-Language' => 'en-US'));
+        $response = $this->requestForPath(
+            'GET',
+            $path,
+            array('Content-Type' => self::CONTENT_TYPE, 'Content-Language' => 'en-US')
+        );
 
         if (empty($response) || !$this->checkResult($response)) {
-         	return array('files' => array(),'metadata' => $this->getLastResultMetadata());
+            return array('files' => array(), 'metadata' => $this->getLastResultMetadata());
         }
-		$files = array();
+        $files = array();
         $feed = IBMAtomFeed::loadFromString($response->getBody());
         $entries = $feed->getEntries();
         foreach ($entries as $entry) {
-             	$files[] = new ConnectionsFile($entry);
+            $files[] = new ConnectionsFile($entry);
         }
         $data = array(
-			'totalResults' => $feed->getTotalResults(),
-			'itemsPerPage' => 10,
-			'startIndex' => ($page-1)*10+1
-		);
-        return array('files' => $files,'metadata' => $data);
-		//return $files;
-	}
-	
-    protected function updateIebUrl($oldLink) 
+            'totalResults' => $feed->getTotalResults(),
+            'itemsPerPage' => 10,
+            'startIndex' => ($page - 1) * 10 + 1
+        );
+        return array('files' => $files, 'metadata' => $data);
+        //return $files;
+    }
+
+    protected function updateIebUrl($oldLink)
     {
         $newLink = $oldLink;
         if ($this->getClient()->getAuthMethod() == AuthMethod::WEB_SSO) {
@@ -750,9 +827,12 @@ class FilesAPI extends AbstractConnectionsAPI {
             $end = strpos($oldLink, "files");
             $conn_url = substr($oldLink, 0, $end - 1);
             if (strcmp($conn_url, $this->getClient()->getBaseURL()) != 0) {
-                $newLink = str_replace($conn_url,
-                        $this->getClient()->getBaseURL(), $oldLink);
-              //  $this->LOGGER->debug("updateIebUrl: newLink=" . $newLink);
+                $newLink = str_replace(
+                    $conn_url,
+                    $this->getClient()->getBaseURL(),
+                    $oldLink
+                );
+                //  $this->LOGGER->debug("updateIebUrl: newLink=" . $newLink);
             }
         }
         return $newLink;
@@ -764,7 +844,7 @@ class FilesAPI extends AbstractConnectionsAPI {
      * @param $txt - XML encoded text
      * @return decoded text
      */
-    private function decodeXml($txt) 
+    private function decodeXml($txt)
     {
         $txt = str_replace('&amp;', '&', $txt);
         $txt = str_replace('&lt;', '<', $txt);
@@ -781,7 +861,7 @@ class FilesAPI extends AbstractConnectionsAPI {
      * @param $txt - plain text
      * @return XML encoded text
      */
-    private function encodeXml($txt) 
+    private function encodeXml($txt)
     {
         $txt = str_replace('&', '&amp;', $txt);
         $txt = str_replace('<', '&lt;', $txt);
@@ -794,7 +874,7 @@ class FilesAPI extends AbstractConnectionsAPI {
     /**
      * @return IBMHttpClient
      */
-    private function getClient() 
+    private function getClient()
     {
         return $this->getHttpClient();
     }
