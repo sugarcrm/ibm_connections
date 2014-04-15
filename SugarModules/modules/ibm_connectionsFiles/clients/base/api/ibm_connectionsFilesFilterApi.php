@@ -69,7 +69,7 @@ class ibm_connectionsFilesFilterApi extends FilterApi
             $beans[$key]->fileVisibility = $item['visibility'];
             $beans[$key]->commentsCount = $item['commentsCount'];
             $beans[$key]->recomendationsCount = $item['recomendationsCount'];
-            $beans[$key]->url = $item['viewLink'];
+            $beans[$key]->view_link = $item['viewLink'];
             $beans[$key]->picture = $item['picture'];
             $beans[$key]->downloadsCount = $item['downloadsCount'];
             $beans[$key]->version = $item['version'];

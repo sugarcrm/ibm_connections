@@ -306,6 +306,19 @@
         if (!this.meta.config) {
             var tab = this.tabs[this.settings.get('activeTab')];
             this.row_actions = tab.row_actions;
+
+            if ('ibm_connectionsFiles' == this.collection.module){
+                _.each(this.collection.models, function(model) {
+                    var url = app.api.buildFileURL({
+                            module: this.collection.module,
+                            id: model.get('id')},
+                        {htmlJsonFormat: false,
+                            cleanCache: true
+                        });
+                    model.set('url', url);
+                }, this);
+            }
+
         }
         this._super('_renderHtml');
     },

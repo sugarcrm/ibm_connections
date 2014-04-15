@@ -96,6 +96,12 @@ $fields = array(
         'source' => 'non-db',
         'unified_search' => false,
     ),
+    "view_link" => array(
+        'name' => 'view_link',
+        'type' => 'varchar',
+        'source' => 'non-db',
+        'unified_search' => false,
+    ),    
     "downloadsCount" => array(
         'name' => 'name',
         'type' => 'varchar',
