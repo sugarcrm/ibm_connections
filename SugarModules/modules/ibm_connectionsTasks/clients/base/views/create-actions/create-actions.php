@@ -13,7 +13,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['ibm_connectionsEntries']['base']['view']['create-actions'] = array(
+$viewdefs['ibm_connectionsTasks']['base']['view']['create-actions'] = array(
     'template' => 'record',
     'buttons' => array(
         array(

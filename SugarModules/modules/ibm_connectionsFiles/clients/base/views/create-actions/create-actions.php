@@ -40,18 +40,6 @@ $viewdefs['ibm_connectionsFiles']['base']['view']['create-actions'] = array(
                     'name'  => 'save_button',
                     'label' => 'LBL_SAVE_BUTTON_LABEL',
                 ),
-                array(
-                    'type'   => 'rowaction',
-                    'name'   => 'save_view_button',
-                    'label'  => 'LBL_SAVE_AND_VIEW',
-                    'showOn' => 'create',
-                ),
-                array(
-                    'type'   => 'rowaction',
-                    'name'   => 'save_create_button',
-                    'label'  => 'LBL_SAVE_AND_CREATE_ANOTHER',
-                    'showOn' => 'create',
-                ),
             ),
         ),
         array(

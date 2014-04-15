@@ -45,25 +45,7 @@ $viewdefs['ibm_connectionsTasks']['base']['layout']['create-actions'] = array(
                                             'span' => 4,
                                         ),
                                 ),
-                                /*array(
-                                    'layout' =>
-                                    array(
-                                        'components' =>
-                                        array(
-                                                array(
-                                                  'view' => 
-                                                  array (
-                                                    'name' => 'dnb-account-create',
-                                                    'label' => 'DNB Account Create',
-                                                  ),
-                                                  'width' => 12,
-                                            ),
-                                        ),
-                                        'type' => 'simple',
-                                        'name' => 'dashboard-pane',
-                                        'span' => 4,
-                                    ),
-                                ),*/
+
                                 array(
                                     'layout' =>
                                         array(

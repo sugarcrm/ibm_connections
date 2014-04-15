@@ -54,22 +54,8 @@ $viewdefs['ibm_connectionsFiles']['base']['view']['record'] = array(
                 array(
                     'type' => 'file',
                     'name' => 'filename',
-                    'label' => 'LBL_FILENAME',
-                ),                
-//                array(
-//                    'type' => 'enum',
-//                    'name' => 'task_id',
-//                    'label' => 'Activity',
-//                    'options' => array('' => ''),
-//                ),
-//                'duedate',
-                /*                'website',
-                                'industry',
-                                'parent_name',
-                                'account_type',
-                                'assigned_user_name',
-                                'phone_office',
-                           */ ),
+                ),
+            ),
         )
     ),
 );
