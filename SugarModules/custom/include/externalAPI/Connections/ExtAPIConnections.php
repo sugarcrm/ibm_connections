@@ -29,7 +29,8 @@
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 
-class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
+class ExtAPIConnections extends ExternalAPIBase implements WebDocument
+{
 
     protected $llMimeWhitelist = array(
         'application/msword',
@@ -95,7 +96,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     public $userId;
     public $api;
 
-    function __construct() {
+    function __construct()
+    {
         require('custom/modules/Connectors/connectors/sources/ext/eapm/connections/config.php');
         require_once 'custom/include/IBMConnections/Api/ConnectionsAPI.php';
 
@@ -106,33 +108,44 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     public function loadEAPM($eapmBean)
     {
         parent::loadEAPM($eapmBean);
-        if ( !empty($eapmBean->api_data) ) {
+        if (!empty($eapmBean->api_data)) {
             $this->api_data = json_decode(base64_decode($eapmBean->api_data), true);
-            if ( isset($this->api_data['subscriberID']) ) {
+            if (isset($this->api_data['subscriberID'])) {
                 $this->userId = $this->api_data['userId'];
             }
         }
     }
 
-    public function quickCheckLogin() {
+    public function quickCheckLogin()
+    {
         $reply = parent::quickCheckLogin();
-        $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Parent Reply: '.print_r($reply,true));
-        if ( $reply['success'] ) {
+        $GLOBALS['log']->debug(__FILE__ . '(' . __LINE__ . '): Parent Reply: ' . print_r($reply, true));
+        if ($reply['success']) {
             $reply = $this->makeRequest('vulcan/shindig/rest/people/@me/@self');
 
-            $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): LL Reply: '.print_r($reply,true));
-            if ( $reply['success'] == true ) {
-                if ( !empty($reply['responseJSON']['entry']['objectId']) ) {
-                    $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Has objectId: '.print_r($reply['responseJSON']['entry']['objectId'],true));
+            $GLOBALS['log']->debug(__FILE__ . '(' . __LINE__ . '): LL Reply: ' . print_r($reply, true));
+            if ($reply['success'] == true) {
+                if (!empty($reply['responseJSON']['entry']['objectId'])) {
+                    $GLOBALS['log']->debug(
+                        __FILE__ . '(' . __LINE__ . '): Has objectId: ' . print_r(
+                            $reply['responseJSON']['entry']['objectId'],
+                            true
+                        )
+                    );
                     return $reply;
                 } else {
-                    $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): No objectId: '.print_r($reply['responseJSON']['entry']['objectId'],true));
+                    $GLOBALS['log']->debug(
+                        __FILE__ . '(' . __LINE__ . '): No objectId: ' . print_r(
+                            $reply['responseJSON']['entry']['objectId'],
+                            true
+                        )
+                    );
                     $reply['success'] = false;
-                    $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM')." #QK1";
+                    $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM') . " #QK1";
                 }
             }
         }
-        $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Bad reply: '.print_r($reply,true));
+        $GLOBALS['log']->debug(__FILE__ . '(' . __LINE__ . '): Bad reply: ' . print_r($reply, true));
 
         return $reply;
     }
@@ -140,29 +153,31 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     public function checkLogin($eapmBean = null)
     {
         $reply = parent::checkLogin($eapmBean);
-        if ( $reply['success'] != true ) {
+        if ($reply['success'] != true) {
             // $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Bad reply: '.print_r($reply,true));
             return $reply;
         }
         try {
-            $reply = $this->makeRequest('profiles/atom/profileService.do','GET',false);
+            $reply = $this->makeRequest('profiles/atom/profileService.do', 'GET', false);
             //$reply = $this->makeRequest('files/basic/cmis/my/servicedoc','GET',false);
-            if ( $reply['success'] !== true ) {
-                $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Bad reply: '.print_r($reply,true));
+            if ($reply['success'] !== true) {
+                $GLOBALS['log']->debug(__FILE__ . '(' . __LINE__ . '): Bad reply: ' . print_r($reply, true));
                 return $reply;
             }
             // get user details
-            if ( $reply['success'] == true ) {
+            if ($reply['success'] == true) {
                 $response = new SimpleXMLElement($reply['rawResponse']);
-                $this->api_data['userId'] = (string) $response->workspace->collection->children('http://www.ibm.com/xmlns/prod/sn')->userid;
+                $this->api_data['userId'] = (string)$response->workspace->collection->children(
+                    'http://www.ibm.com/xmlns/prod/sn'
+                )->userid;
             } else {
-                $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Bad reply: '.print_r($reply,true));
+                $GLOBALS['log']->debug(__FILE__ . '(' . __LINE__ . '): Bad reply: ' . print_r($reply, true));
                 return $reply;
             }
-        } catch(Exception $e) {
-            $reply['success'] = FALSE;
+        } catch (Exception $e) {
+            $reply['success'] = false;
             $reply['errorMessage'] = $e->getMessage();
-            $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Bad reply: '.print_r($reply,true));
+            $GLOBALS['log']->debug(__FILE__ . '(' . __LINE__ . '): Bad reply: ' . print_r($reply, true));
             return $reply;
         }
 
@@ -209,10 +224,16 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     }
 
 
-    public function downloadDoc($documentId, $documentFormat){}
-    public function shareDoc($documentId, $emails){}
+    public function downloadDoc($documentId, $documentFormat)
+    {
+    }
 
-    public function loadDocCache($forceReload = false) {
+    public function shareDoc($documentId, $emails)
+    {
+    }
+
+    public function loadDocCache($forceReload = false)
+    {
         global $db, $current_user;
 
         $cacheKeyName = 'docCache_' . $current_user->id . '_LotusLiveDirect';
@@ -225,21 +246,21 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
                 return $docCache['results'];
             }
         }
-        $requestUrl = '/files/basic/cmis/repository/p!'.$this->api_data['subscriberId'].'/folderc/snx:files';
-        if ( $this->getVersion() == 1 ) {
-            $requestUrl .= '!'.$this->api_data['subscriberId'];
+        $requestUrl = '/files/basic/cmis/repository/p!' . $this->api_data['subscriberId'] . '/folderc/snx:files';
+        if ($this->getVersion() == 1) {
+            $requestUrl .= '!' . $this->api_data['subscriberId'];
         }
         $requestUrl .= '?maxItems=50';
-        $reply = $this->makeRequest($requestUrl,'GET',false);
+        $reply = $this->makeRequest($requestUrl, 'GET', false);
 
         $xml = new DOMDocument();
         $xml->preserveWhiteSpace = false;
         $xml->strictErrorChecking = false;
         $xml->loadXML($reply['rawResponse']);
-        if ( !is_object($xml) ) {
+        if (!is_object($xml)) {
             $reply['success'] = false;
             // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
+            $reply['errorMessage'] = 'Bad response from the server: ' . print_r(libxml_get_errors(), true);
             return;
         }
 
@@ -248,20 +269,20 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $results = array();
 
         $fileNodes = $xp->query('//atom:feed/atom:entry');
-        foreach ( $fileNodes as $fileNode ) {
+        foreach ($fileNodes as $fileNode) {
             $result = array();
 
-            $idTmp = $xp->query('.//atom:id',$fileNode);
-            list($dontcare,$result['id']) = explode("!",$idTmp->item(0)->textContent);
+            $idTmp = $xp->query('.//atom:id', $fileNode);
+            list($dontcare, $result['id']) = explode("!", $idTmp->item(0)->textContent);
 
-            $nameTmp = $xp->query('.//atom:title',$fileNode);
+            $nameTmp = $xp->query('.//atom:title', $fileNode);
             $result['name'] = $nameTmp->item(0)->textContent;
 
-            $timeTmp = $xp->query('.//atom:updated',$fileNode);
+            $timeTmp = $xp->query('.//atom:updated', $fileNode);
             $timeTmp2 = $timeTmp->item(0)->textContent;
-            $result['date_modified'] = preg_replace('/^([^T]*)T([^.]*)\....Z$/','\1 \2',$timeTmp2);
+            $result['date_modified'] = preg_replace('/^([^T]*)T([^.]*)\....Z$/', '\1 \2', $timeTmp2);
 
-            $result['url'] = $this->url.'files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$result['id'];
+            $result['url'] = $this->url . 'files/filer2/home.do#files.do?subContent=fileDetails.do?fileId=' . $result['id'];
 
             $results[] = $result;
         }
@@ -274,19 +295,21 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
         return $results;
     }
-    public function searchDoc($keywords,$flushDocCache=false){
+
+    public function searchDoc($keywords, $flushDocCache = false)
+    {
         $docList = $this->loadDocCache($flushDocCache);
 
         $results = array();
 
         $searchLen = strlen($keywords);
 
-        foreach ( $docList as $doc ) {
-            if ( empty($keywords) || strncasecmp($doc['name'],$keywords,strlen($keywords)) == 0 ) {
+        foreach ($docList as $doc) {
+            if (empty($keywords) || strncasecmp($doc['name'], $keywords, strlen($keywords)) == 0) {
                 // It matches
                 $results[] = $doc;
 
-                if ( count($results) > 15 ) {
+                if (count($results) > 15) {
                     // Only return the first 15 results
                     break;
                 }
@@ -305,24 +328,24 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     protected function makeRequest($urlReq, $method = 'GET', $json = true)
     {
         $client = $this->getClient();
-        $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
+        $url = rtrim($this->url, "/") . "/" . ltrim($urlReq, "/");
         $GLOBALS['log']->debug("REQUEST: $url");
         $client->setUri($url);
-        $client->setAuth($this->account_name,$this->account_password);
+        $client->setAuth($this->account_name, $this->account_password);
         $rawResponse = $client->request();
 //echo $url;
         $reply = array('rawResponse' => $rawResponse->getBody());
-        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
+        $GLOBALS['log']->debug("RESPONSE: " . var_export($rawResponse, true));
 
         //$ns = $xml->attributes();
         //$xml->preserveWhiteSpace = false;
         //$xml->strictErrorChecking = false;
         //$xml->loadXML($reply['rawResponse']);
 
-        if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
+        if (!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
             $reply['success'] = false;
             // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
+            $reply['errorMessage'] = 'Bad response from the server: ' . $rawResponse->getMessage();
             return $reply;
         } else {
             $reply['success'] = true;
@@ -358,20 +381,24 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
      * @param $cookie_array
      * @param $expires
      */
-    private function processLTPACookies($cookie_array, $expires) {
+    private function processLTPACookies($cookie_array, $expires)
+    {
         ob_clean();
         //var_dump($cookie_array);
 
-        for($i=0; $i<count($cookie_array); $i++) {
-            if(substr_count($cookie_array[$i],"LtpaToken") > 0) {
+        for ($i = 0; $i < count($cookie_array); $i++) {
+            if (substr_count($cookie_array[$i], "LtpaToken") > 0) {
                 //if(substr($cookie_array[$i],0,strlen("LtpaToken")) === "LtpaToken") {
-                $cookie_parts = explode(";",$cookie_array[$i]);
-                if(substr_count($cookie_parts[0],"LtpaToken") > 0)
+                $cookie_parts = explode(";", $cookie_array[$i]);
+                if (substr_count($cookie_parts[0], "LtpaToken") > 0) {
                     $cookie_token = explode("=", $cookie_parts[0], 2);
-                if(substr_count($cookie_parts[1],"Path") > 0)
+                }
+                if (substr_count($cookie_parts[1], "Path") > 0) {
                     $cookie_path = explode("=", $cookie_parts[1], 2);
-                if(substr_count($cookie_parts[2],"Domain") > 0)
+                }
+                if (substr_count($cookie_parts[2], "Domain") > 0) {
                     $cookie_domain = explode("=", $cookie_parts[2], 2);
+                }
 
                 $cookie = $cookie_array[$i];
                 //$test = $this->client->setHeaders("Set-Cookie",$cookie);
@@ -386,7 +413,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
                 //echo "setcookie('{$cookie_name}','{$cookie_value}',{$expires},'{$cookie_path[1]}','{$cookie_domain[1]}')<br/>";
 //die();
                 //$cookie_status = setcookie('LtpaToken','w9sx2rFYg/Ez/lJrUfeBJ0QAnXYBWRDE9++hn2Cq5YDPKpNzUBlB8FZX6PpWsvV6BQsjHco5zMvFoQX/h/lS6ortCsmUlJpkXEf9vFS7VB5C0vL6niBkLLuuE8ACyuNGiwxyVySU+hCpm3vbUvhZKFZkrmcUWGawU1Y1DZOj3VDwNcjbdZ/MxAih9SdFhPNFdDhhFxOItTQ+ykrfx/JqV9Rc1NifOROkAts9E65Hec9UmZGZQzx4Zt1BC0ND1vnlzGlAANhGATePlMLgTOokGX9We3gr18jyMsXp9TVDlWC54FV4edNCYXl04GAO8F3fPypAFURX4psQIsStrmGeAqirgQqhOmx5YSVzDtzl16cHCwQSLsWCz7hmc/UdK0Ip35K+srZHguW4mMk6tTLg9w==',786297600,'/','.lotus.com');
-                $cookie_status = setcookie($cookie_name,$cookie_value,0,$cookie_path[1],$cookie_domain[1]);
+                $cookie_status = setcookie($cookie_name, $cookie_value, 0, $cookie_path[1], $cookie_domain[1]);
                 //setcookie("TestCookie", "Test!", 0, "/", ".example.com", 1);
                 //echo $cookie_name. " Status: ".$cookie_status."<br/>";
             }
@@ -402,7 +429,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     {
         static $cacheVersion;
 
-        if ( isset($cacheVersion) ) {
+        if (isset($cacheVersion)) {
             return $cacheVersion;
         }
 
@@ -410,8 +437,8 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $defaultVersion = 2;
         return $defaultVersion;
 
-        $reply = $this->makeRequest('/files/basic/api/nonce','GET',false);
-        if ( !$reply['success'] ) {
+        $reply = $this->makeRequest('/files/basic/api/nonce', 'GET', false);
+        if (!$reply['success']) {
             // Return the default version, not much else we can do except not cache this
             return $defaultVersion;
         }
@@ -420,7 +447,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         $xml->preserveWhiteSpace = false;
         $xml->strictErrorChecking = false;
         $xml->loadXML($reply['rawResponse']);
-        if ( !is_object($xml) ) {
+        if (!is_object($xml)) {
             // Return the default version, not much else we can do except not cache this
             return $defaultVersion;
         }
@@ -433,7 +460,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
         $versionLabel = $versionNodes->item(0)->textContent;
 
-        switch ( $versionLabel ) {
+        switch ($versionLabel) {
             case 'LotusLive Files':
                 $version = 1;
                 break;
@@ -441,7 +468,9 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
                 $version = 2;
                 break;
             default:
-                $GLOBALS['log']->error('Lotus Live API version could not be detected, the version label returned was: '.$versionLabel);
+                $GLOBALS['log']->error(
+                    'Lotus Live API version could not be detected, the version label returned was: ' . $versionLabel
+                );
                 $version = 2;
                 break;
         }
@@ -450,14 +479,15 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         return $version;
     }
 
-    public function getCommunities($type, $page = 1, $searchText = null) {
-        $searchText = str_ireplace(" ","+",$searchText);
+    public function getCommunities($type, $page = 1, $searchText = null)
+    {
+        $searchText = str_ireplace(" ", "+", $searchText);
         $api = $this->api->getCommunitiesAPI();
-        if($type == 'MyCommunities') {
+        if ($type == 'MyCommunities') {
             $reply = $api->listMyCommunities($searchText, null, null, null, 5, $page);
         }
 
-        if($type == 'PublicCommunities') {
+        if ($type == 'PublicCommunities') {
             $reply = $api->listAllCommunities($searchText, null, null, null, 5, $page);
         }
         //var_dump($api->getLastResultMetadata());
@@ -465,15 +495,17 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
     }
 
-    public function getSubCommunities($cummunityId, $page = 1, $searchText = null) {
-        $searchText = str_ireplace(" ","+",$searchText);
+    public function getSubCommunities($cummunityId, $page = 1, $searchText = null)
+    {
+        $searchText = str_ireplace(" ", "+", $searchText);
         $api = $this->api->getCommunitiesAPI();
         $reply = $api->getSubCommunities($cummunityId, $searchText, null, null, null, 5, $page);
         return $reply;
     }
+
     public function getActivitiesList($communityId, $page, $searchText)
     {
-        $searchText = str_ireplace(" ","+",$searchText);
+        $searchText = str_ireplace(" ", "+", $searchText);
         return $this->api->getActivitiesAPI()->listCommunityActivities($communityId, $searchText, $page);
     }
 
@@ -491,6 +523,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     {
         return $this->api->getActivitiesAPI()->getActivity($activityId);
     }
+
     public function getActivityNode($activityId)
     {
         return $this->api->getActivitiesAPI()->getActivityNode($activityId);
@@ -513,7 +546,13 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
     public function createActivity($communityId, $activityName, $description, $tag, $due_date)
     {
-        return $this->api->getActivitiesAPI()->createCommunityActivity($communityId, $activityName, $description, $tag, $due_date);
+        return $this->api->getActivitiesAPI()->createCommunityActivity(
+            $communityId,
+            $activityName,
+            $description,
+            $tag,
+            $due_date
+        );
     }
 
     public function postNote($communityId, $content)
@@ -525,17 +564,35 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     {
         $this->api->getActivitiesAPI()->createSection($activityId, $name);
     }
-    public function createSectionToDo($activityId, $sectionId, $title, $description, $due_date,$tags,$assigned)
+
+    public function createSectionToDo($activityId, $sectionId, $title, $description, $due_date, $tags, $assigned)
     {
-        $this->api->getActivitiesAPI()->createSectionToDo($activityId, $sectionId, $title, $description,$due_date, $tags,$assigned);
+        $this->api->getActivitiesAPI()->createSectionToDo(
+            $activityId,
+            $sectionId,
+            $title,
+            $description,
+            $due_date,
+            $tags,
+            $assigned
+        );
     }
+
     public function createSectionEntry($activityId, $sectionId, $title, $description, $tags)
     {
         $this->api->getActivitiesAPI()->createSectionEntry($activityId, $sectionId, $title, $description, $tags);
     }
-    public function createActivityToDo($activityId, $title, $description, $due_date,$tags,$assigned)
+
+    public function createActivityToDo($activityId, $title, $description, $due_date, $tags, $assigned)
     {
-        return $this->api->getActivitiesAPI()->createToDo($activityId, $title, $description,$due_date, $tags,$assigned);
+        return $this->api->getActivitiesAPI()->createToDo(
+            $activityId,
+            $title,
+            $description,
+            $due_date,
+            $tags,
+            $assigned
+        );
     }
 
     public function createActivityEntry($activityId, $title, $description, $tags)
@@ -543,26 +600,29 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
         return $this->api->getActivitiesAPI()->createEntry($activityId, $title, $description, $tags);
     }
 
-    public function deleteCommunity($communityId) {
+    public function deleteCommunity($communityId)
+    {
         return $this->api->getCommunitiesAPI()->deleteCommunity($communityId);
     }
 
     public function getCommunityDiscussions($communityId, $page, $searchText)
     {
-        $searchText = str_ireplace(" ","+",$searchText);
-        $forums = $this->api->getForumsAPI()->getCommunityForums($communityId,$page, $searchText);
-        return  (empty($forums)) ? array() : $forums->getEntries();
+        $searchText = str_ireplace(" ", "+", $searchText);
+        $forums = $this->api->getForumsAPI()->getCommunityForums($communityId, $page, $searchText);
+        return (empty($forums)) ? array() : $forums->getEntries();
     }
 
     public function getForumReplies($forumId)
     {
         return $this->api->getForumsAPI()->getForumReplies($forumId);
     }
+
     public function getCommunityBookmarks($communityId, $pageNumber = 1, $searchText = '')
     {
-        $searchText = str_ireplace(" ","+",$searchText);
+        $searchText = str_ireplace(" ", "+", $searchText);
         return $this->api->getBookmarksAPI()->getCommunityBookmarks($communityId, $pageNumber, $searchText);
     }
+
     public function createDiscussion($communityId, $title, $content, $tags, $isQuestion)
     {
         return $this->api->getForumsAPI()->createTopic($communityId, $title, $content, $tags, $isQuestion);
@@ -570,7 +630,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
     public function getCommunityWiki($communityId, $page = 1, $searchText = '')
     {
-        $searchText = str_ireplace(" ","+",$searchText);
+        $searchText = str_ireplace(" ", "+", $searchText);
         return $this->api->getWikiAPI()->getCommunityWiki($communityId, $page, $searchText);
     }
 
@@ -582,35 +642,38 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
     public function getCommunityBlog($communityId, $page, $searchText)
     {
-        $searchText = str_ireplace(" ","+",$searchText);
+        $searchText = str_ireplace(" ", "+", $searchText);
         return $this->api->getBlogAPI()->getCommunityBlog($communityId, $page, $searchText);
     }
+
     public function getBlogComments($communityId, $blogId)
     {
         return $this->api->getBlogAPI()->getBlogComments($communityId, $blogId);
     }
+
     public function getFilesList($communityId, $page, $searchText)
     {
-        $searchText = str_ireplace(" ","+",$searchText);
+        $searchText = str_ireplace(" ", "+", $searchText);
         return $this->api->getFilesAPI()->getCommunityFiles($communityId, $page, $searchText);
     }
-    public function getMembers($communityId="", $searchText="", $page = 1, $sortBy = 'name', $asc = true) {
-        $searchText = str_ireplace(" ","+",$searchText);
-        if(!empty($searchText) && empty($communityId)) {
+
+    public function getMembers($communityId = "", $searchText = "", $page = 1, $sortBy = 'name', $asc = true)
+    {
+        $searchText = str_ireplace(" ", "+", $searchText);
+        if (!empty($searchText) && empty($communityId)) {
             $reply = $this->makeRequest("profiles/atom/search.do?search={$searchText}&page={$page}&ps=5");
         }
-        if(!empty($communityId)) {
+        if (!empty($communityId)) {
             //require_once 'custom/include/IBMConnections/Api/CommunitiesAPI.php';
             //$communitiesApi = new CommunitiesAPI();
             //$reply = $communitiesApi->listMembers($community_id);
             $request = "communities/service/atom/community/members?communityUuid={$communityId}&page={$page}&ps=16&sortField={$sortBy}";
-            if(!empty($asc) && $asc){
+            if (!empty($asc) && $asc) {
                 $request .= "&asc=true";
-            }
-            else{
+            } else {
                 $request .= "&desc=true";
             }
-            if(!empty($searchText)){
+            if (!empty($searchText)) {
                 $request .= "&search=" . $searchText;
             }
             $reply = $this->makeRequest($request);
@@ -632,6 +695,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     {
         return $this->api->getFilesAPI()->commentFile($userId, $documentId, $comment);
     }
+
     public function replyDiscussion($topicId, $title, $comment)
     {
         return $this->api->getForumsAPI()->replyToTopic($topicId, $title, $comment);
@@ -641,6 +705,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     {
         return $this->api->getForumsAPI()->replyToReply($replyId, $title, $comment);
     }
+
     public function likeFile($userId, $documentId)
     {
         return $this->api->getFilesAPI()->likeFile($userId, $documentId);
@@ -663,7 +728,14 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
     public function createBookmarkToCommunity($communityId, $title, $href, $description, $tags, $important)
     {
-        return $this->api->getBookmarksAPI()->createCommunityBookmark($communityId, $title, $href, $description, $tags, $important);
+        return $this->api->getBookmarksAPI()->createCommunityBookmark(
+            $communityId,
+            $title,
+            $href,
+            $description,
+            $tags,
+            $important
+        );
     }
 
     public function shareMyFileWithCommunity($cid, $myFileId)
@@ -683,13 +755,19 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
 
     public function uploadFile($fileToUpload, $docName, $mimeType = null, $visibility = "private")
     {
-        return $this->api->getFilesAPI()->uploadFile($docName, sugar_file_get_contents($fileToUpload),  $mimeType, $visibility);
+        return $this->api->getFilesAPI()->uploadFile(
+            $docName,
+            sugar_file_get_contents($fileToUpload),
+            $mimeType,
+            $visibility
+        );
     }
 
     public function getMyFolders()
     {
         return $this->getUserFolders($this->api_data['userId']);
     }
+
     public function getUserFolders($userId)
     {
         return $this->api->getFilesAPI()->getUserFolders($userId);
@@ -718,6 +796,11 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument {
     public function getFileDetails($fileId, $libraryId = '')
     {
         return $this->api->getFilesAPI()->getFileDetails($fileId, $libraryId);
+    }
+
+    public function getFileEntry($fileId)
+    {
+        return $this->api->getFilesAPI()->getFileEntry($fileId);
     }
 
     public function getOverviewCounts($communityId)
