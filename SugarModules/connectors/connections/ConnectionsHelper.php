@@ -1803,18 +1803,12 @@ class ConnectionsHelper
         return $list;
     }
 
-    public function getCommunityMemberArray($comm_id = '')
+    public function getCommunityMemberArray($comm_id, $search_text)
     {
-        if (empty($comm_id)) {
-            $comm_id = $this->getCommunityId();
-        }
-        if (empty($comm_id)) {
-            return array();
-        }
         $sortBy = (empty($this->sortBy)) ? 'name' : $this->sortBy;
         $asc = (empty($this->asc)) ? true : $this->asc;
         $page = (empty($this->page_number)) ? 1 : $this->page_number;
-        $reply = $this->apiClass->getMembers($comm_id, $this->search_text, $page, $sortBy, $asc);
+        $reply = $this->apiClass->getMembers($comm_id, $search_text, $page, $sortBy, $asc);
         $response = new SimpleXMLElement($reply['rawResponse']);
         return $this->getMembersArray($response);
     }

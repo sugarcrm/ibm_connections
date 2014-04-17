@@ -117,7 +117,19 @@ $fields =
             'name' => 'updated',
             'type' => 'varchar',
             'source' => 'non-db',
-        )
+        ),
+
+        'members' =>
+            array (
+                'name' => 'members',
+                'type' => 'link',
+                'relationship' => 'ibm_community_members',
+                'module' => 'ibm_connectionsMembers',
+                'bean_name' => 'ibm_connectionsMembers',
+                'source' => 'non-db',
+                'vname' => 'ibm_connectionsMembers',
+            ),
+
     );
 
 $dictionary['ibm_connectionsCommunity'] =
@@ -127,6 +139,18 @@ $dictionary['ibm_connectionsCommunity'] =
         'activity_enabled' => false,
         'unified_search' => false,
         'favorites' => false,
+        'relationships' =>
+            array (
+                'ibm_community_members' => array (
+                    'lhs_module' => 'ibm_connectionsCommunity',
+                    'lhs_key' => 'id',
+                    'rhs_module' => 'ibm_connectionsMembers',
+                    'rhs_key' => 'community_id',
+                    'relationship_type' => 'one-to-many',
+                ),
+            )
+
+
     );
 
 VardefManager::createVardef('ibm_connectionsCommunity', 'ibm_connectionsCommunity');

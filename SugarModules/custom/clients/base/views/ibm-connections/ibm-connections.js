@@ -61,6 +61,7 @@
 
 
         this.$el.on('show', _.bind(function(ev){ this.openTaskNodes($(ev.target).attr('id')); } , this));
+        this.on('button:delete_item:click', this.deleteModel, this);
     },
 
     initDashlet: function () {
@@ -104,8 +105,6 @@
     },
 
     openTaskNodes:function(task_id, force){
-//        debugger;
-//        var task_id = $(ev.target).attr('id');
         this.settings.set('task_id', task_id);
         var taskNodeView = this.getTaskNodeView(task_id);
         this.$el.find('#'+task_id).append(taskNodeView.el);
@@ -115,8 +114,6 @@
         if (force){
             $('#'+task_id).collapse('show');
         }
-
-
     },
 
     getTaskNodeView:function(task_id)
@@ -195,41 +192,8 @@
                     self.settings.unset('task_id');
                     self.layout.reloadDashlet();
                 }
-
-
-
-
-                /*
-                 self.context.resetLoadFlag();
-                 self.context.set('skipFetch', false);
-                 if (_.isFunction(self.loadData)) {
-                 self.loadData();
-                 } else {
-                 self.context.loadData();
-                 }*/
-
-
-
-                /*
-                 * 
-                 * function(model) {
-                 debugger;
-                 if (model) {
-                 self.layout.reloadDashlet();
-                 //                self.context.trigger('panel-top:refresh', 'emails');
-                 }
-                 }
-
-                 * 
-                 * 
-                 * */
-
             }
-
-
-
         );
-
     },
 
 
@@ -287,14 +251,57 @@
         alert(str);
     },
 
-    rmLink: function(event, opt)
+    unlinkRow: function(event, opt){
+
+        var id = this._getIId(event);
+        var delModel = this.collection.get(id), self = this;
+
+        if ('ibm_connectionsMembers' == delModel.module && 'owner' == delModel.get('role')){
+            app.alert.show('upload_error', {
+                level: 'error',
+                messages: 'You cannot unlink community owner',
+                autoClose: false
+            });
+            return ;
+        }
+
+        app.alert.show('delete_confirmation', {
+            level: 'confirmation',
+            messages: app.utils.formatString(app.lang.get('NTC_UNLINK_CONFIRMATION_FORMATTED'), [delModel.get('name')]),
+            onConfirm: function () {
+                debugger;
+                var data = {
+                    id: delModel.get('id'),
+                    link: opt.link,
+                    related: null,
+                    relatedId: delModel.get(opt.rhs_key),
+                };
+                app.api.relationships('delete', delModel.module, data);
+                self.collection.remove(delModel);
+                self.render();
+            }
+        });
+
+    },
+
+    deleteRow: function(event, opt)
     {
         var id = this._getIId(event);
-        var str = "rmLink\n"+"community_id="+this.settings.get('community_id')+"\n"
-            +"module="+opt.module+"\n"
-            +"link="+opt.link+"\n"
-            +"iid="+id+"\n";
-        alert(str);
+        var delModel = this.collection.get(id), self = this;
+
+        app.alert.show('delete_confirmation', {
+            level: 'confirmation',
+            messages: app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [delModel.get('name')]),
+            onConfirm: function () {
+                delModel.destroy({
+                    success: function() {
+                        self.collection.remove(delModel);
+                        self.render();
+                    }
+
+                });
+            }
+        });
     },
 
     _getIId:function(event){
@@ -309,13 +316,14 @@
 
             if ('ibm_connectionsFiles' == this.collection.module){
                 _.each(this.collection.models, function(model) {
-                    var url = app.api.buildFileURL({
+                    var pictureUrl = app.api.buildFileURL({
                             module: this.collection.module,
-                            id: model.get('id')},
+                            id: model.get('id')
+                        },
                         {htmlJsonFormat: false,
                             cleanCache: true
                         });
-                    model.set('url', url);
+                    model.set('url', pictureUrl);
                 }, this);
             }
 
@@ -339,68 +347,7 @@
             //deb//ugger;
         });
 
-
         this._super('loadData', [options]);
     }
-
-
-
-
-
-
-
-
-
-//    /**
-//     * New model related properties are injected into each model.
-//     * Update the picture url's property for model's assigned user.
-//     *
-//     * @param {Bean} model Appended new model.
-//     */
-//    bindCollectionAdd: function(model) {
-//        var tab = this.tabs[this.settings.get('activeTab')];
-//        model.set('record_date', model.get(tab.record_date));
-//        var pictureUrl = app.api.buildFileURL({
-//            module: 'Users',
-//            id: model.get('assigned_user_id'),
-//            field: 'picture'
-//        });
-//        model.set('picture_url', pictureUrl);
-//        this._super('bindCollectionAdd', [model]);
-//    },
-//
-//    /**
-//     * {@inheritDoc}
-//     */
-//    _dispose: function() {
-//        this.$('.select2').select2('destroy');
-//
-//        this._super("_dispose");
-//    },
-//
-//    /**
-//     * Open up a drawer to archive email.
-//     * @param event
-//     * @param params
-//     */
-//    archiveEmail: function(event, params) {
-//        var self = this;
-//        app.drawer.open({
-//            layout: 'archive-email',
-//            context: {
-//                create: true,
-//                module: 'Emails',
-//                prepopulate: {
-//                    related: this.model,
-//                    to_addresses: [{bean: this.model}]
-//                }
-//            }
-//        }, function(model) {
-//            if (model) {
-//                self.layout.reloadDashlet();
-//                self.context.trigger('panel-top:refresh', 'emails');
-//            }
-//        });
-//    }
 
 })

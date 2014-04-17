@@ -1,8 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -31,53 +27,24 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 
-
-
-class ibm_connectionsMembers extends SugarBean
+require_once 'include/api/SugarApi.php';
+class ibm_connectionsMembersRelateRecordApi extends SugarApi 
 {
-
-    public $module_dir = "ibm_connectionsMembers";
-    public $object_name = "ibm_connectionsMembers";
-
-
-    function fetchFromQuery(SugarQuery $query, array $fields = array(), array $options = array())
-    {
-        $beans = array();
-        $beans[0] = new ibm_connectionsMembers();
-        $beans[0]->name = 'Alexander Razumenko';
-        $beans[0]->id = '0bb7a4c0-4523-1033-8f73-df1a4e1805dc';
-        $beans[0]->role = 'member';
-        $beans[0]->picture = 'http://fox.local/img/1.png';
-        $beans[0]->url = 'http://fox.local/img/1.png';
-
-        $beans[1] = new ibm_connectionsMembers();
-        $beans[1]->name = 'Andrii Fedyk';
-        $beans[1]->id = '79ae9cc0-4520-1033-8f60-df1a4e1805dc';
-        $beans[1]->role = 'owner';
-        $beans[1]->picture = 'http://fox.local/img/2.png';
-        $beans[1]->url = 'http://fox.local/img/2.png';
-
-        return $beans;
+    public function registerApiRest() {
+        return array(
+            'deleteRelatedLink' => array(
+                'reqType'   => 'DELETE',
+                'path'      => array('ibm_connectionsMembers','?'     ,'link','?'        ,'?'),
+                'pathVars'  => array('module'  ,'record',''    ,'link_name','remote_id'),
+                'method'    => 'deleteRelatedLink',
+                'shortHelp' => 'Deletes a relationship between two records',
+                'longHelp'  => 'include/api/help/module_record_link_link_name_remote_id_delete_help.html',
+            ),
+        );
     }
 
-    public function retrieve($id)
-    {
-        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
-        $connectionsApi = new ExtAPIConnections();
-        $eapmBean = EAPM::getLoginInfo('Connections');
-        if (!empty($eapmBean)) {
-            $connectionsApi->loadEAPM($eapmBean);
-        }
-        $member = $connectionsApi->getProfile($id);
-        $this->fromArray($member);
-        return $this;
-    }
-
-
-    public function save()
-    {
-        $this->id = $this->member_id;
-
+    function deleteRelatedLink($api, $args) {
+        
         require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
         $connectionsApi = new ExtAPIConnections();
         $eapmBean = EAPM::getLoginInfo('Connections');
@@ -85,6 +52,9 @@ class ibm_connectionsMembers extends SugarBean
             $connectionsApi->loadEAPM($eapmBean);
         }
 
-        $connectionsApi->addMemberToCommunity($this->member_id, $this->community_id, 'member');
-    }    
+        $connectionsApi->removeMemberFromCommunity($args['record'], $args['remote_id']);
+    }
+   
+    
+
 } 

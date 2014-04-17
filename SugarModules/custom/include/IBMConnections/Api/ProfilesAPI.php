@@ -186,5 +186,21 @@ class ProfilesAPI extends AbstractConnectionsAPI{
         return $this->getHttpClient();
     }
 
+    public function getProfile($userId)
+    {
+        $response = $this->requestForPath('GET', '/profiles/atom/profile.do?userid=' . $userId );
+        $feed = IBMAtomFeed::loadFromString($response->getBody());
+        $entries =  $feed->getEntries();
+        $entry = $entries[0];
 
+        $picture = $entry->getLink("http://www.ibm.com/xmlns/prod/sn/image", "image");
+
+        $profileArr = array(
+            'id' => $userId,
+            'name' => $entry->getTitle(),
+            'picture' => $picture['href']
+        );
+
+        return $profileArr;
+    }
 }

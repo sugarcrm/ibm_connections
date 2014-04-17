@@ -38,8 +38,8 @@ class ibm_connectionsFilesFileApi extends FileApi
         return array(
             'getFileContents' => array(
                 'reqType' => 'GET',
-                'path' => array('ibm_connectionsFiles', '?', 'file', '?'),
-                'pathVars' => array('', 'record', '', 'filename'),
+                'path' => array('ibm_connectionsFiles', '?', 'file'),
+                'pathVars' => array('', 'record'),
                 'method' => 'getFile',
                 'rawReply' => true,
                 'allowDownloadCookie' => true,

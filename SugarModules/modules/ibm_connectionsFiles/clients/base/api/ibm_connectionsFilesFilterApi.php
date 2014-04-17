@@ -38,13 +38,12 @@ class ibm_connectionsFilesFilterApi extends FilterApi
         return array(
             'filterList' => array(
                 'reqType' => 'GET',
-                'path' => array('ibm_connectionsFiles', '?', 'file'),
-                'pathVars' => array('', 'record'),
-                'method' => 'getFile',
-                'rawReply' => true,
-                'allowDownloadCookie' => true,
-                'shortHelp' => 'Gets the contents of a single file from IBM Connections',
-                'longHelp' => '',
+                'path' => array('ibm_connectionsFiles', 'filter'), //, 'filter'
+                'pathVars' => array(''),
+                'method' => 'filterList',
+                'jsonParams' => array('filter'),
+                'shortHelp' => 'Filter records from a single module',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
             )
         );
     }

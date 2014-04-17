@@ -72,6 +72,11 @@ $fields =
             'name' => 'community_id',
             'type' => 'varchar',
             'source' => 'non-db',
+        ),
+        'member_id' => array(
+            'name' => 'member_id',
+            'type' => 'varchar',
+            'source' => 'non-db',
         )
     );
 

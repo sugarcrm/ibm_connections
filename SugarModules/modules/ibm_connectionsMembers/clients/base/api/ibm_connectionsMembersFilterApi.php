@@ -53,13 +53,14 @@ class ibm_connectionsMembersFilterApi extends FilterApi
 
         $helper = new ConnectionsHelper();
 
-        $returnData = $helper->getCommunityMemberArray($args['filter'][0]['community_id']);
+        $filter = $this->reformatFilter($args['filter']);
+        $returnData = $helper->getCommunityMemberArray($filter['community_id'], $filter['name']['$starts']);
 
         $beans = array();
         foreach ($returnData as $key => $item) {
             $beans[$key] = new ibm_connectionsMembers();
             $beans[$key]->id = $item['member_id'];
-            $beans[$key]->community_id = $args['filter'][0]['community_id'];
+            $beans[$key]->community_id = $filter['community_id'];
             $beans[$key]->name = $item['member_name'];
             $beans[$key]->role = $item['member_role'];
             $beans[$key]->picture = 'https://greenhouse.lotus.com/profiles/photo.do?userid=' . $item['member_id'];
@@ -74,5 +75,14 @@ class ibm_connectionsMembersFilterApi extends FilterApi
         return $data;
     }
 
-
+    protected function reformatFilter($filter){
+        $out = array();
+        foreach ($filter AS $condition) {
+            $keys = array_keys($condition);
+            $vals = array_values($condition);
+            $out[$keys[0]] = $vals[0];
+        }
+        return $out;
+    }
+    
 } 

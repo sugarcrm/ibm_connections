@@ -817,4 +817,9 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
         return $reply;
     }
 
+    public function getProfile($id)
+    {
+        return $this->api->getProfilesAPI()->getProfile($id);
+    }    
+
 }
