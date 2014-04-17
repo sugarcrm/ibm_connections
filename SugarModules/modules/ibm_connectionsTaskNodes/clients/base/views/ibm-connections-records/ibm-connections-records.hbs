@@ -1,7 +1,7 @@
 <div>
     {{#if collection.length}}
         {{#each collection.models}}
-            <div  {{#if attributes.completed }} style="text-decoration: line-through;" {{/if}} >
+            <div style="padding-top: 5px; padding-bottom: 5px;"  >
                 <div class="pull-right  actions ">
                     {{#each ../../this.meta.row_actions }}
                         {{field ../../../this model=../this template='edit' }}
