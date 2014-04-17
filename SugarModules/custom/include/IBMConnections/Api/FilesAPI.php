@@ -389,6 +389,19 @@ class FilesAPI extends AbstractConnectionsAPI
 
     }
 
+    public function getFileEntry($documentId)
+    {
+        $this->httpClient = $this->getHttpClient();
+        $path = "files/basic/api/document/{$documentId}/entry";
+        $result = $this->requestForPath("GET", $path);
+        try {
+            $entry = IBMAtomEntry::loadFromString($result->getBody());
+            return new ConnectionsFile($entry);
+        } catch (Exception $e) {
+            return;
+        }
+    }
+
     public function downloadFile($documentId)
     {
         $this->httpClient = $this->getHttpClient();
