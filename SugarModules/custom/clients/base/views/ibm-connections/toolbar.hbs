@@ -24,13 +24,13 @@
 {{/each}}
             </div>            
         </div>
-        {{#if settings.attributes.visibility}}
+        {{!-- #if settings.attributes.visibility}}
             <div class="span4">
                 <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
                     <button class="btn{{#eq settings.attributes.visibility "user"}} active{{/eq}}" value="user" data-action="visibility-switcher" rel="tooltip" data-container="body" data-placement="bottom" title="{{#if ../dashletConfig.visibility_labels.user}}{{str ../dashletConfig.visibility_labels.user this.module}}{{else}}{{str "TPL_TABBED_DASHLET_USER_BUTTON_LABEL" this.module}}{{/if}}" track="click:viewMyUserTabbedDashlet"><i class="icon-user"></i></button>
                     <button class="btn{{#eq settings.attributes.visibility "group"}} active{{/eq}}" value="group" data-action="visibility-switcher" rel="tooltip" data-container="body" data-placement="bottom" title="{{#if ../dashletConfig.visibility_labels.group}}{{str ../dashletConfig.visibility_labels.group this.module}}{{else}}{{str "TPL_TABBED_DASHLET_GROUP_BUTTON_LABEL" this.module}}{{/if}}" track="click:viewMyTeamsTabbedDashlet"><i class="icon-group"></i></button>
                 </div>
             </div>
-        {{/if}}
+        {{/if --}}
     </div>
 </div>
