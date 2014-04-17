@@ -52,31 +52,18 @@ class ibm_connectionsFiles extends SugarBean
     public function retrieve($id)
     {
 
-        /*
         require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
         $connectionsApi = new ExtAPIConnections();
         $eapmBean = EAPM::getLoginInfo('Connections');
         if (!empty($eapmBean)) {
             $connectionsApi->loadEAPM($eapmBean);
         }
-        */
 
-        //$activity = $connectionsApi->getActivity($id);
+        $fileData = $connectionsApi->getFileEntry($id);
 
-
-        $this->id = $id;
-        $this->name = 'test name';
-        $this->filename = 'test.jpg';
-        /*
-        $this->goal = $activity->getSummary();
-        $this->tags = $activity->getTags();
-        $this->due_date = $activity->getDueDate();
-        */
-
-        /*
-        $this->name = $_SESSION['bean'][__CLASS__][$id]['name'];
-        $this->community_id = $_SESSION['bean'][__CLASS__][$id]['community_id'];
-        */
+        if (!is_null($fileData)) {
+            $this->documentFilename = $fileData->getTitle();
+        }
 
         return $this;
     }

@@ -64,12 +64,12 @@ class ibm_connectionsFilesFileApi extends FileApi
             // @TODO Localize this exception message
             throw new SugarApiExceptionMissingParameter('Record id is missing');
         }
-        if (empty($args['filename'])) {
-            // @TODO Localize this exception message
-            throw new SugarApiExceptionMissingParameter('Filename is missing');
-        }
+
         $id = $args['record'];
-        $filename = $args['filename'];
+        $bean = new ibm_connectionsFiles();
+        $bean->retrieve($id);
+
+        $filename = $bean->documentFilename;
 
         require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
         $connectionsApi = new ExtAPIConnections();
@@ -79,6 +79,7 @@ class ibm_connectionsFilesFileApi extends FileApi
         }
 
         $fileContent = $connectionsApi->downloadFile($id);
+        $filesize = strlen($fileContent);
 
         header("Pragma: public");
         header("Cache-Control: maxage=1, post-check=0, pre-check=0");
@@ -89,11 +90,12 @@ class ibm_connectionsFilesFileApi extends FileApi
         header("X-Content-Type-Options: nosniff");
         header("Expires: 0");
         set_time_limit(0);
-        ob_clean();
-        //ob_start();
+        //ob_clean();
+        ob_start();
         header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 2592000));
         echo $fileContent;
         @ob_end_flush();
+        exit();
     }
 
 
