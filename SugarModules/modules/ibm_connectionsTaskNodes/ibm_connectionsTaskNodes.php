@@ -102,7 +102,7 @@ class ibm_connectionsTaskNodes extends SugarBean
             $connectionsApi->loadEAPM($eapmBean);
         }
 
-        $activity = $connectionsApi->getActivity($id);
+        $activity = $connectionsApi->getActivityNode($id);
 
 
         $this->id = $id;
