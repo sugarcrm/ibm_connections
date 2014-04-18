@@ -5,10 +5,10 @@
                 <li  class="accordion-group" iid="{{getFieldValue this "id"}}"  >
                     <div>
                         <div class="pull-right  actions ">
-                            <div style="display: inline-block; margin-right: 10px;">Tasks: 1 / 5</div>
+                            <div style="display: inline-block; margin-right: 10px;">Tasks: {{getFieldValue this "completed_todos"}} / {{getFieldValue this "total_todos"}}</div>
 
                             <div class="progress" style="width: 100px; display: inline-block; margin:0 10px 0 0;" >
-                                <div class="bar" style="width: 60%;"></div>
+                                <div class="bar" style="width: {{getFieldValue this "completion"}}%;"></div>
                             </div>
 
                             {{#each ../row_actions}}

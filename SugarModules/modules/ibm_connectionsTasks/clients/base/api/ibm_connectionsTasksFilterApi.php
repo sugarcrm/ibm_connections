@@ -79,6 +79,8 @@ class ibm_connectionsTasksFilterApi extends FilterApi
         $data['contributor_name'] = $data['contributor']['name'];
         $data['contributor_status'] = $data['contributor']['status'];
         $data['contributor_email'] = $data['contributor']['email'];
+        $data['total_todos'] = $data['todos_count']['total'];
+        $data['completed_todos'] = $data['todos_count']['completed'];
         $data['url'] = $data['webEditUrl'];
 
         $bean = new ibm_connectionsTasks();
