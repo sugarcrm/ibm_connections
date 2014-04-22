@@ -217,7 +217,7 @@ class ConnectionsActivity extends ConnectionsModel
             }
         }
         if ($this->totalToDos == 0) {
-            return 100;
+            return 0;
         }
         return round($this->completedToDos / $this->totalToDos * 100);
     }
