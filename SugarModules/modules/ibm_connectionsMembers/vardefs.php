@@ -77,6 +77,16 @@ $fields =
             'name' => 'member_id',
             'type' => 'varchar',
             'source' => 'non-db',
+        ),
+        'total_todos' => array(
+            'name' => 'total_todos',
+            'type' => 'varchar',
+            'source' => 'non-db',
+        ),
+        'completed_todos' => array(
+            'name' => 'completed_todos',
+            'type' => 'varchar',
+            'source' => 'non-db',
         )
     );
 

@@ -56,6 +56,28 @@ class ibm_connectionsMembersFilterApi extends FilterApi
         $filter = $this->reformatFilter($args['filter']);
         $returnData = $helper->getCommunityMemberArray($filter['community_id'], $filter['name']['$starts']);
 
+        $activities = $helper->getActivitiesList($filter['community_id'], $searchText = '', $page = 1);
+        $membersToDos = array();
+        foreach ($activities as $activity) {
+            $activityDetails = $helper->getActivity($activity['id']);
+            if (is_array($activityDetails) && sizeof($activityDetails) > 0) {
+                foreach ($activityDetails as $node) {
+                    if ($node['node_type'] == 'todo') {
+                        if (!isset($membersToDos[$node['assignedTo']['id']])) {
+                            $membersToDos[$node['assignedTo']['id']] = array(
+                                'total' => 0,
+                                'completed' => 0
+                            );
+                        }
+                        $membersToDos[$node['assignedTo']['id']]['total']++;
+                        if ($node['completed']) {
+                            $membersToDos[$node['assignedTo']['id']]['completed']++;
+                        }
+                    }
+                }
+            }
+        }
+
         $beans = array();
         foreach ($returnData as $key => $item) {
             $beans[$key] = new ibm_connectionsMembers();
@@ -65,6 +87,13 @@ class ibm_connectionsMembersFilterApi extends FilterApi
             $beans[$key]->role = $item['member_role'];
             $beans[$key]->picture = 'https://greenhouse.lotus.com/profiles/photo.do?userid=' . $item['member_id'];
             $beans[$key]->url = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid=' . $item['member_id'];
+            if (isset($membersToDos[$item['member_id']])) {
+                $beans[$key]->total_todos = $membersToDos[$item['member_id']]['total'];
+                $beans[$key]->completed_todos = $membersToDos[$item['member_id']]['completed'];
+            } else {
+                $beans[$key]->total_todos = 0;
+                $beans[$key]->completed_todos = 0;
+            }
         }
 
         $data = array(
