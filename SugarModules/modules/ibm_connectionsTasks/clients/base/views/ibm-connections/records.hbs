@@ -1,32 +1,34 @@
 <div class="tab-pane active">
     {{#if collection.length}}
-        <ul class="unstyled listed  accordion" data-action="pagination-body" id="{{this.cid}}">
-            {{#each collection.models}}
-                <li  class="accordion-group" iid="{{getFieldValue this "id"}}"  >
-                    <div>
-                        <div class="pull-right  actions ">
-                            <div style="display: inline-block; margin-right: 10px;">Tasks: 1 / 5</div>
+    <ul class="unstyled listed  accordion" data-action="pagination-body" id="{{this.cid}}">
+        {{#each collection.models}}
+        <li  class="accordion-group" iid="{{getFieldValue this "id"}}"  >
+        <div>
+            <div class="pull-right  actions ">
+                {{#if attributes.total_todos}}
+                <div style="display: inline-block; margin-right: 10px;">Tasks: {{attributes.completed_todos}} / {{attributes.total_todos}}</div>
 
-                            <div class="progress" style="width: 100px; display: inline-block; margin:0 10px 0 0;" >
-                                <div class="bar" style="width: 60%;"></div>
-                            </div>
+                <div class="progress" style="width: 100px; display: inline-block; margin:0 10px 0 0;" >
+                    <div class="bar" style="width: {{attributes.completion}}%;"></div>
+                </div>
+                {{/if}}
 
-                            {{#each ../row_actions}}
-                                {{field ../../this model=../this}}
-                            {{/each}}
-                        </div>
+                {{#each ../row_actions}}
+                {{field ../../this model=../this}}
+                {{/each}}
+            </div>
 
-                        <p style="padding-left:0" >
-                            <a data-toggle="collapse" data-parent="#{{../this.cid}}" href="#{{getFieldValue this "id"}}">
-                                {{getFieldValue this "name"}}
-                            </a> <i class="icon-caret-right"></i>
-                        </p>
-                    </div>
-                    <div id="{{getFieldValue this "id"}}" class="collapse" style="height: 0px;"></div>
-                </li>
-            {{/each}}
-        </ul>
-    {{else}}
-        <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</div>
-    {{/if}}
+            <p style="padding-left:0" >
+                <a data-toggle="collapse" data-parent="#{{../this.cid}}" href="#{{getFieldValue this "id"}}">
+                {{getFieldValue this "name"}}
+                </a> <i class="icon-caret-right"></i>
+            </p>
+        </div>
+        <div id="{{getFieldValue this "id"}}" class="collapse" style="height: 0px;"></div>
+</li>
+{{/each}}
+</ul>
+{{else}}
+<div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</div>
+{{/if}}
 </div>

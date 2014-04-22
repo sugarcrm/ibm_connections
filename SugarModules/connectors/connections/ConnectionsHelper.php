@@ -1761,6 +1761,7 @@ class ConnectionsHelper
                 $arr['dueDate'] = $entry->getDueDate();
                 $arr['completion'] = $this_activity->getCompletion();
                 $arr['completed'] = $entry->isCompleted();
+                $arr['todos_count'] = $this_activity->getToDosCount();
 
                 $returnData[] = $arr;
             }
