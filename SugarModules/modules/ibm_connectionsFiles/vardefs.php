@@ -41,7 +41,8 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => true,
-        'required' => true,        
+        'required' => true,
+        'vname' => 'LBL_NAME',
     ),
     'author_id' => array(
         'name' => 'id',
@@ -137,11 +138,11 @@ $fields = array(
         'source' => 'non-db',
     ),    
     'filename' => array (
-    'name' => 'filename',
-    'vname' => 'File',
-    'type' => 'file',
-    'source' => 'non-db',
-    'required' => true,
+        'name' => 'filename',
+        'vname' => 'File',
+        'type' => 'file',
+        'source' => 'non-db',
+        'required' => true,
 ),
 
 );

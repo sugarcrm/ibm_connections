@@ -42,6 +42,7 @@ $fields =
             'type' => 'varchar',
             'source' => 'non-db',
             'unified_search' => true,
+            'vname' => 'LBL_NAME',
         ),
         /*'logo' => array(
             'name' => 'logo',

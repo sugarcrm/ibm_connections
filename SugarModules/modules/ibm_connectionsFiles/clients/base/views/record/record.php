@@ -54,6 +54,7 @@ $viewdefs['ibm_connectionsFiles']['base']['view']['record'] = array(
                 array(
                     'type' => 'file',
                     'name' => 'filename',
+                    'label' => 'LBL_IBM-CONNECTIONS_SELECT_FILE_LABEL',
                 ),
             ),
         )

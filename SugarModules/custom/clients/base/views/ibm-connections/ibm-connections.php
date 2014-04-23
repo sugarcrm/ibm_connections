@@ -65,7 +65,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                         'params' => array(
                             'module' => 'ibm_connectionsTasks',
                         ),
-                        'label' => 'Add Activity',
+                        'label' => 'LBL_IBM-CONNECTIONS_ADD_ACTIVITY',
                     ),
                     array(
                         'type' => 'dashletaction',
@@ -73,7 +73,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                         'params' => array(
                             'module' => 'ibm_connectionsFiles',
                         ),
-                        'label' => 'Add File',
+                        'label' => 'LBL_IBM-CONNECTIONS_ADD_FILE',
                     ),
                     array(
                         'type' => 'dashletaction',
@@ -81,7 +81,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                         'params' => array(
                             'module' => 'ibm_connectionsMembers',
                         ),
-                        'label' => 'Add Member',
+                        'label' => 'LBL_IBM-CONNECTIONS_ADD_MEMBER',
                     ),
                 )
             ),
@@ -121,7 +121,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             'fields' => array(
                 array(
                     'name' => 'community_id',
-                    'label' => 'Select a community',
+                    'label' => 'LBL_IBM-CONNECTIONS_SELECT_COMMUNITY',
                     'type' => 'enum',
                     'options' => array('' => ''),
                 ),
@@ -134,8 +134,8 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             'active' => true,
             'filters' => array( ),
             'labels' => array(
-                'singular' => 'Member',
-                'plural' => 'Team',
+                'singular' => 'LBL_IBM-CONNECTIONS_TAB_MEMBER_SINGULAR',
+                'plural' => 'LBL_IBM-CONNECTIONS_TAB_MEMBER_PLURAL',
             ),
             'module' => 'ibm_connectionsMembers',
             'row_actions' => array(
@@ -152,26 +152,26 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                                 )
                             ),
                             'name' => 'edit_button',
-                            'label' => 'New To do',
+                            'label' => 'LBL_IBM-CONNECTIONS_BTN_ADD_TODO',
                         ),
-
+                        /*
+                                                array(
+                                                    'type' => 'dashletaction',
+                                                    'name' => 'edit_button',
+                                                    'label' => 'View Tasks',
+                                                    'action' => 'showMemberTasks',
+                                                ),
+                                                array(
+                                                    'type' => 'dashletaction',
+                                                    'name' => 'edit_button',
+                                                    'label' => 'Profile',
+                                                    'action' => 'showMemberProfile',
+                                                ),
+                        */
                         array(
                             'type' => 'dashletaction',
                             'name' => 'edit_button',
-                            'label' => 'View Tasks',
-                            'action' => 'showMemberTasks',
-                        ),
-                        array(
-                            'type' => 'dashletaction',
-                            'name' => 'edit_button',
-                            'label' => 'Profile',
-                            'action' => 'showMemberProfile',
-                        ),
-
-                        array(
-                            'type' => 'dashletaction',
-                            'name' => 'edit_button',
-                            'label' => 'Remove',
+                            'label' => 'LBL_IBM-CONNECTIONS_BTN_REMOVE',
                             'action' => 'unlinkRow',
                             'params' => array(
                                 'link' => 'community_member',
@@ -187,8 +187,8 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             'active' => false,
             'filters' => array( ),
             'labels' => array(
-                'singular' => 'Task',
-                'plural' => 'Tasks',
+                'singular' => 'LBL_IBM-CONNECTIONS_TAB_TASK_SINGULAR',
+                'plural' => 'LBL_IBM-CONNECTIONS_TAB_TASK_PLURAL',
             ),
             'module' => 'ibm_connectionsTasks',
             'row_actions' => array(
@@ -205,7 +205,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                                 )
                             ),
                             'name' => 'edit_button',
-                            'label' => 'New To do',
+                            'label' => 'LBL_IBM-CONNECTIONS_BTN_ADD_TODO',
                         ),
                         array(
                             'type' => 'dashletaction',
@@ -217,12 +217,12 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                                 )
                             ),
                             'name' => 'edit_button',
-                            'label' => 'New Entry',
+                            'label' => 'LBL_IBM-CONNECTIONS_BTN_ADD_ENTRY',
                         ),
                         array(
                             'type' => 'dashletaction',
                             'name' => 'edit_button',
-                            'label' => 'Remove',
+                            'label' => 'LBL_IBM-CONNECTIONS_BTN_REMOVE',
                             'action' => 'deleteRow',
                             'params' => array(
                                 'module' => 'ibm_connectionsMembers',
@@ -239,8 +239,8 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             'active' => false,
             'filters' => array( ),
             'labels' => array(
-                'singular' => 'File',
-                'plural' => 'Files',
+                'singular' => 'LBL_IBM-CONNECTIONS_TAB_FILE_SINGULAR',
+                'plural' => 'LBL_IBM-CONNECTIONS_TAB_FILE_PLURAL',
             ),
             'module' => 'ibm_connectionsFiles',
             'row_actions' => array(

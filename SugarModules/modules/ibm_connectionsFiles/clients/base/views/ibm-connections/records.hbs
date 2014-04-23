@@ -16,28 +16,30 @@
 <div class="tab-pane active">
     {{#if collection.length}}
     <ul class="unstyled listed" data-action="pagination-body">
-    
+
         {{#each collection.models}}
         <li iid="{{getFieldValue this "id"}}" >
             <div class="pull-right  actions ">
                 {{#each ../../row_actions}}
                     {{field ../../../this model=../this}}
-                    {{log this}}
+                {{!log this}}
                 {{/each}}
             </div>
 
             <p>
                 <a href="{{getFieldValue this "url"}}" class="pull-left avatar42" data-title="{{getFieldValue this "name"}}">
                     <img src="{{getFieldValue this "picture"}}" alt="{{getFieldValue this "name"}}">
-                </a>
-                    
-                <a href="{{getFieldValue this "url"}}">{{getFieldValue this "name"}}</a>
-                    
-            </p>
+                    </a>
+
+                    <a href="{{getFieldValue this "url"}}">{{getFieldValue this "name"}}</a>
+
+                </p>
                 <div class="details">
-                    <a target="_blank" href="{{getFieldValue this "view_link"}}">View</a>
-                   {{! Version: {{getFieldValue this "version" "No version"}}
-                    Size: {{getFieldValue this "fileSize" "0"}}
+
+
+                    <a target="_blank" href="{{getFieldValue this "view_link"}}">{{str 'LBL_IBM-CONNECTIONS_LIST_FILE_VIEW' this.module}}</a>
+                    {{! Version: {{getFieldValue this "version" "No version"}}
+                    {{str 'LBL_IBM-CONNECTIONS_LIST_FILE_SIZE' this.module}}: {{getFieldValue this "fileSize" "0"}}
                 </div>
             </li>
         {{/each}}

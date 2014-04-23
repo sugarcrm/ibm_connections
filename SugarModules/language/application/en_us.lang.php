@@ -39,3 +39,32 @@ $app_list_strings['moduleList']['ibm_connectionsTasks'] = 'IBM connections Commu
 $app_list_strings['moduleList']['ibm_connectionsTaskNodes'] = 'IBM connections Community task nodes';
 $app_list_strings['moduleList']['ibm_connectionsEntries'] = 'IBM connections Community Entries';
 $app_list_strings['moduleList']['ibm_connectionsTodos'] = 'IBM connections Community todos';
+
+
+$app_strings['LBL_IBM-CONNECTIONS_DASHLET'] = 'IBM connections';
+$app_strings['LBL_IBM-CONNECTIONS_DASHLET_DESCRIPTION'] = 'IBM connections client';
+
+
+$app_strings['LBL_IBM-CONNECTIONS_ADD_ACTIVITY'] = 'Add Activity';
+$app_strings['LBL_IBM-CONNECTIONS_ADD_FILE'] = 'Add File';
+$app_strings['LBL_IBM-CONNECTIONS_ADD_MEMBER'] = 'Add Member';
+
+$app_strings['LBL_IBM-CONNECTIONS_SELECT_COMMUNITY'] = 'Select community';
+
+$app_strings['LBL_IBM-CONNECTIONS_TAB_MEMBER_SINGULAR'] = 'Member';
+$app_strings['LBL_IBM-CONNECTIONS_TAB_MEMBER_PLURAL'] = 'Team';
+$app_strings['LBL_IBM-CONNECTIONS_TAB_TASK_SINGULAR'] = 'Task';
+$app_strings['LBL_IBM-CONNECTIONS_TAB_TASK_PLURAL'] = 'Tasks';
+$app_strings['LBL_IBM-CONNECTIONS_TAB_FILE_SINGULAR'] = 'File';
+$app_strings['LBL_IBM-CONNECTIONS_TAB_FILE_PLURAL'] = 'Files';
+
+$app_strings['LBL_IBM-CONNECTIONS_BTN_ADD_TODO'] = 'New To do';
+$app_strings['LBL_IBM-CONNECTIONS_BTN_ADD_ENTRY'] = 'New Entry';
+$app_strings['LBL_IBM-CONNECTIONS_BTN_REMOVE'] = 'Remove';
+
+
+$app_strings['LBL_IBM-CONNECTIONS_LIST_FILE_VIEW'] = 'View';
+$app_strings['LBL_IBM-CONNECTIONS_LIST_FILE_SIZE'] = 'Size';
+$app_strings['LBL_IBM-CONNECTIONS_LIST_TASKS'] = 'Tasks';
+
+$app_strings['LBL_IBM-CONNECTIONS_SELECT_FILE_LABEL'] = 'Select File';
