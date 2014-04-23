@@ -58,7 +58,7 @@ $fields =
             'width' => '42',
             'height' => '42',
             'border' => '', */
-        ) ,
+        ),
         'role' => array(
             'name' => 'role',
             'type' => 'varchar',
@@ -78,7 +78,22 @@ $fields =
             'name' => 'member_id',
             'type' => 'varchar',
             'source' => 'non-db',
-        )
+        ),
+        'total_todos' => array(
+            'name' => 'total_todos',
+            'type' => 'varchar',
+            'source' => 'non-db',
+        ),
+        'completed_todos' => array(
+            'name' => 'completed_todos',
+            'type' => 'varchar',
+            'source' => 'non-db',
+        ),
+        'completion' => array(
+            'name' => 'completion',
+            'type' => 'varchar',
+            'source' => 'non-db',
+        ),
     );
 
 $dictionary['ibm_connectionsMembers'] =
