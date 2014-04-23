@@ -32,7 +32,8 @@ $viewdefs['ibm_connectionsMembers']['base']['view']['record'] = array(
                     'type' => 'relate',
                     'name' => 'name',
                     'id_name' => 'member_id',
-                    'module' => 'ibm_connectionsMembers'
+                    'module' => 'ibm_connectionsMembers',
+                    'hideMore' => true
                 ),                
                 array(
                     'name' => 'favorite',
