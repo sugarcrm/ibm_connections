@@ -185,13 +185,11 @@
                 if (-1 != _.indexOf(['ibm_connectionsTodos', 'ibm_connectionsEntries'], model.module) ){
                     var task_id = model.get('task_id');
                     self.taskNodeCache[task_id] = null;
-//                self.settings.set('task_id', task_id);
-                    self.render();
-                    self.$el.find('#'+task_id).collapse('show');
+                    self.settings.set('task_id', task_id);
                 }else{
                     self.settings.unset('task_id');
-                    self.layout.reloadDashlet();
                 }
+                self.layout.reloadDashlet();
             }
         );
     },
@@ -332,6 +330,11 @@
     },
 
     loadData: function(options) {
+        app.alert.show('ibm-connections',
+            {level: 'process',
+                title: app.lang.getAppString('LBL_LOADING'),
+                autoClose: false});
+
         var self = this;
         options = options || {};
         if (!_.isFunction(options.complete)) {
@@ -344,6 +347,7 @@
             if (!_.isEmpty(task_id)){
                 this.$el.find('#'+task_id).collapse('show');
             }
+            app.alert.dismiss('ibm-connections');
             //deb//ugger;
         });
 
