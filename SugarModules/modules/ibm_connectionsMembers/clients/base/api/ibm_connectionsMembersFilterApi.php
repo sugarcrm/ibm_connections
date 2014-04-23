@@ -32,6 +32,10 @@ require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/
 
 class ibm_connectionsMembersFilterApi extends FilterApi
 {
+    /**
+     * @var ConnectionsHelper
+     */
+    private $helper;
 
     public function registerApiRest()
     {
@@ -51,32 +55,12 @@ class ibm_connectionsMembersFilterApi extends FilterApi
     public function filterList(ServiceBase $api, array $args)
     {
 
-        $helper = new ConnectionsHelper();
+        $this->helper = new ConnectionsHelper();
 
         $filter = $this->reformatFilter($args['filter']);
-        $returnData = $helper->getCommunityMemberArray($filter['community_id'], $filter['name']['$starts']);
+        $returnData = $this->helper->getCommunityMemberArray($filter['community_id'], $filter['name']['$starts']);
 
-        $activities = $helper->getActivitiesList($filter['community_id'], $searchText = '', $page = 1);
-        $membersToDos = array();
-        foreach ($activities as $activity) {
-            $activityDetails = $helper->getActivity($activity['id']);
-            if (is_array($activityDetails) && sizeof($activityDetails) > 0) {
-                foreach ($activityDetails as $node) {
-                    if ($node['node_type'] == 'todo') {
-                        if (!isset($membersToDos[$node['assignedTo']['id']])) {
-                            $membersToDos[$node['assignedTo']['id']] = array(
-                                'total' => 0,
-                                'completed' => 0
-                            );
-                        }
-                        $membersToDos[$node['assignedTo']['id']]['total']++;
-                        if ($node['completed']) {
-                            $membersToDos[$node['assignedTo']['id']]['completed']++;
-                        }
-                    }
-                }
-            }
-        }
+        $membersToDos = $this->buildMembersTodosMap($filter['community_id']);
 
         $beans = array();
         foreach ($returnData as $key => $item) {
@@ -88,9 +72,13 @@ class ibm_connectionsMembersFilterApi extends FilterApi
             $beans[$key]->picture = 'https://greenhouse.lotus.com/profiles/photo.do?userid=' . $item['member_id'];
             $beans[$key]->url = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid=' . $item['member_id'];
             if (isset($membersToDos[$item['member_id']])) {
-                $beans[$key]->total_todos = $membersToDos[$item['member_id']]['total'];
-                $beans[$key]->completed_todos = $membersToDos[$item['member_id']]['completed'];
+                $totalTodos = $membersToDos[$item['member_id']]['total'];
+                $completedTodos = $membersToDos[$item['member_id']]['completed'];
+                $beans[$key]->total_todos = $totalTodos;
+                $beans[$key]->completed_todos = $completedTodos;
+                $beans[$key]->completion = ($totalTodos > 0) ? round($completedTodos / $totalTodos * 100) : 0;
             } else {
+                $beans[$key]->completion = 0;
                 $beans[$key]->total_todos = 0;
                 $beans[$key]->completed_todos = 0;
             }
@@ -104,7 +92,8 @@ class ibm_connectionsMembersFilterApi extends FilterApi
         return $data;
     }
 
-    protected function reformatFilter($filter){
+    protected function reformatFilter($filter)
+    {
         $out = array();
         foreach ($filter AS $condition) {
             $keys = array_keys($condition);
@@ -113,5 +102,36 @@ class ibm_connectionsMembersFilterApi extends FilterApi
         }
         return $out;
     }
-    
+
+    /**
+     * @param $communityId
+     * @return array
+     */
+    protected function buildMembersTodosMap($communityId)
+    {
+        $activities = $this->helper->getActivitiesList($communityId, $searchText = '', $page = 1);
+        $membersToDos = array();
+        foreach ($activities as $activity) {
+            $activityDetails = $this->helper->getActivity($activity['id']);
+            if (is_array($activityDetails) && sizeof($activityDetails) > 0) {
+                foreach ($activityDetails as $node) {
+                    if ($node['node_type'] == 'todo') {
+                        if (!isset($membersToDos[$node['assignedTo']['id']])) {
+                            $membersToDos[$node['assignedTo']['id']] = array(
+                                'total' => 0,
+                                'completed' => 0,
+                                'completion' => 0
+                            );
+                        }
+                        $membersToDos[$node['assignedTo']['id']]['total']++;
+                        if ($node['completed']) {
+                            $membersToDos[$node['assignedTo']['id']]['completed']++;
+                        }
+                    }
+                }
+            }
+        }
+        return $membersToDos;
+    }
+
 } 
