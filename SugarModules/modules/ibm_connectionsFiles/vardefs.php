@@ -131,6 +131,11 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
     ),
+    'content_type' => array(
+        'name' => 'content_type',
+        'type' => 'varchar',
+        'source' => 'non-db',
+    ),    
     'filename' => array (
     'name' => 'filename',
     'vname' => 'File',

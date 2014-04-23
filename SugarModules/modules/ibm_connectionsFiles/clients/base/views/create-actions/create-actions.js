@@ -10,7 +10,9 @@
 
     populateFileName:function()
     {
-        this.model.set('name', this.model.get('filename'));
+        if (_.isEmpty(this.model.get('name'))){
+            this.model.set('name', this.model.get('filename'));
+        }
     }
 
 })

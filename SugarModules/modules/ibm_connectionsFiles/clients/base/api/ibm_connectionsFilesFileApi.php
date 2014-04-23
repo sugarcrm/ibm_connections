@@ -69,7 +69,6 @@ class ibm_connectionsFilesFileApi extends FileApi
         $bean = new ibm_connectionsFiles();
         $bean->retrieve($id);
 
-        $filename = $bean->documentFilename;
 
         require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
         $connectionsApi = new ExtAPIConnections();
@@ -79,13 +78,11 @@ class ibm_connectionsFilesFileApi extends FileApi
         }
 
         $fileContent = $connectionsApi->downloadFile($id);
-        $filesize = strlen($fileContent);
 
         header("Pragma: public");
         header("Cache-Control: maxage=1, post-check=0, pre-check=0");
-        header("Content-Type: application/force-download");
-        header("Content-type: application/octet-stream");
-        header("Content-Disposition: attachment; filename=\"" . $filename . "\";");
+        header("Content-Type: {$bean->content_type}");
+        header("Content-Disposition: attachment; filename=\"{$bean->name}\";");
         header("Content-Length: " . strlen($fileContent));
         header("X-Content-Type-Options: nosniff");
         header("Expires: 0");

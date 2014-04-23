@@ -26,6 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'include/download_file.php';
+require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
+
 class ibm_connectionsFiles extends SugarBean
 {
     public $module_dir = "ibm_connectionsFiles";
@@ -51,7 +54,7 @@ class ibm_connectionsFiles extends SugarBean
 
     public function retrieve($id)
     {
-
+        $this->id = $id;
         require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
         $connectionsApi = new ExtAPIConnections();
         $eapmBean = EAPM::getLoginInfo('Connections');
@@ -62,11 +65,29 @@ class ibm_connectionsFiles extends SugarBean
         $fileData = $connectionsApi->getFileEntry($id);
 
         if (!is_null($fileData)) {
-            $this->documentFilename = $fileData->getTitle();
+            $this->name = $fileData->getTitle();
+            $this->community_id = $fileData->getCommunityId();
+            $this->content_type = $fileData->getMimeType();
         }
-
         return $this;
     }
 
+    public function save()
+    {
+        $helper = new ConnectionsHelper();
+
+        $fileInfo = array(
+            'path' => dirname(__FILE__).'/1.txt',
+            'content-type' => 'application/octet-stream',
+        );
+
+        if (!empty($this->filename)) {
+            $df = new DownloadFile();
+            $fileInfo = $df->getFileInfo($this, 'filename');
+            $helper->uploadNewFile($this->community_id, $this->name, $fileInfo, 'private');
+        }else{
+            $this->id = $helper->uploadNewFile($this->community_id, $this->name, $fileInfo, 'private');
+        }
+    }
 
 } 

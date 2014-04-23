@@ -558,9 +558,9 @@ class ConnectionsHelper
         echo json_encode(array('id' => $this->document_id, 'result' => $result));
     }
 
-    public function deleteFile()
+    public function deleteFile($fileId)
     {
-        $this->apiClass->deleteFile($this->document_id);
+        $this->apiClass->deleteFile($fileId);
     }
 
     public function deleteCommunity()
@@ -654,18 +654,13 @@ class ConnectionsHelper
     }
 
 
-    public function uploadNewFile()
+    public function uploadNewFile($community_id, $name, $fileInfo, $visibility)
     {
-        if (empty($_FILES['file_el']) || $_FILES['file_el']['error'] > 0) {
-            return;
-        }
-        $fileToUpload = $_FILES['file_el']['tmp_name'];
-        $mimeType = $_FILES['file_el']['type'];
-
-        $reply = $this->apiClass->uploadFile($fileToUpload, $this->file_name, $mimeType, $this->visibility);
+        $reply = $this->apiClass->uploadFile($fileInfo['path'], $name, $fileInfo['content-type'], $visibility);
         if (!empty($reply->docId)) {
-            $this->apiClass->shareMyFileWithCommunity($this->getCommunityId(), $reply->docId);
+            $this->apiClass->shareMyFileWithCommunity($community_id, $reply->docId);
         }
+        return $reply->docId;
     }
 
     public function downloadFile()
