@@ -84,6 +84,12 @@ class ibm_connectionsFiles extends SugarBean
         if (!empty($this->filename)) {
             $df = new DownloadFile();
             $fileInfo = $df->getFileInfo($this, 'filename');
+            if (empty($this->community_id) && isset($_POST['community_id'])){
+                $this->community_id = $_POST['community_id'];
+            }
+            if (empty($this->name)){
+                $this->name = $fileInfo['name'];
+            }
             $helper->uploadNewFile($this->community_id, $this->name, $fileInfo, 'private');
         }else{
             $this->id = $helper->uploadNewFile($this->community_id, $this->name, $fileInfo, 'private');

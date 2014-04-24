@@ -64,13 +64,96 @@
         this.on('button:delete_item:click', this.deleteModel, this);
     },
 
+    dropAttachment: function(event) {
+        var files = event.originalEvent.dataTransfer.files, uploadedFiles = [], self = this;
+        for (var i = 0; i < files.length; i++)
+        {
+            var formData = new FormData();
+            formData.append('filename', files[i]);
+            formData.append('community_id', this.settings.get('community_id'));
+            formData.append('name', files[i].name);
+            formData.append('OAuth-Token', app.api.getOAuthToken());
+
+            var fileBean = app.data.createBean('ibm_connectionsFiles');
+            fileBean.id = this.settings.get('community_id');
+            var uploadURL = app.api.buildFileURL({
+                module: fileBean.module,
+                id: fileBean.id,
+                field: 'filename'
+            });
+            var jqXHR=$.ajax({
+                /*xhr: function() {
+                 var xhrobj = $.ajaxSettings.xhr();
+                 if (xhrobj.upload) {
+                 xhrobj.upload.addEventListener('progress', function(event) {
+                 var percent = 0;
+                 var position = event.loaded || event.position;
+                 var total = event.total;
+                 if (event.lengthComputable) {
+                 percent = Math.ceil(position / total * 100);
+                 }
+                 //Set progress
+                 status.setProgress(percent);
+                 }, false);
+                 }
+                 return xhrobj;
+                 },*/
+                url: uploadURL,
+                type: "POST",
+                contentType:false,
+                processData:false,
+//                dataType: 'json',
+                cache: false,
+                data: formData,
+                success: function(data){
+                    data = $.parseJSON($('<div>'+data+'</div>').text());
+                    uploadedFiles.push(data.record.name);
+                    if (uploadedFiles.length == files.length){
+                        app.alert.dismiss('ibmconn-uploading');
+                        self.layout.reloadDashlet();
+//                        self.refreshTabsForModule('ibm_connectionsFiles');
+                    }
+                }
+            });
+//            sendFileToServer(fd,status);
+        }
+
+        app.alert.show('ibmconn-uploading',
+            {level: 'process',
+                title: app.lang.getAppString('LBL_UPLOADING'),
+                autoClose: false});
+
+        event.stopPropagation();
+        event.preventDefault();
+    },
+
     initDashlet: function () {
+        var self = this;
         this._super('initDashlet', []);
         if (this.meta.config) {
             var communityCollect = app.data.createBeanCollection("ibm_connectionsCommunity", null, {});
             communityCollect.on('reset', this.fillCommunities, this);
             communityCollect.fetch();
         }
+
+        this.$el.on('dragenter', function(event) {
+//            self.$(event.currentTarget).addClass("dragdrop");
+            return false;
+        });
+
+        this.$el.on('dragover', function(event) {
+            return false;
+        });
+
+        this.$el.on('dragleave', function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+//            self.$(event.currentTarget).removeClass("dragdrop");
+            return false;
+        });
+
+        this.$el.on('drop', _.bind(this.dropAttachment, this) );
+
     },
 
     fillCommunities: function (communityCollect) {
