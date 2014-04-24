@@ -33,62 +33,14 @@ class ibm_connectionsTaskNodes extends SugarBean
 
     public function save()
     {
-
-        $goal = ''; // Temporary! Need to add form field
-
-        //Create and setup Connections API object
-        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
-        $connectionsApi = new ExtAPIConnections();
-        $eapmBean = EAPM::getLoginInfo('Connections');
-        if (!empty($eapmBean)) {
-            $connectionsApi->loadEAPM($eapmBean);
-        }
-
-        if (!empty($this->due_date)) {
-            $this->due_date = $GLOBALS['timedate']->asDbDate(
-                $GLOBALS['timedate']->fromUserDate($this->due_date)
-            );
-        }
-        $tag_str = str_replace(' ', ',', $this->activity_tags);
-        if (!empty($tag_str)) {
-            $tag = explode(',', $tag_str);
+        $this->in_save = true;
+        if (empty($this->id) || !empty($this->new_with_id)) {
+            $returnData = $this->insertTaskNode();
         } else {
-            $tag = array();
+            $returnData = $this->updateTaskNode();
         }
-
-        $connectionsApi->createActivityToDo(
-            $activityId,
-            $this->name,
-            $goal,
-            null,
-            $tag,
-            array('name' => null, 'id' => null)
-        );
-
-
-        $result = $connectionsApi->createActivity(
-            $this->community_id,
-            $this->name,
-            $goal,
-            $tag,
-            null
-        );
-
-        $activityData = IBMAtomEntry::loadFromString($result);
-        $item = new ConnectionsActivity($activityData);
-        $activityId = $item->getId();
-
-        $this->id = $activityId;
-        return $activityId;
-
-
-        /*
-        $_SESSION['bean'][__CLASS__][$this->id] = array(
-            'id' => $this->id,
-            'name' => $this->name,
-            'community_id' => $this->community_id,
-        );
-        */
+        return $returnData;
+        $this->in_save = false;
 
     }
 
@@ -118,6 +70,64 @@ class ibm_connectionsTaskNodes extends SugarBean
 
         return $this;
     }
+
+    public function mark_deleted($id)
+    {
+        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
+        $connectionsApi = new ExtAPIConnections();
+        $eapmBean = EAPM::getLoginInfo('Connections');
+        if (!empty($eapmBean)) {
+            $connectionsApi->loadEAPM($eapmBean);
+        }
+        $connectionsApi->deleteAtivityNode($id);
+    }
+
+    private function updateTaskNode()
+    {
+        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
+        $connectionsApi = new ExtAPIConnections();
+        $eapmBean = EAPM::getLoginInfo('Connections');
+        if (!empty($eapmBean)) {
+            $connectionsApi->loadEAPM($eapmBean);
+        }
+
+        $connectionsApi->markToDoCompeted($this->id, (bool)$this->completed);
+        return $this->id;
+
+    }
+
+    /*
+    private function insertTaskNode()
+    {
+            $tag = array();
+        }
+
+        $connectionsApi->createActivityToDo(
+            $activityId,
+            $this->name,
+            $goal,
+            null,
+            $tag,
+            array('name' => null, 'id' => null)
+        );
+
+
+        $result = $connectionsApi->createActivity(
+            $this->community_id,
+            $this->name,
+            $goal,
+            $tag,
+            null
+        );
+
+        $activityData = IBMAtomEntry::loadFromString($result);
+        $item = new ConnectionsActivity($activityData);
+        $activityId = $item->getId();
+
+        $this->id = $activityId;
+        return $activityId;
+    }
+    */
 
 
 }

@@ -78,7 +78,7 @@ class FilesAPI extends AbstractConnectionsAPI
         $client->setParameterGet('sO', 'dsc');
         $client->setParameterGet('acls', 'true');
         $client->setParameterGet('collectionAcls', 'true');
-        $client->setParameterGet('pageSize', 5);
+        $client->setParameterGet('pageSize', 150);
         $client->setParameterGet('page', $page);
         $client->setParameterGet('includeTags', 'true');
         //$client->setParameterGet("sortBy", 'title');
@@ -551,16 +551,14 @@ class FilesAPI extends AbstractConnectionsAPI
      */
     public function deleteDoc($documentId)
     {
-        $path = '/files/basic/api/myuserlibrary/document/' . $documentId
-            . '/entry';
+        $path = '/files/basic/api/myuserlibrary/document/' . $documentId . '/entry';
         $client = $this->getHttpClient();
         $nonce = $this->requestNonce();
-        $response = $this
-            ->requestForPath(
-                'DELETE',
-                $path,
-                array('X-Update-Nonce' => $nonce)
-            );
+        $response = $this->requestForPath(
+            'DELETE',
+            $path,
+            array('X-Update-Nonce' => $nonce)
+        );
         if (empty($response) || !$this->checkResult($response)) {
             return false;
         }

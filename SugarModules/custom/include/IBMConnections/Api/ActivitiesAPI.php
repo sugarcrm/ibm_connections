@@ -120,6 +120,14 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         return new ConnectionsActivity($entry);
     }
 
+    public function deleteActivityNode($id)
+    {
+        $this->getHttpClient()->resetParameters();
+        //$this->getHttpClient()->setParameterGet("activityNodeUuid", $id);
+        $result = $this->requestForPath("DELETE", "/activities/service/atom2/activitynode?activityNodeUuid=" . $id);
+        return (!empty($result) && $this->checkResult($result));
+    }
+
     public function getNode($activityId, $nodeId)
     {
         $feedLink = "/activities/service/atom2/activity?activityUuid=" . $activityId . "&ps=150";

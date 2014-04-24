@@ -223,6 +223,10 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
         return $this->api->getFilesAPI()->deleteDoc($document_id);
     }
 
+    public function deleteAtivityNode($id)
+    {
+        return $this->api->getActivitiesAPI()->deleteActivityNode($id);
+    }
 
     public function downloadDoc($documentId, $documentFormat)
     {
@@ -820,6 +824,6 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
     public function getProfile($id)
     {
         return $this->api->getProfilesAPI()->getProfile($id);
-    }    
+    }
 
 }
