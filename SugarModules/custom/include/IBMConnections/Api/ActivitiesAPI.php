@@ -67,7 +67,7 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $this->getHttpClient()->resetParameters();
         $this->getHttpClient()->setParameterGet("commUuid", $communityId);
         $this->getHttpClient()->setParameterGet("page", $page);
-        $this->getHttpClient()->setParameterGet("ps", '10');
+        $this->getHttpClient()->setParameterGet("ps", '150');
         $this->getHttpClient()->setParameterGet("sortBy", 'title');
         $this->getHttpClient()->setParameterGet("sortOrder", 'asc');
         if (!empty($searchText)) {
