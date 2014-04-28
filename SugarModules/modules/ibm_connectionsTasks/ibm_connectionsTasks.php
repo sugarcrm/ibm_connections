@@ -107,4 +107,15 @@ class ibm_connectionsTasks extends SugarBean
         return $this;
     }
 
-} 
+    public function mark_deleted($id)
+    {
+        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
+        $connectionsApi = new ExtAPIConnections();
+        $eapmBean = EAPM::getLoginInfo('Connections');
+        if (!empty($eapmBean)) {
+            $connectionsApi->loadEAPM($eapmBean);
+        }
+        $connectionsApi->deleteActivity($id);
+    }
+
+}
