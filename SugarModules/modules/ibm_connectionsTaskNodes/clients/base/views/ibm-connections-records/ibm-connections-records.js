@@ -2,10 +2,22 @@
     initialize: function (options) {
         var self = this, collection = app.data.createBeanCollection(options.module);
         collection.on('change:completed', function (model) {
+
+            app.alert.show('ibm-tasknodes-save',
+                {level: 'process',
+                    title: app.lang.getAppString('LBL_SAVING'),
+                    autoClose: false});
+
             model.save({}, {success: function () {
-                self.render()
+                self.render();
+                self.context.trigger('tasknodes:change:completed');
+                app.alert.dismiss('ibm-tasknodes-save');
             }});
         })
+
+        collection.on("reset", function () {
+            self.context.trigger('tasknodes:reset');
+        });
 
         options.collection = collection;
 
@@ -13,17 +25,28 @@
 
         this.on('button:delete_button:click', this.deleteModel, this);
     },
-    
-    deleteModel:function (model) {
-        var delModel = model;
+
+    deleteModel: function (model) {
+        var delModel = model, self = this;
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [delModel.get('name')]),
             onConfirm: function () {
-                delModel.destroy();
+
+                app.alert.show('ibm-tasknodes-del',
+                    {level: 'process',
+                        title: app.lang.getAppString('LBL_DELETING'),
+                        autoClose: false});
+
+                delModel.destroy({success: function () {
+                    self.collection.remove(delModel);
+                    self.render();
+                    self.context.trigger('tasknodes:remove');
+                    app.alert.dismiss('ibm-tasknodes-del');
+                }});
             }
         });
-    }, 
+    },
 
     loadData: function (options) {
         options = options || {}

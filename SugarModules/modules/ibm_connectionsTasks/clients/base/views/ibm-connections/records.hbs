@@ -5,19 +5,11 @@
                 <li  class="accordion-group" iid="{{getFieldValue this "id"}}"  >
                     <div>
                         <div class="pull-right  actions ">
-                            {{#if attributes.total_todos}}
-                                <div style="display: inline-block; margin-right: 10px;">{{str 'LBL_IBM-CONNECTIONS_LIST_TASKS' this.module}}: {{attributes.completed_todos}} / {{attributes.total_todos}}</div>
-
-                                <div class="progress" style="width: 100px; display: inline-block; margin:0 10px 0 0;" >
-                                    <div class="bar" style="width: {{attributes.completion}}%;"></div>
-                                </div>
-                            {{/if}}
-
+                            <div class="status" style="display: inline-block;" ></div>
                             {{#each ../row_actions}}
                                 {{field ../../this model=../this}}
                             {{/each}}
                         </div>
-
                         <p style="padding-left:0" >
                             <a data-toggle="collapse" data-parent="#{{../this.cid}}" href="#{{getFieldValue this "id"}}">
                                 {{getFieldValue this "name"}}

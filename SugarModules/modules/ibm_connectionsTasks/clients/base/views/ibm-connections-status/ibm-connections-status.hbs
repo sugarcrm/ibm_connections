@@ -1,0 +1,7 @@
+{{#if model.attributes.total_todos}}
+    <div style="display: inline-block; margin-right: 10px;">{{str 'LBL_IBM-CONNECTIONS_LIST_TASKS' model.module}}: {{model.attributes.completed_todos}} / {{model.attributes.total_todos}}</div>
+
+    <div class="progress" style="width: 100px; display: inline-block; margin:0 10px 0 0;" >
+        <div class="bar" style="width: {{model.attributes.completion}}%;"></div>
+    </div>
+{{/if}}
