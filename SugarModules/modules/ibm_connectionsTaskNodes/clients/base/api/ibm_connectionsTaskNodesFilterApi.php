@@ -88,6 +88,11 @@ class ibm_connectionsTaskNodesFilterApi extends FilterApi
         $data['contributor_name'] = $data['contributor']['name'];
         $data['contributor_status'] = $data['contributor']['status'];
         $data['contributor_email'] = $data['contributor']['email'];
+
+        $data['assigned_user_id'] = $data['assignedTo']['id'];
+        $data['assigned_user_name'] = $data['assignedTo']['name'];
+        $data['assigned_user_url'] = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid=' . $data['assignedTo']['id'];
+
         $data['url'] = $data['webEditUrl'];
 
         $bean = new ibm_connectionsTaskNodes();

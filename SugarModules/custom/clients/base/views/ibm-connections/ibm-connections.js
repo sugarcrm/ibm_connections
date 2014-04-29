@@ -57,6 +57,8 @@
         }
     },
 
+    plugins: ['Dashlet', 'ToggleVisibility', 'Tooltip'],
+    
     /**
      * {@inheritDoc}
      */
@@ -78,6 +80,16 @@
         this.$el.on('show', _.bind(function(ev){ this.openTaskNodes($(ev.target).attr('id')); } , this));
         this.on('button:delete_item:click', this.deleteModel, this);
         this.context.on('tasknodes:remove tasknodes:change:completed tasknodes:reset', this.recalcTask, this);
+
+        Handlebars.registerHelper('dateFormat', function(dateString) {
+            var formattedDateString = app.date.format(new Date(dateString), app.user.getPreference('datepref'));
+
+            var wrapper = "<span class=\"relativetime\" "+ " >" +
+                formattedDateString +
+                "</span>";
+            return new Handlebars.SafeString(wrapper);
+        });
+
     },
 
     recalcTask: function(){

@@ -76,13 +76,24 @@ $fields = array(
         'unified_search' => true,
     ),
     
+    'assigned_user_url' => array(
+        'name' => 'assigned_user_url',
+        'type' => 'varchar',
+        'source' => 'non-db',
+        'unified_search' => false,
+    ),
+
     'completed' => array(
         'name' => 'completed',
         'type' => 'varchar',
         'source' => 'non-db',
         'unified_search' => true,
     ),
- 
+    'duedate' => array(
+        'name' => 'duedate',
+        'source' => 'non-db',
+        'type' => 'date',
+    ),
 );
 
  

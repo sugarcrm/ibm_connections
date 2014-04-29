@@ -1428,7 +1428,7 @@ class ConnectionsHelper
         $arr['node_type'] = $entry->getType();
         $arr['title'] = $entry->getTitle();
         $arr['parent_id'] = $this->activity_id;
-        $arr['dueDate'] = $entry->getDueDate();
+        $arr['duedate'] = $entry->getDueDate();
         $nodes = $entry->listNodes();
         $has_todo = false;
         $has_comment = false;
@@ -1753,7 +1753,7 @@ class ConnectionsHelper
                 $arr['content'] = $entry->getContent();
                 $arr['commentsCount'] = $this_activity->getCommentsCount();
                 $arr['webEditUrl'] = $entry->getWebEditUrl();
-                $arr['dueDate'] = $entry->getDueDate();
+                $arr['duedate'] = $entry->getDueDate();
                 $arr['completion'] = $this_activity->getCompletion();
                 $arr['completed'] = $entry->isCompleted();
                 $arr['todos_count'] = $this_activity->getToDosCount();

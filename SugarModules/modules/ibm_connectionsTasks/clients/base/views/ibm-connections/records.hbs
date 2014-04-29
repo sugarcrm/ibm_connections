@@ -14,6 +14,10 @@
                             <a data-toggle="collapse" data-parent="#{{../this.cid}}" href="#{{getFieldValue this "id"}}">
                                 {{getFieldValue this "name"}}
                             </a> <i class="icon-caret-right"></i>
+
+                            {{#if attributes.duedate }}
+                                <date class="date">{{dateFormat attributes.duedate}}</date>
+                            {{/if}}
                         </p>
                     </div>
                     <div id="{{getFieldValue this "id"}}" class="collapse" style="height: 0px;"></div>

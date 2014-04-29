@@ -114,7 +114,11 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
     ),
-
+    'duedate' => array(
+        'name' => 'duedate',
+        'type' => 'date',
+        'source' => 'non-db',
+    ),
 );
 
 $dictionary['ibm_connectionsTasks'] =

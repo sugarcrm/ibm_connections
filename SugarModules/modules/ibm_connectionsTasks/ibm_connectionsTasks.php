@@ -44,11 +44,6 @@ class ibm_connectionsTasks extends SugarBean
             $connectionsApi->loadEAPM($eapmBean);
         }
 
-        if (!empty($this->due_date)) {
-            $this->due_date = $GLOBALS['timedate']->asDbDate(
-                $GLOBALS['timedate']->fromUserDate($this->due_date)
-            );
-        }
         $tag_str = str_replace(' ', ',', $this->activity_tags);
         if (!empty($tag_str)) {
             $tag = explode(',', $tag_str);
@@ -61,7 +56,7 @@ class ibm_connectionsTasks extends SugarBean
             $this->name,
             $goal,
             $tag,
-            null
+            $this->duedate
         );
 
         $activityData = IBMAtomEntry::loadFromString($result);
@@ -97,7 +92,7 @@ class ibm_connectionsTasks extends SugarBean
         $this->name = $activity->getTitle();
         $this->goal = $activity->getSummary();
         $this->tags = $activity->getTags();
-        $this->due_date = $activity->getDueDate();
+        $this->duedate = $activity->getDueDate();
 
         /*
         $this->name = $_SESSION['bean'][__CLASS__][$id]['name'];

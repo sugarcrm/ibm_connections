@@ -20,6 +20,15 @@
                 {{getFieldValue this "name"}}
 
 
+                {{#if attributes.assigned_user_name }}
+                    <a target="_blank" href="{{getFieldValue this "assigned_user_url"}}">{{getFieldValue this "assigned_user_name"}}</a>
+                {{/if}}
+
+                {{#if attributes.duedate }}
+                    <date class="date">{{dateFormat attributes.duedate}}</date>
+                {{/if}}
+
+
                 <div style="clear: both;"></div>
             </div>
         {{/each}}

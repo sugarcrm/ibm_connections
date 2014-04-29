@@ -50,7 +50,9 @@ $viewdefs['ibm_connectionsTasks']['base']['view']['record'] = array(
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
-            'fields' => array( ),
+            'fields' => array(
+                'duedate',
+            ),
         ),
 
     ),
