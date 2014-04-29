@@ -33,8 +33,9 @@ $viewdefs['ibm_connectionsMembers']['base']['view']['record'] = array(
                     'name' => 'name',
                     'id_name' => 'member_id',
                     'module' => 'ibm_connectionsMembers',
-                    'hideMore' => true
-                ),                
+                    'hideMore' => true,
+                    'imgUrl' => 'https://greenhouse.lotus.com/profiles/photo.do?userid={0}'
+                ),
                 array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',
@@ -50,7 +51,7 @@ $viewdefs['ibm_connectionsMembers']['base']['view']['record'] = array(
                 ),
             )
         ),
-        
+
         /*array(
             'name' => 'panel_body',
             'label' => 'LBL_PANEL_BODY',
