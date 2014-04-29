@@ -122,8 +122,9 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                 array(
                     'name' => 'community_id',
                     'label' => 'LBL_IBM-CONNECTIONS_SELECT_COMMUNITY',
-                    'type' => 'enum',
+                    'type' => 'imgenum',
                     'options' => array('' => ''),
+                    'imgUrl' => 'https://greenhouse.lotus.com/communities/service/html/image?communityUuid={0}'
                 ),
             ),
         ),
