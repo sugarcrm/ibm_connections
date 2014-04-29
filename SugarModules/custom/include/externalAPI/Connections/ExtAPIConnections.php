@@ -225,7 +225,7 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
 
     public function deleteActivity($id)
     {
-        return $this->api->getActivitiesAPI()->deleteActivity($id);
+        return $this->api->getActivitiesAPI()->deleteActivityNode($id);
     }
 
     public function deleteAtivityNode($id)
