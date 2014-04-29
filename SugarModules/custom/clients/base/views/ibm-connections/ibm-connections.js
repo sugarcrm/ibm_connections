@@ -66,11 +66,6 @@
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
-
-        /*this.plugins = _.union(this.plugins, [
-         'Connector'
-         ]);*/
-
         this._super('initialize', [options]);
         this.tbodyTag = 'ul[data-action="pagination-body"]';
 
@@ -158,7 +153,7 @@
                     uploadedFiles.push(data.record.name);
                     if (uploadedFiles.length == files.length){
                         app.alert.dismiss('ibmconn-uploading');
-                        self.layout.reloadDashlet();
+                        self.refreshTabsForModule('ibm_connectionsFiles');
 //                        self.refreshTabsForModule('ibm_connectionsFiles');
                     }
                 }
@@ -311,17 +306,13 @@
                     self.unsetSubView('task-nodes', task_id);
                     self.render();
                     self.$el.find('#'+task_id).collapse('show');
+                    self.refreshTabsForModule('ibm_connectionsMembers');
                 }else{
                     self.settings.unset('task_id');
-                    self.layout.reloadDashlet();
+                    self.refreshTabsForModule(model.module);
                 }
             }
         );
-    },
-
-
-    rk: function(){
-        this.layout.reloadDashlet();
     },
 
     addLink:function(event, params){
@@ -349,10 +340,7 @@
                  }*/
             }
         }, function(model) {
-            /*if (model) {
-             self.layout.reloadDashlet();
-             self.context.trigger('panel-top:refresh', 'emails');
-             }*/
+
         });
     },
 
@@ -446,7 +434,7 @@
         }
         this._super('_renderHtml');
 
-        if ('ibm_connectionsTasks' == this.collection.module){
+        if (!this.meta.config && 'ibm_connectionsTasks' == this.collection.module){
             _.each(this.collection.models, function(model) {
                 var statusView = this.getSubView('task-status', model.id);
                 statusView.model = model;
@@ -457,7 +445,7 @@
 
     },
 
-    loadData: function(options) {
+    loadDataForTabs: function(tabs, options) {
         app.alert.show('ibm-connections',
             {level: 'process',
                 title: app.lang.getAppString('LBL_LOADING'),
@@ -478,7 +466,7 @@
             app.alert.dismiss('ibm-connections');
         });
 
-        this._super('loadData', [options]);
+        this._super('loadDataForTabs', [tabs, options]);
     }
 
 })
