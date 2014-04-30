@@ -74,26 +74,27 @@ class ibm_connectionsFiles extends SugarBean
 
     public function save()
     {
-        $helper = new ConnectionsHelper();
-
-        $fileInfo = array(
-            'path' => dirname(__FILE__).'/1.txt',
-            'content-type' => 'application/octet-stream',
-        );
-
-        if (!empty($this->filename)) {
-            $df = new DownloadFile();
-            $fileInfo = $df->getFileInfo($this, 'filename');
-            if (empty($this->community_id) && isset($_POST['community_id'])){
-                $this->community_id = $_POST['community_id'];
-            }
-            if (empty($this->name)){
-                $this->name = $fileInfo['name'];
-            }
-            $helper->uploadNewFile($this->community_id, $this->name, $fileInfo, 'private');
-        }else{
-            $this->id = $helper->uploadNewFile($this->community_id, $this->name, $fileInfo, 'private');
+        if(empty($this->id) || !empty($this->new_with_id)) {
+            $this->uploadFile();
         }
+    }
+
+    protected function uploadFile()
+    {
+        $helper = new ConnectionsHelper();
+        $df = new DownloadFile();
+        $fileInfo = $df->getFileInfo($this, 'filename');
+        if (empty($this->name)){
+            $this->name = $fileInfo['name'];
+        }
+        $id = $helper->uploadNewFile($this->community_id, $this->name, $fileInfo, 'private');
+
+        require_once 'include/upload_file.php';
+        $upload = new UploadFile('filename');
+        $upload->unlink_file($this->id);
+
+        $this->id = $id;
+
     }
 
     public function mark_deleted($id)

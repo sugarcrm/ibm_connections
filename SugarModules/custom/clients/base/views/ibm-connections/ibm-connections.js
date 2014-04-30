@@ -63,6 +63,7 @@
      * {@inheritDoc}
      */
     initialize: function(options) {
+        this.initCustomBeans();
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
@@ -108,57 +109,29 @@
     },
 
     dropAttachment: function(event) {
-        var files = event.originalEvent.dataTransfer.files, uploadedFiles = [], self = this;
-        for (var i = 0; i < files.length; i++)
-        {
+        var files = event.originalEvent.dataTransfer.files, uploadedCnt=0, self = this;
+        for (var i = 0; i < files.length; i++) {
             var formData = new FormData();
             formData.append('filename', files[i]);
             formData.append('community_id', this.settings.get('community_id'));
             formData.append('name', files[i].name);
             formData.append('OAuth-Token', app.api.getOAuthToken());
 
-            var fileBean = app.data.createBean('ibm_connectionsFiles');
-            fileBean.id = this.settings.get('community_id');
-            var uploadURL = app.api.buildFileURL({
-                module: fileBean.module,
-                id: fileBean.id,
-                field: 'filename'
-            });
+            var uploadURL = app.api.buildURL('ibm_connectionsFiles', 'create', null, {viewed: "1"});
             var jqXHR=$.ajax({
-                /*xhr: function() {
-                 var xhrobj = $.ajaxSettings.xhr();
-                 if (xhrobj.upload) {
-                 xhrobj.upload.addEventListener('progress', function(event) {
-                 var percent = 0;
-                 var position = event.loaded || event.position;
-                 var total = event.total;
-                 if (event.lengthComputable) {
-                 percent = Math.ceil(position / total * 100);
-                 }
-                 //Set progress
-                 status.setProgress(percent);
-                 }, false);
-                 }
-                 return xhrobj;
-                 },*/
                 url: uploadURL,
                 type: "POST",
-                contentType:false,
-                processData:false,
-//                dataType: 'json',
-                cache: false,
                 data: formData,
+                processData: false,
+                contentType: false,
                 success: function(data){
-                    data = $.parseJSON($('<div>'+data+'</div>').text());
-                    uploadedFiles.push(data.record.name);
-                    if (uploadedFiles.length == files.length){
+                    uploadedCnt++;
+                    if (uploadedCnt == files.length){
                         app.alert.dismiss('ibmconn-uploading');
                         self.refreshTabsForModule('ibm_connectionsFiles');
-//                        self.refreshTabsForModule('ibm_connectionsFiles');
                     }
                 }
             });
-//            sendFileToServer(fd,status);
         }
 
         app.alert.show('ibmconn-uploading',
@@ -467,6 +440,33 @@
         });
 
         this._super('loadDataForTabs', [tabs, options]);
+    },
+
+    initCustomBeans: function () {
+        if (!app.metadata.getModule('ibm_connectionsFiles')) {
+            return;
+        }
+        
+        var filesClass = app.data.getBeanClass("ibm_connectionsFiles");
+
+        filesClass.prototype.save = function (attributes, options) {
+            var url = app.api.buildURL(this.module, 'create', this.attributes, {viewed: "1"});
+            var ajaxParams = {
+                files: options.$files,
+                processData: false,
+                iframe: true
+            };
+            delete options.$files;
+
+            if (!options || options.deleteIfFails !== false) {
+                options = options || {};
+                options.deleteIfFails = true;
+            }
+            var method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
+
+            return app.api.call(method, url, this.attributes, options, ajaxParams);
+        };
+
     }
 
 })
