@@ -66,5 +66,6 @@ $app_strings['LBL_IBM-CONNECTIONS_BTN_REMOVE'] = 'Remove';
 $app_strings['LBL_IBM-CONNECTIONS_LIST_FILE_VIEW'] = 'View';
 $app_strings['LBL_IBM-CONNECTIONS_LIST_FILE_SIZE'] = 'Size';
 $app_strings['LBL_IBM-CONNECTIONS_LIST_TASKS'] = 'Tasks';
+$app_strings['LBL_IBM-CONNECTIONS_LIST_VERSION'] = 'Version';
 
 $app_strings['LBL_IBM-CONNECTIONS_SELECT_FILE_LABEL'] = 'Select File';
