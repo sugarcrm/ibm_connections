@@ -27,10 +27,12 @@
  ********************************************************************************/
 
 require_once 'clients/base/api/ModuleApi.php';
+require_once 'include/download_file.php';
 
-class ibm_connectionsFilesApi extends ModuleApi 
+class ibm_connectionsFilesApi extends ModuleApi
 {
-    public function registerApiRest() {
+    public function registerApiRest()
+    {
         return array(
             'create' => array(
                 'reqType' => 'POST',
@@ -48,35 +50,34 @@ class ibm_connectionsFilesApi extends ModuleApi
      * @param $args
      * @return array
      */
-    public function createRecord($api, $args){
-        
-        
+    public function createRecord($api, $args)
+    {
         $fileField = 'filename';
         $prefix = empty($args['prefix']) ? '' : $args['prefix'];
         $filesIndex = $prefix . $fileField;
 
+        $bean = BeanFactory::newBean('ibm_connectionsFiles');
+
+        $dl = new DownloadFileApi($api);
+
+        $def = $bean->field_defs[$fileField];
+        $def['docType'] = 'Sugar';
+        $args[$prefix . $def['docType']] = $dl->getMimeType($_FILES[$filesIndex]['tmp_name']);
+
+        $api->action = 'save';
+        $bean->new_with_id = true;
+        $bean->id = create_guid();
 
         if (!empty($_FILES[$filesIndex]) && empty($_FILES[$filesIndex . '_file'])) {
             $_FILES[$filesIndex . '_file'] = $_FILES[$filesIndex];
             unset($_FILES[$filesIndex]);
-        }        
-            
-        
-        
-        $api->action = 'save';
-//        $this->requireArgs($args,array('module'));
+        }
 
-        $bean = BeanFactory::newBean('ibm_connectionsFiles');
-
-        $def = $bean->field_defs[$fileField];
         require_once 'include/SugarFields/SugarFieldHandler.php';
         $sfh = new SugarFieldHandler();
         $sf = $sfh->getSugarField($def['type']);
 
-
         $sf->save($bean, $args, $fileField, $def, $prefix);
-        
-        
 
         $id = $this->updateBean($bean, $api, $args);
 
