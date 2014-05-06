@@ -51,9 +51,9 @@ class ibm_connectionsTaskNodesFilterApi extends FilterApi
 
     public function filterList(ServiceBase $api, array $args)
     {
-        //$beans = $this->buildBeansList('3e9fa159-5752-4a95-a9ba-bf34065b9f70'); //root
-        //$beans = $this->buildBeansList('206fadff-9778-4dba-b589-a6f90d340f6c'); //section
-        $beans = $this->buildBeansList($args['filter'][0]['task_id']);
+
+        $filter = ConnectionsHelper::reformatFilter($args['filter']);
+        $beans = $this->buildBeansList($filter['task_id']);
 
         $data = array(
             'next_offset' => -1,

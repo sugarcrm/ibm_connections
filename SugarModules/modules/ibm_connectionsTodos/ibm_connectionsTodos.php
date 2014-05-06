@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
+
 class ibm_connectionsTodos extends SugarBean
 {
     public $module_dir = "ibm_connectionsTodos";
@@ -36,67 +38,18 @@ class ibm_connectionsTodos extends SugarBean
 
         $goal = ''; // Temporary! Need to add form field
 
-        //Create and setup Connections API object
-        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
-        $connectionsApi = new ExtAPIConnections();
-        $eapmBean = EAPM::getLoginInfo('Connections');
-        if (!empty($eapmBean)) {
-            $connectionsApi->loadEAPM($eapmBean);
-        }
+        $helper = new ConnectionsHelper();
 
-        if (!empty($this->due_date)) {
-            $this->due_date = $GLOBALS['timedate']->asDbDate(
-                $GLOBALS['timedate']->fromUserDate($this->due_date)
-            );
-        }
-        $tag_str = str_replace(' ', ',', $this->activity_tags);
-        if (!empty($tag_str)) {
-            $tag = explode(',', $tag_str);
-        } else {
-            $tag = array();
-        }
-
-        $result = $connectionsApi->createActivityToDo(
-            $this->task_id,
-            $this->name,
-            $goal,
-            $this->duedate,
-            $tag,
-            array('name' => null, 'id' => $this->assigned_user_id)
-        );
-
-
-        $activityData = IBMAtomEntry::loadFromString($result);
-        $item = new ConnectionsActivity($activityData);
-        //$item = new ConnectionsActivityTodo($activityData);
-        $activityId = $item->getId();
-
+        $assigned = array('name' => null, 'id' => $this->assigned_user_id);
+        $activityId = $helper->createActivityToDo($this->task_id, $this->name, $goal, $this->duedate, $tag, $assigned);
         $this->id = $activityId;
         return $activityId;
-
-
-        /*
-        $_SESSION['bean'][__CLASS__][$this->id] = array(
-            'id' => $this->id,
-            'name' => $this->name,
-            'community_id' => $this->community_id,
-        );
-        */
-
     }
 
     public function retrieve($id)
     {
-
-        require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
-        $connectionsApi = new ExtAPIConnections();
-        $eapmBean = EAPM::getLoginInfo('Connections');
-        if (!empty($eapmBean)) {
-            $connectionsApi->loadEAPM($eapmBean);
-        }
-
-        $activity = $connectionsApi->getActivityNode($id);
-
+        $helper = new ConnectionsHelper();
+        $activity = $helper->getActivityNode($id);
 
         $this->id = $id;
         $this->name = $activity->getTitle();
@@ -104,14 +57,8 @@ class ibm_connectionsTodos extends SugarBean
         $this->tags = $activity->getTags();
         $this->due_date = $activity->getDueDate();
 
-        /*
-        $this->name = $_SESSION['bean'][__CLASS__][$id]['name'];
-        $this->community_id = $_SESSION['bean'][__CLASS__][$id]['community_id'];
-        */
-
         return $this;
     }
-
 
 
 }

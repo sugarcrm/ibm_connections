@@ -52,11 +52,11 @@ class ibm_connectionsTasksFilterApi extends FilterApi
 
     public function filterList(ServiceBase $api, array $args)
     {
-        $this->communityId = $args['filter'][0]['community_id'];
+        $filter = ConnectionsHelper::reformatFilter($args['filter']);
+        $this->communityId = $filter['community_id'];
         $helper = new ConnectionsHelper();
 
         $returnData = $helper->getActivitiesList($this->communityId);
-        //$returnData = $helper->getActivity('f27a4ecc-e981-436e-be75-7d85f96fb4e6');
 
         $beans = array();
         foreach ($returnData as $item) {

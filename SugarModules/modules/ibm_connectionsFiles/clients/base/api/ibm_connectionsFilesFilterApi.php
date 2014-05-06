@@ -53,27 +53,24 @@ class ibm_connectionsFilesFilterApi extends FilterApi
 
         $helper = new ConnectionsHelper();
 
-        $returnData = $helper->getFilesList($args['filter'][0]['community_id']);
+        $filter = ConnectionsHelper::reformatFilter($args['filter']);
+        $returnData = $helper->getFilesList($filter['community_id']);
 
         $beans = array();
-        foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsFiles();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->community_id = $args['filter'][0]['community_id'];
-            $beans[$key]->name = $item['title'];
-            $beans[$key]->author_id = $item['author']['id'];
-            $beans[$key]->author_name = $item['author']['name'];
-            $beans[$key]->author_email = $item['author']['email'];
-            $beans[$key]->author_status = $item['author']['status'];
-            $beans[$key]->uploaded = $item['uploaded'];
-            $beans[$key]->fileVisibility = $item['visibility'];
-            $beans[$key]->commentsCount = $item['commentsCount'];
-            $beans[$key]->recomendationsCount = $item['recomendationsCount'];
-            $beans[$key]->view_link = $item['viewLink'];
-            $beans[$key]->picture = $item['picture'];
-            $beans[$key]->downloadsCount = $item['downloadsCount'];
-            $beans[$key]->version = $item['version'];
-            $beans[$key]->fileSize = $item['fileSize'];
+        foreach ($returnData as $item) {
+            $bean = new ibm_connectionsFiles();
+
+            $item['community_id'] = $filter['community_id'];
+            $item['name'] = $item['title'];
+            $item['author_id'] = $item['author']['id'];
+            $item['author_name'] = $item['author']['name'];
+            $item['author_email'] = $item['author']['email'];
+            $item['author_status'] = $item['author']['status'];
+            $item['fileVisibility'] = $item['visibility'];
+            $item['>view_link'] = $item['viewLink'];
+            $bean->fromArray($item);
+
+            $beans[] = $bean;
         }
 
         $data = array(

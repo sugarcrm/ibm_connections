@@ -57,31 +57,32 @@ class ibm_connectionsMembersFilterApi extends FilterApi
 
         $this->helper = new ConnectionsHelper();
 
-        $filter = $this->reformatFilter($args['filter']);
+        $filter = ConnectionsHelper::reformatFilter($args['filter']);
         $returnData = $this->helper->getCommunityMemberArray($filter['community_id'], $filter['name']['$starts']);
 
         $membersToDos = $this->buildMembersTodosMap($filter['community_id']);
 
         $beans = array();
-        foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsMembers();
-            $beans[$key]->id = $item['member_id'];
-            $beans[$key]->community_id = $filter['community_id'];
-            $beans[$key]->name = $item['member_name'];
-            $beans[$key]->role = $item['member_role'];
-            $beans[$key]->picture = 'https://greenhouse.lotus.com/profiles/photo.do?userid=' . $item['member_id'];
-            $beans[$key]->url = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid=' . $item['member_id'];
+        foreach ($returnData as $item) {
+            $bean = new ibm_connectionsMembers();
+
+            $item['id'] = $item['member_id'];
+            $item['community_id'] = $filter['community_id'];
+            $item['name'] = $item['member_name'];
+            $item['role'] = $item['member_role'];
+            $item['picture'] = 'https://greenhouse.lotus.com/profiles/photo.do?userid=' . $item['member_id'];
+            $item['url'] = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid=' . $item['member_id'];
+            $item['completion'] = 0;
+            $item['total_todos'] = 0;
+            $item['completed_todos'] = 0;
             if (isset($membersToDos[$item['member_id']])) {
                 $totalTodos = $membersToDos[$item['member_id']]['total'];
                 $completedTodos = $membersToDos[$item['member_id']]['completed'];
-                $beans[$key]->total_todos = $totalTodos;
-                $beans[$key]->completed_todos = $completedTodos;
-                $beans[$key]->completion = ($totalTodos > 0) ? round($completedTodos / $totalTodos * 100) : 0;
-            } else {
-                $beans[$key]->completion = 0;
-                $beans[$key]->total_todos = 0;
-                $beans[$key]->completed_todos = 0;
+                $item['total_todos'] = $totalTodos;
+                $item['completed_todos'] = $completedTodos;
+                $item['completion'] = ($totalTodos > 0) ? round($completedTodos / $totalTodos * 100) : 0;
             }
+            $bean->fromArray($item);
         }
 
         $data = array(
@@ -90,17 +91,6 @@ class ibm_connectionsMembersFilterApi extends FilterApi
         );
 
         return $data;
-    }
-
-    protected function reformatFilter($filter)
-    {
-        $out = array();
-        foreach ($filter AS $condition) {
-            $keys = array_keys($condition);
-            $vals = array_values($condition);
-            $out[$keys[0]] = $vals[0];
-        }
-        return $out;
     }
 
     /**

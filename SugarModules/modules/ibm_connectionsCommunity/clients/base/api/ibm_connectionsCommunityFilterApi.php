@@ -90,13 +90,14 @@ class ibm_connectionsCommunityFilterApi extends FilterApi
 
 
         $beans = array();
-        foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsCommunity();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->name = $item['name'];
-            $beans[$key]->members = $item['members_list'];
-            $beans[$key]->files = $item['files_list'];
-            $beans[$key]->activities = $item['activities_list'];
+        foreach ($returnData as $item) {
+            $bean = new ibm_connectionsCommunity();
+            $item['members'] = $item['members_list'];
+            $item['files'] = $item['files_list'];
+            $item['activities'] = $item['activities_list'];
+            $bean->fromArray($item);
+
+            $beans[] = $bean;
         }
 
         $data = array(
