@@ -12,6 +12,7 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
 
 $viewdefs['base']['view']['ibm-connections'] = array(
     'dashlets' => array(
@@ -19,14 +20,10 @@ $viewdefs['base']['view']['ibm-connections'] = array(
             'label' => 'LBL_IBM-CONNECTIONS_DASHLET',
             'description' => 'LBL_IBM-CONNECTIONS_DASHLET_DESCRIPTION',
             'config' => array(
-                'limit' => '10',
-                'filter' => '7',
-                'visibility' => 'user',
+                'limit' => '5',
             ),
             'preview' => array(
-                'limit' => '10',
-                'filter' => '7',
-                'visibility' => 'user',
+                'limit' => '5',
             ),
             'filter' => array(
                 'module' => array(
@@ -124,7 +121,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                     'label' => 'LBL_IBM-CONNECTIONS_SELECT_COMMUNITY',
                     'type' => 'imgenum',
                     'options' => array('' => ''),
-                    'imgUrl' => 'https://greenhouse.lotus.com/communities/service/html/image?communityUuid={0}'
+                    'imgUrl' => ConnectionsHelper::URL_COMMUNITY_IMAGE
                 ),
             ),
         ),

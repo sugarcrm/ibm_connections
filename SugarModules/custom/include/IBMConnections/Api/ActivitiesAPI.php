@@ -39,15 +39,12 @@ class ActivitiesAPI extends AbstractConnectionsAPI
      * Enter description here ...
      */
 
-    public function listCommunityActivities($communityId, $page, $searchText)
+    public function isEnabled($communityId)
     {
-        //      	$commApi = new CommunitiesAPI($this->getHttpClient());
-//        	$commApi->activateActivities($communityId); 
         $feed = $this->getRemoteAppFeed($communityId);
         if (empty($feed)) {
-            return array();
+            return false;
         }
-        $entries = array();
         $entries = $feed->getEntries();
         for ($i = 0; $i < sizeof($entries); $i++) {
             $entry = $entries[$i];
@@ -59,7 +56,13 @@ class ActivitiesAPI extends AbstractConnectionsAPI
                 }
             }
         }
-        if (empty($path)) {
+        return !empty($path);
+    }
+
+    public function listCommunityActivities($communityId, $searchText, $page, $limit)
+    {
+
+        if (!$this->isEnabled($communityId)) {
             return array('message' => 'widget_is_not_activated');
         }
 
@@ -67,7 +70,7 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $this->getHttpClient()->resetParameters();
         $this->getHttpClient()->setParameterGet("commUuid", $communityId);
         $this->getHttpClient()->setParameterGet("page", $page);
-        $this->getHttpClient()->setParameterGet("ps", '150');
+        $this->getHttpClient()->setParameterGet("ps", $limit);
         $this->getHttpClient()->setParameterGet("sortBy", 'title');
         $this->getHttpClient()->setParameterGet("sortOrder", 'asc');
         if (!empty($searchText)) {
@@ -82,13 +85,9 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         if (empty($result) || !$this->checkResult($result)) {
             return array();
         }
-        $activities = array();
+
         $feed = IBMAtomFeed::loadFromString($result->getBody());
-        $entries = $feed->getEntries();
-        foreach ($entries as $entry) {
-            $activities[] = new ConnectionsActivity($entry);
-        }
-        return $activities;
+        return $this->getItemList($feed, 'ConnectionsActivity');
     }
 
     /**

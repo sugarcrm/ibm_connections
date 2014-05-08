@@ -27,10 +27,10 @@
  ********************************************************************************/
 
 require_once 'modules/ibm_connectionsCommunity/ibm_connectionsCommunity.php';
-require_once 'clients/base/api/FilterApi.php';
+require_once 'modules/ibm_connectionsFiles/clients/base/api/ibm_connectionsFilesFilterApi.php';
 require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
 
-class ibm_connectionsCommunityFilterApi extends FilterApi
+class ibm_connectionsCommunityFilterApi extends ibm_connectionsFilesFilterApi
 {
 
     public function registerApiRest()
@@ -40,7 +40,7 @@ class ibm_connectionsCommunityFilterApi extends FilterApi
                 'reqType' => 'GET',
                 'path' => array('ibm_connectionsCommunity'), //, 'filter'
                 'pathVars' => array(''),
-                'method' => 'communitiesList',
+                'method' => 'filterList',
                 'jsonParams' => array(),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
@@ -49,7 +49,7 @@ class ibm_connectionsCommunityFilterApi extends FilterApi
                 'reqType' => 'GET',
                 'path' => array('ibm_connectionsCommunity', 'filter'), //, 'filter'
                 'pathVars' => array(''),
-                'method' => 'communitiesList',
+                'method' => 'filterList',
                 'jsonParams' => array('filter'),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
@@ -57,55 +57,10 @@ class ibm_connectionsCommunityFilterApi extends FilterApi
         );
     }
 
-    public function communitiesList(ServiceBase $api, array $args)
-    {
-
-        $helper = new ConnectionsHelper();
-        $returnData = $helper->getCommunityList('MyCommunities', 1, '');
-
-        $beans = array();
-        foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsCommunity();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->name = $item['name'];
-            $beans[$key]->members = $item['members_list'];
-            $beans[$key]->files = $item['files_list'];
-            $beans[$key]->activities = $item['activities_list'];
-        }
-
-        $data = array(
-            'next_offset' => -1,
-            'records' => $this->formatBeans($api, $args, $beans)
-        );
-
-        return $data;
-    }
-
     public function filterList(ServiceBase $api, array $args)
     {
         $helper = new ConnectionsHelper();
-        $returnData = $helper->getCommunityList('MyCommunities', 1, '');
-
-        //return $returnData;
-
-
-        $beans = array();
-        foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsCommunity();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->name = $item['name'];
-            $beans[$key]->members = $item['members_list'];
-            $beans[$key]->files = $item['files_list'];
-            $beans[$key]->activities = $item['activities_list'];
-        }
-
-        $data = array(
-            'next_offset' => -1,
-            'records' => $this->formatBeans($api, $args, $beans)
-        );
-
-        return $data;
+        $entries = $helper->getCommunityList('MyCommunities', 1, '');
+        return $this->formatResult($api, $args, array('entries' => $entries ), 'ibm_connectionsCommunity');
     }
-
-
 } 

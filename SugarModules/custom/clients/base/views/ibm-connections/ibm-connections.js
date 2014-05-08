@@ -22,47 +22,29 @@
 ({
     extendsFrom: 'TabbedDashletView',
 
-    /**
-     * {@inheritDoc}
-     *
-     * @property {Number} _defaultSettings.filter Number of past days against
-     *   which retrieved records will be filtered, supported values are '7',
-     *   '30' and '90' days, defaults to '7'.
-     * @property {Number} _defaultSettings.limit Maximum number of records to
-     *   load per request, defaults to '10'.
-     * @property {String} _defaultSettings.visibility Records visibility
-     *   regarding current user, supported values are 'user' and 'group',
-     *   defaults to 'user'.
-     */
-    _defaultSettings: {
-        filter: 7,
-        limit: 10,
-        visibility: 'user'
-    },
-
     subView: {
-        'task-nodes' : {
-            meta:{
+        'task-nodes': {
+            meta: {
                 name: 'ibm-connections-records',
                 module: 'ibm_connectionsTaskNodes'
             },
-            cache:{}
+            cache: {}
         },
-        'task-status' : {
-            meta:{
+        'task-status': {
+            meta: {
                 name: 'ibm-connections-status',
                 module: 'ibm_connectionsTasks'
             },
-            cache:{}
+            cache: {}
         }
     },
 
     plugins: ['Dashlet', 'ToggleVisibility', 'Tooltip'],
-    
+
     /**
      * {@inheritDoc}
      */
-    initialize: function(options) {
+    initialize: function (options) {
         this.initCustomBeans();
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
@@ -73,14 +55,16 @@
         //this.on('click [data-event="button:link_member2task"]', this.linkMember2task, this);
 
 
-        this.$el.on('show', _.bind(function(ev){ this.openTaskNodes($(ev.target).attr('id')); } , this));
+        this.$el.on('show', _.bind(function (ev) {
+            this.openTaskNodes($(ev.target).attr('id'));
+        }, this));
         this.on('button:delete_item:click', this.deleteModel, this);
         this.context.on('tasknodes:remove tasknodes:change:completed tasknodes:reset', this.recalcTask, this);
 
-        Handlebars.registerHelper('dateFormat', function(dateString) {
+        Handlebars.registerHelper('dateFormat', function (dateString) {
             var formattedDateString = app.date.format(new Date(dateString), app.user.getPreference('datepref'));
 
-            var wrapper = "<span class=\"relativetime\" "+ " >" +
+            var wrapper = "<span class=\"relativetime\" " + " >" +
                 formattedDateString +
                 "</span>";
             return new Handlebars.SafeString(wrapper);
@@ -88,28 +72,28 @@
 
     },
 
-    recalcTask: function(){
+    recalcTask: function () {
         var task_id = this.settings.get('task_id'),
             view = this.getSubView('task-nodes', task_id),
             task = this.collection.get(task_id);
 
-        var val = _.reduce(view.collection.models, function(memo, model){
+        var val = _.reduce(view.collection.models, function (memo, model) {
 
-            if ('todo' == model.get('node_type') ){
+            if ('todo' == model.get('node_type')) {
                 memo.total_todos++;
-                if ( true === model.get('completed') || '1' === model.get('completed') ){
+                if (true === model.get('completed') || '1' === model.get('completed')) {
                     memo.completed_todos++;
                 }
                 memo.completion = memo.completed_todos / memo.total_todos * 100;
             }
             return memo;
-        }, {total_todos: 0, completed_todos: 0, completion: 0} );
+        }, {total_todos: 0, completed_todos: 0, completion: 0});
         task.set(val);
         this.getSubView('task-status', task.id).render();
     },
 
-    dropAttachment: function(event) {
-        var files = event.originalEvent.dataTransfer.files, uploadedCnt=0, self = this;
+    dropAttachment: function (event) {
+        var files = event.originalEvent.dataTransfer.files, uploadedCnt = 0, self = this;
         for (var i = 0; i < files.length; i++) {
             var formData = new FormData();
             formData.append('filename', files[i]);
@@ -118,15 +102,15 @@
             formData.append('OAuth-Token', app.api.getOAuthToken());
 
             var uploadURL = app.api.buildURL('ibm_connectionsFiles', 'create', null, {viewed: "1"});
-            var jqXHR=$.ajax({
+            var jqXHR = $.ajax({
                 url: uploadURL,
                 type: "POST",
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(data){
+                success: function (data) {
                     uploadedCnt++;
-                    if (uploadedCnt == files.length){
+                    if (uploadedCnt == files.length) {
                         app.alert.dismiss('ibmconn-uploading');
                         self.refreshTabsForModule('ibm_connectionsFiles');
                     }
@@ -149,26 +133,26 @@
         if (this.meta.config) {
             var communityCollect = app.data.createBeanCollection("ibm_connectionsCommunity", null, {});
             communityCollect.on('reset', this.fillCommunities, this);
-            communityCollect.fetch();
+            communityCollect.fetch({fields: ['id', 'name']});
         }
 
-        this.$el.on('dragenter', function(event) {
+        this.$el.on('dragenter', function (event) {
 //            self.$(event.currentTarget).addClass("dragdrop");
             return false;
         });
 
-        this.$el.on('dragover', function(event) {
+        this.$el.on('dragover', function (event) {
             return false;
         });
 
-        this.$el.on('dragleave', function(event) {
+        this.$el.on('dragleave', function (event) {
             event.stopPropagation();
             event.preventDefault();
 //            self.$(event.currentTarget).removeClass("dragdrop");
             return false;
         });
 
-        this.$el.on('drop', _.bind(this.dropAttachment, this) );
+        this.$el.on('drop', _.bind(this.dropAttachment, this));
 
     },
 
@@ -199,48 +183,51 @@
 
     },
 
-    _getFilters: function(index) {
-        return [{'community_id': this.settings.get('community_id') }];
+    _getFilters: function (index) {
+        return [
+            {'community_id': this.settings.get('community_id') }
+        ];
     },
 
-    openTaskNodes:function(task_id, force){
+    openTaskNodes: function (task_id, force) {
         this.settings.set('task_id', task_id);
         var taskNodeView = this.getSubView('task-nodes', task_id);
-        this.$el.find('#'+task_id).append(taskNodeView.el);
-        taskNodeView.loadData({task_id:task_id});
+        this.$el.find('#' + task_id).append(taskNodeView.el);
+        taskNodeView.loadData({task_id: task_id});
         taskNodeView.render();
 
-        if (force){
-            $('#'+task_id).collapse('show');
+        if (force) {
+            $('#' + task_id).collapse('show');
         }
     },
 
-    getSubView: function(name, id){
-        if (!this.subView[name]['cache'][id]){
+    getSubView: function (name, id) {
+        if (!this.subView[name]['cache'][id]) {
             var meta = _.extend(this.subView[name]['meta'], {context: this.context, layout: this});
             this.subView[name]['cache'][id] = app.view.createView(meta);
         }
         return this.subView[name]['cache'][id];
     },
 
-    unsetSubView: function(name, id){
+    unsetSubView: function (name, id) {
         delete this.subView[name]['cache'][id];
     },
 
-    getTaskNodeCollect:function(task_id)
-    {
-        if (!this.taskNodeCache[task_id] ){
+    getTaskNodeCollect: function (task_id) {
+        if (!this.taskNodeCache[task_id]) {
             var collection = app.data.createBeanCollection('ibm_connectionsTaskNodes');
-            collection.filterDef = [{task_id: task_id}];
+            collection.filterDef = [
+                {task_id: task_id}
+            ];
             this.taskNodeCache[task_id] = collection;
         }
 
         return this.taskNodeCache[task_id];
     },
 
-    filterDefToObject:function(pairs){
+    filterDefToObject: function (pairs) {
         var obj = {};
-        _.each(pairs, function(condition){
+        _.each(pairs, function (condition) {
             obj[ _.keys(condition)[0] ] = _.values(condition)[0];
 
         });
@@ -254,11 +241,11 @@
      * @param {Object} params Optional params to getaration create form
      * @param {String} params.module
      */
-    addItem:function(event, params){
+    addItem: function (event, params) {
         var parentId = this._getIId(event);
         var parent = this.collection.get(parentId);
         var defVals = {community_id: this.settings.get('community_id')};
-        _.each(params.fieldMap, function(pName, chName){
+        _.each(params.fieldMap, function (pName, chName) {
             defVals[chName] = parent.get(pName);
         });
 
@@ -270,17 +257,17 @@
                     module: params.module,
                     model: app.data.createBean(params.module, defVals)
                 }
-            }, function(context, model) {
+            }, function (context, model) {
                 if (!model) {
                     return;
                 }
-                if (-1 != _.indexOf(['ibm_connectionsTodos', 'ibm_connectionsEntries'], model.module) ){
+                if (-1 != _.indexOf(['ibm_connectionsTodos', 'ibm_connectionsEntries'], model.module)) {
                     var task_id = model.get('task_id');
                     self.unsetSubView('task-nodes', task_id);
                     self.render();
-                    self.$el.find('#'+task_id).collapse('show');
+                    self.$el.find('#' + task_id).collapse('show');
                     self.refreshTabsForModule('ibm_connectionsMembers');
-                }else{
+                } else {
                     self.settings.unset('task_id');
                     self.refreshTabsForModule(model.module);
                 }
@@ -288,7 +275,7 @@
         );
     },
 
-    addLink:function(event, params){
+    addLink: function (event, params) {
         /*
          var id = this._getIId(event);
          var str = "addLink\n"+"community_id="+this.settings.get('community_id')+"\n"
@@ -312,39 +299,39 @@
                  community_id:this.settings.get('community_id')
                  }*/
             }
-        }, function(model) {
+        }, function (model) {
 
         });
     },
 
-    showMemberTasks: function(event){
+    showMemberTasks: function (event) {
         var id = this._getIId(event);
         var str = "showMemberTasks\n"
-            + "community_id="+this.settings.get('community_id')+"\n"
-            +"member id="+id+"\n";
+            + "community_id=" + this.settings.get('community_id') + "\n"
+            + "member id=" + id + "\n";
         alert(str);
     },
 
-    showMemberProfile: function(event){
+    showMemberProfile: function (event) {
         var id = this._getIId(event);
         var str = "showMemberProfile\n"
-            + "community_id="+this.settings.get('community_id')+"\n"
-            +"member id="+id+"\n";
+            + "community_id=" + this.settings.get('community_id') + "\n"
+            + "member id=" + id + "\n";
         alert(str);
     },
 
-    unlinkRow: function(event, opt){
+    unlinkRow: function (event, opt) {
 
         var id = this._getIId(event);
         var delModel = this.collection.get(id), self = this;
 
-        if ('ibm_connectionsMembers' == delModel.module && 'owner' == delModel.get('role')){
+        if ('ibm_connectionsMembers' == delModel.module && 'owner' == delModel.get('role')) {
             app.alert.show('upload_error', {
                 level: 'error',
                 messages: 'You cannot unlink community owner',
                 autoClose: false
             });
-            return ;
+            return;
         }
 
         app.alert.show('delete_confirmation', {
@@ -365,8 +352,7 @@
 
     },
 
-    deleteRow: function(event, opt)
-    {
+    deleteRow: function (event, opt) {
         var id = this._getIId(event);
         var delModel = this.collection.get(id), self = this;
 
@@ -381,18 +367,17 @@
         });
     },
 
-    _getIId:function(event){
+    _getIId: function (event) {
         return this.$(event.currentTarget).parents('li:first[iid]').attr("iid");
     },
 
-
-    _renderHtml: function() {
+    _renderHtml: function () {
         if (!this.meta.config) {
             var tab = this.tabs[this.settings.get('activeTab')];
             this.row_actions = tab.row_actions;
 
-            if ('ibm_connectionsFiles' == this.collection.module){
-                _.each(this.collection.models, function(model) {
+            if ('ibm_connectionsFiles' == this.collection.module) {
+                _.each(this.collection.models, function (model) {
                     var pictureUrl = app.api.buildFileURL({
                             module: this.collection.module,
                             id: model.get('id')
@@ -407,18 +392,18 @@
         }
         this._super('_renderHtml');
 
-        if (!this.meta.config && 'ibm_connectionsTasks' == this.collection.module){
-            _.each(this.collection.models, function(model) {
+        if (!this.meta.config && 'ibm_connectionsTasks' == this.collection.module) {
+            _.each(this.collection.models, function (model) {
                 var statusView = this.getSubView('task-status', model.id);
                 statusView.model = model;
-                this.$el.find('[iid='+model.id+'] .status').append(statusView.el);
+                this.$el.find('[iid=' + model.id + '] .status').append(statusView.el);
                 statusView.render();
             }, this);
         }
 
     },
 
-    loadDataForTabs: function(tabs, options) {
+    loadDataForTabs: function (tabs, options) {
         app.alert.show('ibm-connections',
             {level: 'process',
                 title: app.lang.getAppString('LBL_LOADING'),
@@ -427,14 +412,15 @@
         var self = this;
         options = options || {};
         if (!_.isFunction(options.complete)) {
-            options.complete = function(){};
+            options.complete = function () {
+            };
         }
 
-        options.complete = _.wrap(options.complete, function(func) {
+        options.complete = _.wrap(options.complete, function (func) {
             func();
             var task_id = this.settings.get('task_id');
-            if (!_.isEmpty(task_id)){
-                this.$el.find('#'+task_id).collapse('show');
+            if (!_.isEmpty(task_id)) {
+                this.$el.find('#' + task_id).collapse('show');
             }
             app.alert.dismiss('ibm-connections');
         });
@@ -446,7 +432,7 @@
         if (!app.metadata.getModule('ibm_connectionsFiles')) {
             return;
         }
-        
+
         var filesClass = app.data.getBeanClass("ibm_connectionsFiles");
 
         filesClass.prototype.save = function (attributes, options) {
@@ -467,6 +453,25 @@
             return app.api.call(method, url, this.attributes, options, ajaxParams);
         };
 
-    }
+    },
 
+    showMore: function () {
+        app.alert.show('ibm-connections',
+            {level: 'process',
+                title: app.lang.getAppString('LBL_LOADING'),
+                autoClose: false});
+
+        var self = this;
+
+        this.collection.paginate({
+            limit: this.settings.get('limit'),
+            add: true,
+            success: function () {
+                if (!self.disposed) {
+                    self.render();
+                    app.alert.dismiss('ibm-connections');
+                }
+            }
+        });
+    }
 })

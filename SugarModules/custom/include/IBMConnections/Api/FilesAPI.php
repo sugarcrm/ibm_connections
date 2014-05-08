@@ -69,16 +69,17 @@ class FilesAPI extends AbstractConnectionsAPI
      * @return array of ConnectionsFile
      * @throws IBMConnectionsApiException
      */
-    public function getCommunityFiles($cid, $page = 1, $search = '')
+    public function getCommunityFiles($cid, $search = '', $page = 1, $pageSize = 5)
     {
         $path = '/files/basic/api/communitycollection/' . $cid . '/feed';
         $client = $this->getHttpClient();
         $client->resetParameters();
-        $client->setParameterGet('sK', 'added');
-        $client->setParameterGet('sO', 'dsc');
+        $client->setParameterGet('sK', 'label');
+        $client->setParameterGet('sO', 'asc');
+        $client->setParameterGet('sC', 'document');
         $client->setParameterGet('acls', 'true');
         $client->setParameterGet('collectionAcls', 'true');
-        $client->setParameterGet('pageSize', 150);
+        $client->setParameterGet('pageSize', $pageSize);
         $client->setParameterGet('page', $page);
         $client->setParameterGet('includeTags', 'true');
         //$client->setParameterGet("sortBy", 'title');
@@ -103,12 +104,7 @@ class FilesAPI extends AbstractConnectionsAPI
         if (empty($response) || !$this->checkResult($response)) {
             return array();
         }
-        $files = array();
         $feed = IBMAtomFeed::loadFromString($response->getBody());
-        $entries = $feed->getEntries();
-        foreach ($entries as $entry) {
-            $files[] = new ConnectionsFile($entry);
-        }
         switch ($response->getStatus()) {
             case 200:
                 //Files retrieved.
@@ -126,7 +122,8 @@ class FilesAPI extends AbstractConnectionsAPI
                      CONNECTIONS_SERVICE_GENERIC, $response);
                      */
         }
-        return $files;
+
+        return $this->getItemList($feed, 'ConnectionsFile');
     }
 
 

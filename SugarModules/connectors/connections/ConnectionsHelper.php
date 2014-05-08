@@ -13,6 +13,10 @@ class ConnectionsHelper
     public $language;
     private $view;
 
+    const URL_USER_PROFILE = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid={0}';
+    const URL_USER_AVATAR = 'https://greenhouse.lotus.com/profiles/photo.do?userid={0}';
+    const URL_COMMUNITY_IMAGE = 'https://greenhouse.lotus.com/communities/service/html/image?communityUuid={0}';
+
     public function __construct()
     {
         require_once('include/connectors/utils/ConnectorUtils.php');
@@ -331,11 +335,13 @@ class ConnectionsHelper
                 $member_id = (string)$entry->contributor->children('http://www.ibm.com/xmlns/prod/sn')->userid;
                 $member_role = (string)$entry->children('http://www.ibm.com/xmlns/prod/sn')->role;
                 $res [] = array(
-                    'member_id' => $member_id,
-                    'member_name' => $member_name,
-                    'member_email' => $member_email,
-                    'member_role' => $member_role,
-                    'community_id' => $communityId
+                    'id' => $member_id,
+                    'name' => $member_name,
+                    'email' => $member_email,
+                    'role' => $member_role,
+                    'community_id' => $communityId,
+                    'picture' => string_format(ConnectionsHelper::URL_USER_AVATAR, array($member_id)),
+                    'url' => string_format(ConnectionsHelper::URL_USER_PROFILE, array($member_id))
                 );
             }
         }
@@ -860,7 +866,7 @@ class ConnectionsHelper
         $profile_body = $smarty->fetch($tplName);
 
 
-        $list = $this->getFilesList($communityId, $this->page_number, $this->search_text);
+        $list = $this->getFilesList($communityId, $this->search_text, $this->page_number);
         $tab = 'file';
         $reply = $this->display($tab, 2, '', $profile_body);
         ob_clean();
@@ -1260,6 +1266,16 @@ class ConnectionsHelper
                 $arr['updated'] = $this->formateDate($entry->getUpdatedDate());
                 $arr['type'] = $entry->getCommunityType();
                 $arr['member_count'] = $entry->getMemberCount();
+
+
+                $beans[$key]->id = $item['id'];
+                $beans[$key]->name = $item['name'];
+                $beans[$key]->members = $item['members_list'];
+                $beans[$key]->files = $item['files_list'];
+                $beans[$key]->activities = $item['activities_list'];
+
+
+
                 //$arr['members_list'] = $this->getCommunityMemberArray($arr['id']);
                 //$arr['files_list'] = $this->getFilesList($arr['id']);
                 //$arr['activities_list'] = $this->getActivitiesList($arr['id']);
@@ -1697,34 +1713,43 @@ class ConnectionsHelper
         echo json_encode($content);
     }
 
-    public function getFilesList($communityId, $page = 1, $searchText = "")
+    public function getFilesList($communityId, $searchText = "",$page = 1, $limit = 5)
     {
-        $entries = $this->apiClass->getFilesList($communityId, $page, $searchText);
-        $returnData = array();
+        $entries = $this->apiClass->getFilesList($communityId, $searchText, $page, $limit);
+        $returnData = array(
+            'entries' => array(),
+            'total'   => $entries['total']
+        );
+
         if (!empty($entries)) {
-            foreach ($entries as $entry) {
-
+            foreach ($entries['entries'] as $entry) {
                 $arr = array();
-
-                $arr['author'] = $entry->getAuthor();
-                $arr['uploaded'] = $this->formateDate($entry->getFormattedUpdatedDate());
                 $arr['id'] = $entry->getId();
-                $arr['title'] = $entry->getTitle();
+                $arr['name'] = $entry->getTitle();
+                $arr['community_id'] =  $entry->getCommunityId();
+
+                $author = $entry->getAuthor();
+                $arr['author_id'] = $author['id'];
+                $arr['author_name'] = $author['name'];
+                $arr['author_email'] = $author['email'];
+                $arr['author_status'] = $author['status'];
+
                 $arr['tags'] = $entry->getTags();
                 $arr['visibility'] = $entry->getVisibility();
                 $arr['commentsCount'] = $entry->getCommentsCount();
                 $arr['recomendationsCount'] = $entry->getRecomendationsCount();
-                $arr['viewLink'] = $entry->getViewLink();
+                $arr['view_link'] = $entry->getViewLink();
                 $arr['downloadsCount'] = $entry->getDownloadsCount();
                 $arr['version'] = $entry->getVersion();
                 $arr['fileSize'] = $entry->getFileSize();
-                $arr['picture'] = $this->view->getFilePicture($arr['title']);
+                $arr['content_type'] =  $entry->getMimeType();
+                $arr['picture'] = $this->view->getFilePicture($arr['name']);
+                $arr['community_id'] =  $entry->getCommunityId();
 
-                $returnData[] = $arr;
+                $returnData['entries'][] = $arr;
             }
         }
         return $returnData;
-        return $file_list;
     }
 
     public function getActivityCompletion()
@@ -1734,41 +1759,82 @@ class ConnectionsHelper
         echo json_encode(array('id' => $this->activityId, 'completion' => $this_activity->getCompletion()));
     }
 
-    public function getActivitiesList($communityId, $searchText = '', $page = 1)
+    public function getActivitiesList($communityId, $searchText = '', $page = 1, $limit = 5, $fields)
     {
-        $entries = $this->apiClass->getActivitiesList($communityId, $searchText, $page);
+        $entries = $this->apiClass->getActivitiesList($communityId, $searchText, $page, $limit);
 
-        $returnData = array();
 
-        if (!empty($entries) && empty($entries['message'])) {
-            foreach ($entries as $entry) {
-                $this_activity = $this->apiClass->getActivity($entry->getId());
+        $returnData = array(
+            'entries' => array(),
+            'total'   => $entries['total']
+        );
+
+        if (!empty($entries)) {
+            foreach ($entries['entries'] as $entry) {
+
 
                 $arr = array();
-
-                $arr['contributor'] = $entry->getContributor();
-                $arr['last_updated'] = $this->formateDate($entry->getFormattedUpdatedDate());
                 $arr['id'] = $entry->getId();
-                $arr['title'] = $entry->getTitle();
-                $arr['content'] = $entry->getContent();
-                $arr['commentsCount'] = $this_activity->getCommentsCount();
-                $arr['webEditUrl'] = $entry->getWebEditUrl();
-                $arr['duedate'] = $entry->getDueDate();
-                $arr['completion'] = $this_activity->getCompletion();
-                $arr['completed'] = $entry->isCompleted();
-                $arr['todos_count'] = $this_activity->getToDosCount();
+                $arr['name'] = $entry->getTitle();
+                $arr['community_id'] =  $communityId;
 
-                $returnData[] = $arr;
-            }
-        } else {
-            if (!empty($entries['message'])) {
-                switch ($entries['message']) {
-                    case 'widget_is_not_activated':
-                        $returnData[] = $this->language['LBL_WIDGET_IS_NOT_ACTIVATED'];
-                        break;
+                $contributor = $entry->getContributor();
+                $arr['contributor_id'] = $contributor['id'];
+                $arr['contributor_name'] = $contributor['name'];
+                $arr['contributor_status'] = $contributor['status'];
+                $arr['contributor_email'] = $contributor['email'];
+                $arr['url'] = $entry->getWebEditUrl();
+
+                $arr['content'] = $entry->getContent();
+                $arr['duedate'] = $entry->getDueDate();
+                $arr['completed'] = $entry->isCompleted();
+
+                if ( array_intersect(array('commentsCount', 'completion', 'completed_todos', 'total_todos'), $fields)){
+                    $this_activity = $this->apiClass->getActivity($entry->getId());
+                    $arr['commentsCount'] = $this_activity->getCommentsCount();
+
+                    $arr['completion'] = $this_activity->getCompletion();
+
+                    $toDosCount = $this_activity->getToDosCount();
+                    $arr['completed_todos'] = $toDosCount['completed'];
+                    $arr['total_todos'] = $toDosCount['total'];
                 }
+
+                $returnData['entries'][] = $arr;
+
             }
         }
+
+        /*
+                if (!empty($entries) && empty($entries['message'])) {
+                    foreach ($entries as $entry) {
+                        $this_activity = $this->apiClass->getActivity($entry->getId());
+        
+                        $arr = array();
+        
+                        $arr['contributor'] = $entry->getContributor();
+                        $arr['last_updated'] = $this->formateDate($entry->getFormattedUpdatedDate());
+                        $arr['id'] = $entry->getId();
+                        $arr['title'] = $entry->getTitle();
+                        $arr['content'] = $entry->getContent();
+                        $arr['commentsCount'] = $this_activity->getCommentsCount();
+                        $arr['webEditUrl'] = $entry->getWebEditUrl();
+                        $arr['duedate'] = $entry->getDueDate();
+                        $arr['completion'] = $this_activity->getCompletion();
+                        $arr['completed'] = $entry->isCompleted();
+                        $arr['todos_count'] = $this_activity->getToDosCount();
+        
+                        $returnData[] = $arr;
+                    }
+                } else {
+                    if (!empty($entries['message'])) {
+                        switch ($entries['message']) {
+                            case 'widget_is_not_activated':
+                                $returnData[] = $this->language['LBL_WIDGET_IS_NOT_ACTIVATED'];
+                                break;
+                        }
+                    }
+                }*/
 
         return $returnData;
     }
@@ -1799,14 +1865,18 @@ class ConnectionsHelper
         return $list;
     }
 
-    public function getCommunityMemberArray($comm_id, $search_text)
+    public function getCommunityMemberArray($comm_id, $search_text, $page = 1, $limit = 5)
     {
-        $sortBy = (empty($this->sortBy)) ? 'name' : $this->sortBy;
-        $asc = (empty($this->asc)) ? true : $this->asc;
-        $page = (empty($this->page_number)) ? 1 : $this->page_number;
-        $reply = $this->apiClass->getMembers($comm_id, $search_text, $page, $sortBy, $asc);
+        $reply = $this->apiClass->getMembers($comm_id, $search_text, $page, $limit);
         $response = new SimpleXMLElement($reply['rawResponse']);
-        return $this->getMembersArray($response);
+        $feed = IBMAtomFeed::loadFromString($reply['rawResponse']);
+
+
+        $result = array(
+            'entries' => $this->getMembersArray($response),
+            'total' =>  $feed->getTotalResults(),
+        );
+        return $result;
     }
 
     public function getCommunityMembers()

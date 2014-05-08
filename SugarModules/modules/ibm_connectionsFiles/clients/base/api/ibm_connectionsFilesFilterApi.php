@@ -33,6 +33,8 @@ require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/
 class ibm_connectionsFilesFilterApi extends FilterApi
 {
 
+    const LIST_MAX_ENTRIES_PER_PAGE = 5;
+
     public function registerApiRest()
     {
         return array(
@@ -50,39 +52,56 @@ class ibm_connectionsFilesFilterApi extends FilterApi
 
     public function filterList(ServiceBase $api, array $args)
     {
-
         $helper = new ConnectionsHelper();
+        $filter = $this->reformatFilter($args['filter']);
+        $options = $this->parseArguments($api, $args);
+        $page = $this->pageNum($options['offset'], $options['limit']);
+        $entries = $helper->getFilesList($filter['community_id'], '', $page, $options['limit']);
 
-        $returnData = $helper->getFilesList($args['filter'][0]['community_id']);
+        return $this->formatResult($api, $args, $entries, 'ibm_connectionsFiles');
+    }
 
-        $beans = array();
-        foreach ($returnData as $key => $item) {
-            $beans[$key] = new ibm_connectionsFiles();
-            $beans[$key]->id = $item['id'];
-            $beans[$key]->community_id = $args['filter'][0]['community_id'];
-            $beans[$key]->name = $item['title'];
-            $beans[$key]->author_id = $item['author']['id'];
-            $beans[$key]->author_name = $item['author']['name'];
-            $beans[$key]->author_email = $item['author']['email'];
-            $beans[$key]->author_status = $item['author']['status'];
-            $beans[$key]->uploaded = $item['uploaded'];
-            $beans[$key]->fileVisibility = $item['visibility'];
-            $beans[$key]->commentsCount = $item['commentsCount'];
-            $beans[$key]->recomendationsCount = $item['recomendationsCount'];
-            $beans[$key]->view_link = $item['viewLink'];
-            $beans[$key]->picture = $item['picture'];
-            $beans[$key]->downloadsCount = $item['downloadsCount'];
-            $beans[$key]->version = $item['version'];
-            $beans[$key]->fileSize = $item['fileSize'];
-        }
+    protected function formatResult($api, $args, $entries, $recordClass)
+    {
+        $options = $this->parseArguments($api, $args);
 
         $data = array(
             'next_offset' => -1,
-            'records' => $this->formatBeans($api, $args, $beans)
+            'records' => array()
         );
+
+        if ($entries['total'] > $options['offset'] + $options['limit']) {
+            $data['next_offset'] = $options['offset'] + $options['limit'];
+        }
+
+        if (!empty($entries['entries'])) {
+            foreach ($entries['entries'] as $entry) {
+                $bean = new $recordClass();
+                $bean->fromArray($entry);
+                $data['records'][] = $bean;
+            }
+        }
+
+        $data['records'] = $this->formatBeans($api, $args, $data['records']);
 
         return $data;
     }
 
+    protected function pageNum($offset, $limit)
+    {
+        $limit = empty($limit) ? self::LIST_MAX_ENTRIES_PER_PAGE : $limit;
+        return floor($offset / $limit) + 1;
+    }
+
+    protected function reformatFilter($filter)
+    {
+        $out = array();
+        foreach ($filter AS $condition) {
+            $keys = array_keys($condition);
+            $vals = array_values($condition);
+            $out[$keys[0]] = $vals[0];
+        }
+        return $out;
+    }
 
 } 

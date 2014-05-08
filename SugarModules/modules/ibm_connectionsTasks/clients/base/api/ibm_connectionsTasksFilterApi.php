@@ -27,13 +27,11 @@
  ********************************************************************************/
 
 require_once 'modules/ibm_connectionsTasks/ibm_connectionsTasks.php';
-require_once 'clients/base/api/FilterApi.php';
+require_once 'modules/ibm_connectionsFiles/clients/base/api/ibm_connectionsFilesFilterApi.php';
 require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
 
-class ibm_connectionsTasksFilterApi extends FilterApi
+class ibm_connectionsTasksFilterApi extends ibm_connectionsFilesFilterApi
 {
-
-    private $communityId;
 
     public function registerApiRest()
     {
@@ -52,42 +50,19 @@ class ibm_connectionsTasksFilterApi extends FilterApi
 
     public function filterList(ServiceBase $api, array $args)
     {
-        $this->communityId = $args['filter'][0]['community_id'];
-        $helper = new ConnectionsHelper();
+        $bean = BeanFactory::newBean('ibm_connectionsMembers');
 
-        $returnData = $helper->getActivitiesList($this->communityId);
-        //$returnData = $helper->getActivity('f27a4ecc-e981-436e-be75-7d85f96fb4e6');
-
-        $beans = array();
-        foreach ($returnData as $item) {
-            $beans[] = $this->buildBean($item);
+        if (empty($args['fields'])){
+            $args['fields'] = implode(',', array_keys($bean->field_defs));
         }
 
-        $data = array(
-            'next_offset' => -1,
-            'records' => $this->formatBeans($api, $args, $beans)
-        );
+        $helper = new ConnectionsHelper();
+        $filter = $this->reformatFilter($args['filter']);
+        $options = $this->parseArguments($api, $args, $bean);
+        $page = $this->pageNum($options['offset'], $options['limit']);
+        $entries = $helper->getActivitiesList($filter['community_id'], '',$page, $options['limit'], $options['select']);
 
-        return $data;
+        return $this->formatResult($api, $args, $entries, 'ibm_connectionsTasks');
     }
-
-    private function buildBean($data)
-    {
-        $data['name'] = $data['title'];
-        $data['community_id'] = $this->communityId;
-        $data['contributor_id'] = $data['contributor']['id'];
-        $data['contributor_name'] = $data['contributor']['name'];
-        $data['contributor_status'] = $data['contributor']['status'];
-        $data['contributor_email'] = $data['contributor']['email'];
-        $data['total_todos'] = $data['todos_count']['total'];
-        $data['completed_todos'] = $data['todos_count']['completed'];
-        $data['url'] = $data['webEditUrl'];
-
-        $bean = new ibm_connectionsTasks();
-        $bean->fromArray($data);
-        return $bean;
-    }
-
-
 
 } 

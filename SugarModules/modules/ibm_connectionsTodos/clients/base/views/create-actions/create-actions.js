@@ -22,15 +22,12 @@
             _.each(list.models, function (model) {
                 options[model.get('id')] = model.get('name');
             }, this);
-//            debugger;
             fldEnum.items = options;
             fldEnum._render();
         }, this);
-        collect.fetch();
+        collect.fetch({fields:['id', 'name'], limit: 150, max_num: 150 });
 
 
     }
-
-
 
 })

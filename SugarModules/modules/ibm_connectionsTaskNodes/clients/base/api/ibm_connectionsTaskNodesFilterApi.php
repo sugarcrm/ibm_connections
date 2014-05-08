@@ -27,10 +27,10 @@
  ********************************************************************************/
 
 require_once 'modules/ibm_connectionsTaskNodes/ibm_connectionsTaskNodes.php';
-require_once 'clients/base/api/FilterApi.php';
+require_once 'modules/ibm_connectionsFiles/clients/base/api/ibm_connectionsFilesFilterApi.php';
 require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
 
-class ibm_connectionsTaskNodesFilterApi extends FilterApi
+class ibm_connectionsTaskNodesFilterApi extends ibm_connectionsFilesFilterApi
 {
     const NAME_SEPARATOR = ' :: ';
 
@@ -51,9 +51,8 @@ class ibm_connectionsTaskNodesFilterApi extends FilterApi
 
     public function filterList(ServiceBase $api, array $args)
     {
-        //$beans = $this->buildBeansList('3e9fa159-5752-4a95-a9ba-bf34065b9f70'); //root
-        //$beans = $this->buildBeansList('206fadff-9778-4dba-b589-a6f90d340f6c'); //section
-        $beans = $this->buildBeansList($args['filter'][0]['task_id']);
+        $filter = $this->reformatFilter($args['filter']);
+        $beans = $this->buildBeansList($filter['task_id']);
 
         $data = array(
             'next_offset' => -1,
@@ -91,7 +90,7 @@ class ibm_connectionsTaskNodesFilterApi extends FilterApi
 
         $data['assigned_user_id'] = $data['assignedTo']['id'];
         $data['assigned_user_name'] = $data['assignedTo']['name'];
-        $data['assigned_user_url'] = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid=' . $data['assignedTo']['id'];
+        $data['assigned_user_url'] = string_format(ConnectionsHelper::URL_USER_PROFILE, array($data['assignedTo']['id']));
 
         $data['url'] = $data['webEditUrl'];
 

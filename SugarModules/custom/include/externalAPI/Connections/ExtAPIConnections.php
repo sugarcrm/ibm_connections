@@ -493,11 +493,11 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
         $searchText = str_ireplace(" ", "+", $searchText);
         $api = $this->api->getCommunitiesAPI();
         if ($type == 'MyCommunities') {
-            $reply = $api->listMyCommunities($searchText, null, null, null, 5, $page);
+            $reply = $api->listMyCommunities($searchText, null, null, null, CommunitiesAPI::MAX_PAGE_SIZE, $page);
         }
 
         if ($type == 'PublicCommunities') {
-            $reply = $api->listAllCommunities($searchText, null, null, null, 5, $page);
+            $reply = $api->listAllCommunities($searchText, null, null, null, CommunitiesAPI::MAX_PAGE_SIZE, $page);
         }
         //var_dump($api->getLastResultMetadata());
         return $reply;
@@ -512,10 +512,10 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
         return $reply;
     }
 
-    public function getActivitiesList($communityId, $page, $searchText)
+    public function getActivitiesList($communityId, $searchText, $page, $limit)
     {
-        $searchText = str_ireplace(" ", "+", $searchText);
-        return $this->api->getActivitiesAPI()->listCommunityActivities($communityId, $searchText, $page);
+        $searchText = urlencode($searchText);
+        return $this->api->getActivitiesAPI()->listCommunityActivities($communityId, $searchText, $page, $limit);
     }
 
     public function editCommunity($communityId, $title, $content, $type, $tags)
@@ -660,23 +660,23 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
         return $this->api->getBlogAPI()->getBlogComments($communityId, $blogId);
     }
 
-    public function getFilesList($communityId, $page, $searchText)
+    public function getFilesList($communityId, $searchText, $page, $limit)
     {
-        $searchText = str_ireplace(" ", "+", $searchText);
-        return $this->api->getFilesAPI()->getCommunityFiles($communityId, $page, $searchText);
+        $searchText = urlencode($searchText);
+        return $this->api->getFilesAPI()->getCommunityFiles($communityId, $searchText, $page, $limit);
     }
 
-    public function getMembers($communityId = "", $searchText = "", $page = 1, $sortBy = 'name', $asc = true)
+    public function getMembers($communityId = "", $searchText = "", $page = 1, $pageSize = 5, $sortBy = 'name', $asc = true)
     {
-        $searchText = str_ireplace(" ", "+", $searchText);
+        $searchText = urlencode($searchText);
         if (!empty($searchText) && empty($communityId)) {
-            $reply = $this->makeRequest("profiles/atom/search.do?search={$searchText}&page={$page}&ps=5");
+            $reply = $this->makeRequest("profiles/atom/search.do?search={$searchText}&page={$page}&ps={$pageSize}");
         }
         if (!empty($communityId)) {
             //require_once 'custom/include/IBMConnections/Api/CommunitiesAPI.php';
             //$communitiesApi = new CommunitiesAPI();
             //$reply = $communitiesApi->listMembers($community_id);
-            $request = "communities/service/atom/community/members?communityUuid={$communityId}&page={$page}&ps=16&sortField={$sortBy}";
+            $request = "communities/service/atom/community/members?communityUuid={$communityId}&page={$page}&ps={$pageSize}&sortField={$sortBy}";
             if (!empty($asc) && $asc) {
                 $request .= "&asc=true";
             } else {

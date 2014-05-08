@@ -14,7 +14,6 @@
 
 }}
 
-{{! /Users/famchyk/work/sugarCRM/build/ult/sugarcrm/modules/ibm_connectionsMembers/clients/base/views/ibm-connections/records.hbs }}
 <div class="tab-pane active">
     {{#if collection.length}}
     <ul class="unstyled listed" data-action="pagination-body">
@@ -51,6 +50,9 @@
         <div style="clear: both;"></div>
         </li>
         {{/each}}
+        {{#notEq ../collection.next_offset "-1"}}
+            <li><a class="more" data-action="show-more">{{str "LBL_SHOW_MORE_MODULE" this.module}}</a></li>
+        {{/notEq}}    
     </ul>
     {{else}}
     <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str
