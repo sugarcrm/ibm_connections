@@ -307,7 +307,7 @@ abstract class AbstractConnectionsAPI extends ExternalAPIBase// implements WebDo
         return $baseUrl;
     }
 
-    protected function  getItemList(IBMAtomFeed $feed, $class)
+    protected function getItemList(IBMAtomFeed $feed, $modelName)
     {
         $result = array(
             'entries' => array(),
@@ -315,7 +315,7 @@ abstract class AbstractConnectionsAPI extends ExternalAPIBase// implements WebDo
         );
         $entries = $feed->getEntries();
         foreach ($entries as $entry) {
-            $result['entries'][] = new $class($entry);
+            $result['entries'][] = new $modelName($entry);
         }
         return $result;
     }

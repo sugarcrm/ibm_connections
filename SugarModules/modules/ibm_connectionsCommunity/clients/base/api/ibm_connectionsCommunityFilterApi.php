@@ -61,6 +61,6 @@ class ibm_connectionsCommunityFilterApi extends ibm_connectionsFilesFilterApi
     {
         $helper = new ConnectionsHelper();
         $entries = $helper->getCommunityList('MyCommunities', 1, '');
-        return $this->formatResult($api, $args, array('entries' => $entries ), 'ibm_connectionsCommunity');
+        return $this->formatResult($api, $args, array('entries' => $entries ), new ibm_connectionsCommunity());
     }
 } 

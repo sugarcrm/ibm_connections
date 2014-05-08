@@ -58,10 +58,10 @@ class ibm_connectionsFilesFilterApi extends FilterApi
         $page = $this->pageNum($options['offset'], $options['limit']);
         $entries = $helper->getFilesList($filter['community_id'], '', $page, $options['limit']);
 
-        return $this->formatResult($api, $args, $entries, 'ibm_connectionsFiles');
+        return $this->formatResult($api, $args, $entries, new ibm_connectionsFiles());
     }
 
-    protected function formatResult($api, $args, $entries, $recordClass)
+    protected function formatResult($api, $args, $entries, $tmpBean)
     {
         $options = $this->parseArguments($api, $args);
 
@@ -76,7 +76,7 @@ class ibm_connectionsFilesFilterApi extends FilterApi
 
         if (!empty($entries['entries'])) {
             foreach ($entries['entries'] as $entry) {
-                $bean = new $recordClass();
+                $bean = clone $tmpBean;
                 $bean->fromArray($entry);
                 $data['records'][] = $bean;
             }

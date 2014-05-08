@@ -79,7 +79,7 @@ class ibm_connectionsMembersFilterApi extends ibm_connectionsFilesFilterApi
             $entries['entries'] = $this->buildMembersTodosMap($filter['community_id'], $entries['entries']);
         }
 
-        return $this->formatResult($api, $args, $entries, 'ibm_connectionsMembers');
+        return $this->formatResult($api, $args, $entries, new ibm_connectionsMembers());
 
         return $data;
     }

@@ -62,7 +62,7 @@ class ibm_connectionsTasksFilterApi extends ibm_connectionsFilesFilterApi
         $page = $this->pageNum($options['offset'], $options['limit']);
         $entries = $helper->getActivitiesList($filter['community_id'], '',$page, $options['limit'], $options['select']);
 
-        return $this->formatResult($api, $args, $entries, 'ibm_connectionsTasks');
+        return $this->formatResult($api, $args, $entries, new ibm_connectionsTasks());
     }
 
 } 
