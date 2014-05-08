@@ -466,6 +466,30 @@ class ConnectionsHelper
         );
     }
 
+    public function createActivity($communityId, $name, $goal, $tags, $dueDate)
+    {
+        global $timedate;
+        if (!empty($dueDate)) {
+            $dueDate = $timedate->asDbDate($timedate->fromUserDate($dueDate));
+        }
+        $tag_str = str_replace(' ', ',', $tags);
+        if (!empty($tag_str)) {
+            $tag = explode(',', $tag_str);
+        } else {
+            $tag = array();
+        }
+        $result = $this->apiClass->createActivity($communityId, $name, $goal, $tag, $dueDate);
+        $activityData = IBMAtomEntry::loadFromString($result);
+        $item = new ConnectionsActivity($activityData);
+        $activityId = $item->getId();
+        return $activityId;
+    }
+
+    public function deleteActivity($id)
+    {
+        $this->apiClass->deleteActivity($id);
+    }
+
     public function saveActivitySection()
     {
         $this->apiClass->createActivitySection($this->ibm_parent_id, $this->name);
@@ -508,6 +532,26 @@ class ConnectionsHelper
         ob_clean();
         echo json_encode(array('id' => $this->ibm_parent_id));
 
+    }
+
+    public function createActivityToDo($taskId, $name, $goal, $dueDate, $tags, $assigned)
+    {
+        global $timedate;
+        if (!empty($dueDate)) {
+            $dueDate = $timedate->asDbDate($timedate->fromUserDate($dueDate));
+        }
+        $tag_str = str_replace(' ', ',', $tags);
+        if (!empty($tag_str)) {
+            $tag = explode(',', $tag_str);
+        } else {
+            $tag = array();
+        }
+        $result = $this->apiClass->createActivityToDo($taskId, $name, $goal, $dueDate, $tag, $assigned);
+        $activityData = IBMAtomEntry::loadFromString($result);
+        $item = new ConnectionsActivity($activityData);
+        $activityId = $item->getId();
+
+        return $activityId;
     }
 
     public function saveActivityEntry()
@@ -1288,64 +1332,10 @@ class ConnectionsHelper
     }
 
 
-    function getActivityNode()
+    function getActivityNode($id)
     {
-        $activityId = $this->ibm_activity_id;
-        $nodeId = $this->ibm_node_id;
-        $entry = $this->apiClass->getNode($activityId, $nodeId);
-        $reply = $this->view->scrollable_div_start;
-        $reply .= $this->view->table_start;
-
-        if (!empty($entry)) {
-            $arrs = array();
-            $type = $entry->getType();
-            switch ($type) {
-                case 'todo':
-                    $reply .= $this->getToDoViewModal($entry);
-                    break;
-                case 'entry':
-                    $reply .= $this->getEntryViewModal($entry);
-                    break;
-                case 'section':
-                    $reply .= $this->getSectionView($entry);
-                    break;
-            }
-            $reply .= "<tr><td>";
-            $attach_arr = $entry->getAttachments();
-            for ($i = 0; $i < count($attach_arr); $i++) {
-                $reply .= "<br>" . "<a href='{$attach_arr[$i]['href']}'>{$attach_arr[$i]['fileName']}</a>";
-
-            }
-            $reply .= "</td></tr>";
-            $nodes = $entry->listNodes();
-            foreach ($nodes as $node) {
-                switch ($node->getType()) {
-                    case 'todo':
-                        $reply .= $this->getToDoViewModal($node);
-                        break;
-                    case 'reply':
-                        $arr = array(
-                            'contributor' => $node->getContributor(),
-                            'content' => $node->getContent(),
-                            'updated' => $this->formateDate($node->getFormattedUpdatedDate())
-                        );
-                        $reply .= $this->view->activityReply($arr);
-                        break;
-                }
-
-            }
-
-        } else {
-            $reply .= "<tr><td>{$this->language['LBL_NO_DATA']}</td></tr>";
-        }
-        $reply .= $this->view->table_end;
-        $reply .= $this->view->scrollable_div_end;
-        $content = array(
-            "header" => $this->language['LBL_ACTIVITY_NODE'],
-            "body" => $reply
-        );
-        ob_clean();
-        echo json_encode($content);
+        $item = $this->apiClass->getActivityNode($id);
+        return $item;
     }
 
 
@@ -1904,4 +1894,5 @@ class ConnectionsHelper
             array('frame' => $reply, 'content' => $list, 'container_id' => $tab . '_list', 'page' => $this->page_number)
         );
     }
+
 }

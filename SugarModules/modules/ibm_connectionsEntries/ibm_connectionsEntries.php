@@ -61,21 +61,10 @@ class ibm_connectionsEntries extends SugarBean
 
         $activityData = IBMAtomEntry::loadFromString($result);
         $item = new ConnectionsActivity($activityData);
-        //$item = new ConnectionsActivityTodo($activityData);
         $activityId = $item->getId();
 
         $this->id = $activityId;
         return $activityId;
-
-
-        /*
-        $_SESSION['bean'][__CLASS__][$this->id] = array(
-            'id' => $this->id,
-            'name' => $this->name,
-            'community_id' => $this->community_id,
-        );
-        */
-
     }
 
     public function retrieve($id)
@@ -90,7 +79,6 @@ class ibm_connectionsEntries extends SugarBean
 
         $activity = $connectionsApi->getActivityNode($id);
 
-
         $this->id = $id;
         $this->name = $activity->getTitle();
         $this->goal = $activity->getSummary();
@@ -98,13 +86,7 @@ class ibm_connectionsEntries extends SugarBean
         $this->due_date = $activity->getDueDate();
         $this->description = $activity->getContent();
 
-        /*
-        $this->name = $_SESSION['bean'][__CLASS__][$id]['name'];
-        $this->community_id = $_SESSION['bean'][__CLASS__][$id]['community_id'];
-        */
-
         return $this;
     }
-
 
 }

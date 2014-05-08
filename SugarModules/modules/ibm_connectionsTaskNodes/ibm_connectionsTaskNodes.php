@@ -1,4 +1,5 @@
 <?php
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -25,7 +26,6 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
 class ibm_connectionsTaskNodes extends SugarBean
 {
     public $module_dir = "ibm_connectionsTaskNodes";
@@ -63,11 +63,6 @@ class ibm_connectionsTaskNodes extends SugarBean
         $this->tags = $activity->getTags();
         $this->due_date = $activity->getDueDate();
 
-        /*
-        $this->name = $_SESSION['bean'][__CLASS__][$id]['name'];
-        $this->community_id = $_SESSION['bean'][__CLASS__][$id]['community_id'];
-        */
-
         return $this;
     }
 
@@ -95,40 +90,6 @@ class ibm_connectionsTaskNodes extends SugarBean
         return $this->id;
 
     }
-
-    /*
-    private function insertTaskNode()
-    {
-            $tag = array();
-        }
-
-        $connectionsApi->createActivityToDo(
-            $activityId,
-            $this->name,
-            $goal,
-            null,
-            $tag,
-            array('name' => null, 'id' => null)
-        );
-
-
-        $result = $connectionsApi->createActivity(
-            $this->community_id,
-            $this->name,
-            $goal,
-            $tag,
-            null
-        );
-
-        $activityData = IBMAtomEntry::loadFromString($result);
-        $item = new ConnectionsActivity($activityData);
-        $activityId = $item->getId();
-
-        $this->id = $activityId;
-        return $activityId;
-    }
-    */
-
 
 }
  
