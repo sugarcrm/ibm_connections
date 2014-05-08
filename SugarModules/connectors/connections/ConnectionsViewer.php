@@ -514,7 +514,7 @@ class ConnectionsViewer
     public function getFilePicture($name)
     {
         $icon_name = "undefined";
-        $type = pathinfo($name, PATHINFO_EXTENSION);
+        $type = get_file_extension($name);
         if (!empty($type)) {
             foreach ($this->type_image as $key => $val){
                 if ( strpos($val,' '. $type .' ') !== false){
