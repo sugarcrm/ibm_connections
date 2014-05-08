@@ -81,33 +81,6 @@ class ibm_connectionsMembersFilterApi extends ibm_connectionsFilesFilterApi
 
         return $this->formatResult($api, $args, $entries, 'ibm_connectionsMembers');
 
-        /*        $beans = array();
-                foreach ($returnData as $key => $item) {
-                    $beans[$key] = new ibm_connectionsMembers();
-                    $beans[$key]->id = $item['member_id'];
-                    $beans[$key]->community_id = $filter['community_id'];
-                    $beans[$key]->name = $item['member_name'];
-                    $beans[$key]->role = $item['member_role'];
-                    $beans[$key]->picture = string_format(ConnectionsHelper::URL_USER_AVATAR, array($item['member_id']));
-                    $beans[$key]->url = string_format(ConnectionsHelper::URL_USER_PROFILE, array($item['member_id']));            
-                    if (isset($membersToDos[$item['member_id']])) {
-                        $totalTodos = $membersToDos[$item['member_id']]['total'];
-                        $completedTodos = $membersToDos[$item['member_id']]['completed'];
-                        $beans[$key]->total_todos = $totalTodos;
-                        $beans[$key]->completed_todos = $completedTodos;
-                        $beans[$key]->completion = ($totalTodos > 0) ? round($completedTodos / $totalTodos * 100) : 0;
-                    } else {
-                        $beans[$key]->completion = 0;
-                        $beans[$key]->total_todos = 0;
-                        $beans[$key]->completed_todos = 0;
-                    }
-                }
-        
-                $data = array(
-                    'next_offset' => -1,
-                    'records' => $this->formatBeans($api, $args, $beans)
-                );
-        */
         return $data;
     }
 
