@@ -87,7 +87,16 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         }
 
         $feed = IBMAtomFeed::loadFromString($result->getBody());
-        return $this->getItemList($feed, 'ConnectionsActivity');
+        $result = array(
+            'entries' => array(),
+            'total' =>  $feed->getTotalResults(),
+        );
+        $entries = $feed->getEntries();
+        foreach ($entries as $entry) {
+            $result['entries'][] = new ConnectionsActivity($entry);
+        }
+
+        return $result;
     }
 
     /**

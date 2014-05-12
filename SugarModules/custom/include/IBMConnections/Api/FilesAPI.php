@@ -123,7 +123,15 @@ class FilesAPI extends AbstractConnectionsAPI
                      */
         }
 
-        return $this->getItemList($feed, 'ConnectionsFile');
+        $result = array(
+            'entries' => array(),
+            'total' =>  $feed->getTotalResults(),
+        );
+        $entries = $feed->getEntries();
+        foreach ($entries as $entry) {
+            $result['entries'][] = new ConnectionsFile($entry);
+        }
+        return $result;
     }
 
 
