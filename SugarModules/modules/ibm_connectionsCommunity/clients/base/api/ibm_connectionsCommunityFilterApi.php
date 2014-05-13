@@ -60,7 +60,14 @@ class ibm_connectionsCommunityFilterApi extends ibm_connectionsFilesFilterApi
     public function filterList(ServiceBase $api, array $args)
     {
         $helper = new ConnectionsHelper();
+        $res = $helper->apiClass->checkLogin();
+        if (!$res['success']) {
+            throw new SugarApiExceptionRequestMethodFailure('ERROR_NEED_AUTHORIZE');
+        }
+
         $entries = $helper->getCommunityList('MyCommunities', 1, '');
-        return $this->formatResult($api, $args, array('entries' => $entries ), new ibm_connectionsCommunity());
+
+        return $this->formatResult($api, $args, array('entries' => $entries), new ibm_connectionsCommunity());
     }
+
 } 

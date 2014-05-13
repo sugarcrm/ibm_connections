@@ -130,11 +130,6 @@
     initDashlet: function () {
         var self = this;
         this._super('initDashlet', []);
-        if (this.meta.config) {
-            var communityCollect = app.data.createBeanCollection("ibm_connectionsCommunity", null, {});
-            communityCollect.on('reset', this.fillCommunities, this);
-            communityCollect.fetch({fields: ['id', 'name']});
-        }
 
         this.$el.on('dragenter', function (event) {
 //            self.$(event.currentTarget).addClass("dragdrop");
@@ -157,6 +152,7 @@
     },
 
     fillCommunities: function (communityCollect) {
+        debugger;
         this.communityOptions = {};
         var communityField = _.find(this.fields, function (field) {
             return field.name == 'community_id';
@@ -473,5 +469,21 @@
                 }
             }
         });
+    },
+
+    loadData: function (options) {
+        this._super('loadData', [options]);
+        if (this.meta.config) {
+            var communityCollect = app.data.createBeanCollection("ibm_connectionsCommunity", null, {});
+            var collectOpts = {
+                fields: ['id', 'name'],
+                success: _.bind(this.fillCommunities, this),
+                error: _.bind(function(){
+                    this.template = app.template.get(this.name + '.ibm-connections-need-configure');
+                    this._render();
+                }, this),
+            };
+            communityCollect.fetch(collectOpts);
+        }
     }
 })
