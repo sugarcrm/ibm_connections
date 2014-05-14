@@ -129,6 +129,18 @@
 
     initDashlet: function () {
         var self = this;
+        if (this.meta.config) {
+            var communityCollect = app.data.createBeanCollection("ibm_connectionsCommunity", null, {});
+            communityCollect.on('reset', this.fillCommunities, this);
+            communityCollect.fetch({
+                fields: ['id', 'name'],
+                error: function () {
+                    self.template = app.template.get(self.name + '.ibm-connections-need-configure');
+                    self._render();
+                }
+            });
+        }        
+        
         this._super('initDashlet', []);
 
         this.$el.on('dragenter', function (event) {
