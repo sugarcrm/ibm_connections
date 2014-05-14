@@ -666,8 +666,14 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
         return $this->api->getFilesAPI()->getCommunityFiles($communityId, $searchText, $page, $limit);
     }
 
-    public function getMembers($communityId = "", $searchText = "", $page = 1, $pageSize = 5, $sortBy = 'name', $asc = true)
-    {
+    public function getMembers(
+        $communityId = "",
+        $searchText = "",
+        $page = 1,
+        $pageSize = 5,
+        $sortBy = 'name',
+        $asc = true
+    ) {
         $searchText = urlencode($searchText);
         if (!empty($searchText) && empty($communityId)) {
             $reply = $this->makeRequest("profiles/atom/search.do?search={$searchText}&page={$page}&ps={$pageSize}");
@@ -829,6 +835,16 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
     public function getProfile($id)
     {
         return $this->api->getProfilesAPI()->getProfile($id);
+    }
+
+    public function isActivitiesActivated($id)
+    {
+        return $this->api->getCommunitiesAPI()->isWidgetActivated($id, 'Activities');
+    }
+
+    public function activateCommunityWidget($id, $widgetType)
+    {
+        return $this->api->getCommunitiesAPI()->activateAppWidget($id, $widgetType);
     }
 
 }
