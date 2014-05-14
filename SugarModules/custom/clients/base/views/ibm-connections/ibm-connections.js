@@ -481,21 +481,5 @@
                 }
             }
         });
-    },
-
-    loadData: function (options) {
-        this._super('loadData', [options]);
-        if (this.meta.config) {
-            var communityCollect = app.data.createBeanCollection("ibm_connectionsCommunity", null, {});
-            var collectOpts = {
-                fields: ['id', 'name'],
-                success: _.bind(this.fillCommunities, this),
-                error: _.bind(function(){
-                    this.template = app.template.get(this.name + '.ibm-connections-need-configure');
-                    this._render();
-                }, this),
-            };
-            communityCollect.fetch(collectOpts);
-        }
     }
 })
