@@ -79,20 +79,17 @@ class ibm_connectionsFilesFileApi extends FileApi
 
         $fileContent = $connectionsApi->downloadFile($id);
 
-        header("Pragma: public");
-        header("Cache-Control: maxage=1, post-check=0, pre-check=0");
-        header("Content-Type: {$bean->content_type}");
-        header("Content-Disposition: attachment; filename=\"{$bean->name}\";");
-        header("Content-Length: " . strlen($fileContent));
-        header("X-Content-Type-Options: nosniff");
-        header("Expires: 0");
-        set_time_limit(0);
-        //ob_clean();
-        ob_start();
-        header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 2592000));
-        echo $fileContent;
-        @ob_end_flush();
-        exit();
+        $api->getResponse()->setType(RestResponse::RAW);
+
+        $api->setHeader("Pragma", "public");
+        $api->setHeader("Cache-Control", "maxage=1, post-check=0, pre-check=0");
+        $api->setHeader("Content-Type", $bean->content_type);
+        $api->setHeader("Content-Disposition", "attachment; filename=\"{$bean->name}\";");
+        $api->setHeader("Content-Length", strlen($fileContent));
+        $api->setHeader("X-Content-Type-Options", "nosniff");
+        $api->setHeader("Expires", 0);
+
+        return $fileContent;
     }
 
 
