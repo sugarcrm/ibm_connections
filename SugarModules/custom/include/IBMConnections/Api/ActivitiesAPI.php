@@ -39,33 +39,8 @@ class ActivitiesAPI extends AbstractConnectionsAPI
      * Enter description here ...
      */
 
-    public function isEnabled($communityId)
-    {
-        $feed = $this->getRemoteAppFeed($communityId);
-        if (empty($feed)) {
-            return false;
-        }
-        $entries = $feed->getEntries();
-        for ($i = 0; $i < sizeof($entries); $i++) {
-            $entry = $entries[$i];
-            $retArray = $entry->getCategories("http://www.ibm.com/xmlns/prod/sn/type");
-            for ($k = 0; $k < sizeof($retArray); $k++) {
-                if (strcmp($retArray[$k]['term'], "Activities") == 0) {
-                    $link = $entry->getLink("http://www.ibm.com/xmlns/prod/sn/remote-application/feed");
-                    $path = $this->extractRelativeUrlPath($link['href']);
-                }
-            }
-        }
-        return !empty($path);
-    }
-
     public function listCommunityActivities($communityId, $searchText, $page, $limit)
     {
-
-        if (!$this->isEnabled($communityId)) {
-            return array('message' => 'widget_is_not_activated');
-        }
-
 
         $this->getHttpClient()->resetParameters();
         $this->getHttpClient()->setParameterGet("commUuid", $communityId);
@@ -89,7 +64,7 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $feed = IBMAtomFeed::loadFromString($result->getBody());
         $result = array(
             'entries' => array(),
-            'total' =>  $feed->getTotalResults(),
+            'total' => $feed->getTotalResults(),
         );
         $entries = $feed->getEntries();
         foreach ($entries as $entry) {
@@ -286,7 +261,7 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         //echo "path1". $path;
         if (empty($path)) {
             $commApi = new CommunitiesAPI($this->getHttpClient());
-            $commApi->activateActivities($communityId);
+            $commApi->activateAppWidget($communityId, 'Activities');
             $feed = $this->getRemoteAppFeed($communityId);
             if (empty($feed)) {
                 return;

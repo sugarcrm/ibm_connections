@@ -1319,7 +1319,6 @@ class ConnectionsHelper
                 $beans[$key]->activities = $item['activities_list'];
 
 
-
                 //$arr['members_list'] = $this->getCommunityMemberArray($arr['id']);
                 //$arr['files_list'] = $this->getFilesList($arr['id']);
                 //$arr['activities_list'] = $this->getActivitiesList($arr['id']);
@@ -1703,12 +1702,12 @@ class ConnectionsHelper
         echo json_encode($content);
     }
 
-    public function getFilesList($communityId, $searchText = "",$page = 1, $limit = 5)
+    public function getFilesList($communityId, $searchText = "", $page = 1, $limit = 5)
     {
         $entries = $this->apiClass->getFilesList($communityId, $searchText, $page, $limit);
         $returnData = array(
             'entries' => array(),
-            'total'   => $entries['total']
+            'total' => $entries['total']
         );
 
         if (!empty($entries)) {
@@ -1716,7 +1715,7 @@ class ConnectionsHelper
                 $arr = array();
                 $arr['id'] = $entry->getId();
                 $arr['name'] = $entry->getTitle();
-                $arr['community_id'] =  $entry->getCommunityId();
+                $arr['community_id'] = $entry->getCommunityId();
 
                 $author = $entry->getAuthor();
                 $arr['author_id'] = $author['id'];
@@ -1732,9 +1731,9 @@ class ConnectionsHelper
                 $arr['downloadsCount'] = $entry->getDownloadsCount();
                 $arr['version'] = $entry->getVersion();
                 $arr['fileSize'] = $entry->getFileSize();
-                $arr['content_type'] =  $entry->getMimeType();
+                $arr['content_type'] = $entry->getMimeType();
                 $arr['picture'] = $this->view->getFilePicture($arr['name']);
-                $arr['community_id'] =  $entry->getCommunityId();
+                $arr['community_id'] = $entry->getCommunityId();
 
                 $returnData['entries'][] = $arr;
             }
@@ -1751,12 +1750,16 @@ class ConnectionsHelper
 
     public function getActivitiesList($communityId, $searchText = '', $page = 1, $limit = 5, $fields)
     {
-        $entries = $this->apiClass->getActivitiesList($communityId, $searchText, $page, $limit);
 
+        if (!$this->apiClass->isActivitiesActivated($communityId)) {
+            $this->activateCommunityActivities($communityId);
+        }
+
+        $entries = $this->apiClass->getActivitiesList($communityId, $searchText, $page, $limit);
 
         $returnData = array(
             'entries' => array(),
-            'total'   => $entries['total']
+            'total' => $entries['total']
         );
 
         if (!empty($entries)) {
@@ -1766,7 +1769,7 @@ class ConnectionsHelper
                 $arr = array();
                 $arr['id'] = $entry->getId();
                 $arr['name'] = $entry->getTitle();
-                $arr['community_id'] =  $communityId;
+                $arr['community_id'] = $communityId;
 
                 $contributor = $entry->getContributor();
                 $arr['contributor_id'] = $contributor['id'];
@@ -1779,7 +1782,7 @@ class ConnectionsHelper
                 $arr['duedate'] = $entry->getDueDate();
                 $arr['completed'] = $entry->isCompleted();
 
-                if ( array_intersect(array('commentsCount', 'completion', 'completed_todos', 'total_todos'), $fields)){
+                if (array_intersect(array('commentsCount', 'completion', 'completed_todos', 'total_todos'), $fields)) {
                     $this_activity = $this->apiClass->getActivity($entry->getId());
                     $arr['commentsCount'] = $this_activity->getCommentsCount();
 
@@ -1864,7 +1867,7 @@ class ConnectionsHelper
 
         $result = array(
             'entries' => $this->getMembersArray($response),
-            'total' =>  $feed->getTotalResults(),
+            'total' => $feed->getTotalResults(),
         );
         return $result;
     }
@@ -1893,6 +1896,11 @@ class ConnectionsHelper
         echo json_encode(
             array('frame' => $reply, 'content' => $list, 'container_id' => $tab . '_list', 'page' => $this->page_number)
         );
+    }
+
+    public function activateCommunityActivities($id)
+    {
+        return $this->apiClass->activateCommunityWidget($id, 'Activities');
     }
 
 }
