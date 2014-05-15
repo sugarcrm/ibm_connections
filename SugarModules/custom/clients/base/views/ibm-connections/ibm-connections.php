@@ -121,7 +121,57 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                     'label' => 'LBL_IBM-CONNECTIONS_SELECT_COMMUNITY',
                     'type' => 'imgenum',
                     'options' => array('' => ''),
-                    'imgUrl' => ConnectionsHelper::URL_COMMUNITY_IMAGE
+                    'imgUrl' => ConnectionsHelper::URL_COMMUNITY_IMAGE,
+                    'span'  => 12
+                ),
+                array(
+                    'type' => 'title',
+                    'name' => 'title',
+                    'default_value' => 'Or create new',
+                    'value' => 'Or create new',
+                    'span' => 12
+                ),
+                array(
+                    'name' => 'name',
+                    'type' => 'text',
+                    'label' => 'LBL_NAME',
+                    'required' => true,
+                ),
+                array(
+                    'name' => 'access',
+                    'label' => 'Access',
+                    'type' => 'enum',
+                    'options' => array(
+                        'public' => 'Public',
+                        'publicInviteOnly' => 'Moderated',
+                        'private' => 'Restricted',
+                    ),
+                ),
+                array(
+                    'type' => 'memberset',
+                    'name' => 'members',
+                    'label' => 'Add member',
+                    'module' => 'ibm_connectionsMembers',
+                    'span'  => 12
+                ),
+                array(
+                    'name' => 'tags',
+                    'label' => 'Tags',
+                    'type' => 'text',
+                ),
+                array(
+                    'name' => 'description',
+                    'label' => 'LBL_DESCRIPTION',
+                    'type' => 'textarea',
+                    'span' => 12
+                ),
+
+                array(
+                    'type' => 'button',
+                    'name' => 'community_add',
+                    'label' => 'Add',
+                    'primary' => true,
+                    'dismiss_label' => true
                 ),
             ),
         ),

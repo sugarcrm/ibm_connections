@@ -45,6 +45,9 @@
      * {@inheritDoc}
      */
     initialize: function (options) {
+
+        this.events['click [name=community_add]'] = 'addCommunity';
+
         this.initCustomBeans();
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
@@ -139,8 +142,27 @@
                     self._render();
                 }
             });
-        }        
-        
+
+            this.communityModel = app.data.createBean('ibm_connectionsCommunity');
+            this.communityModel.on("error:validation", function(){
+                app.alert.show('invalid-data', {
+                    level: 'error',
+                    messages: 'ERR_RESOLVE_ERRORS',
+                    autoClose: true
+                });
+
+            }, this);
+
+
+            _.each(this.fields, function(fld){
+                if ('community_id' != fld.name){
+                    fld.model = this.communityModel;
+                    fld.model.on("error:validation:" + fld.name, fld.handleValidationError, fld);
+                }
+            }, this);
+
+        }
+
         this._super('initDashlet', []);
 
         this.$el.on('dragenter', function (event) {
@@ -164,7 +186,7 @@
     },
 
     fillCommunities: function (communityCollect) {
-        debugger;
+
         this.communityOptions = {};
         var communityField = _.find(this.fields, function (field) {
             return field.name == 'community_id';
@@ -481,5 +503,29 @@
                 }
             }
         });
+    },
+
+    addCommunity: function () {
+        debugger;
+        var self = this;
+
+        _.each(this.fields, function (fld) {
+            if ('community_id' != fld.name) {
+                var val = fld.value;
+                /*if ('enum' == fld.type){
+                 val = _.first(val)
+                 }*/
+                self.communityModel.set(fld.name, val);
+            }
+        });
+
+        var flds = this.getFields('ibm_connectionsCommunity');
+        this.communityModel.doValidate(flds, function (isValid) {
+            if (isValid) {
+                debugger;
+                self.communityModel.save();
+            }
+        });
+
     }
 })
