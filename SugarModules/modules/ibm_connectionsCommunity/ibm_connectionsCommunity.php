@@ -29,10 +29,54 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2014 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
+
 class ibm_connectionsCommunity extends SugarBean
 {
 
     public $module_dir = "ibm_connectionsCommunity";
     public $object_name = "ibm_connectionsCommunity";
+
+    public function retrieve($id)
+    {
+        $helper = new ConnectionsHelper();
+        $community = $helper->getCommunity($id);
+
+        $this->id = $id;
+        $this->name = $community->getTitle();
+        $this->tags = $community->getTags();
+        $this->description = $community->getDescription();
+        $this->url = $community->getWebUrl();
+        $this->logo = $community->getLogoLink();
+        $this->access = $community->getCommunityType();
+
+        return $this;
+    }
+
+    public function save()
+    {
+        if ($this->new_with_id) {
+            $name = $this->name;
+            $descr = $this->description;
+            $members = $this->members;
+            $access = $this->access;
+
+            $helper = new ConnectionsHelper();
+            $communityId = $helper->createCommunity($name, $access, $descr, "");
+
+            if (is_array($members) && sizeof($members) > 0) {
+                foreach ($members as $member) {
+                    if (isset($member['id'])) {
+                        $helper->addMember($communityId, $member['id'], $member['role']);
+                    }
+                }
+            }
+            $this->id = $communityId;
+            return $communityId;
+        } else {
+            return $this->id;
+        }
+    }
 
 }

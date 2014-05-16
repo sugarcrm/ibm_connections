@@ -731,10 +731,9 @@ class ConnectionsHelper
         echo $content;
     }
 
-    public function addMember()
+    public function addMember($communityId, $memberId, $role)
     {
-        $communityId = $this->getCommunityId();
-        $this->apiClass->addMemberToCommunity($this->member_id, $communityId, $this->member_role);
+        $this->apiClass->addMemberToCommunity($memberId, $communityId, $role);
     }
 
     public function removeMember()
@@ -1876,7 +1875,7 @@ class ConnectionsHelper
     {
         global $beanList, $current_user;
         $communityId = $this->getCommunityId();
-        $members_list = $this->getCommunityMemberArray($communityId);
+        $members_list = $this->getCommunityMemberArray($communityId, '');
         $this->isCommunityOwner = false;
         foreach ($members_list as $member) {
             if ($this->apiClass->api_data['userId'] == $member['member_id']) {
@@ -1901,6 +1900,18 @@ class ConnectionsHelper
     public function activateCommunityActivities($id)
     {
         return $this->apiClass->activateCommunityWidget($id, 'Activities');
+    }
+
+    public function getCommunity($communityId)
+    {
+        return $this->apiClass->getCommunity($communityId);
+    }
+
+    public function createCommunity($name, $access, $description, $tags)
+    {
+        $tags = explode(",", $tags);
+        $communityId = $this->apiClass->createCommunity($name, $description, $access, $tags, '');
+        return $communityId;
     }
 
 }
