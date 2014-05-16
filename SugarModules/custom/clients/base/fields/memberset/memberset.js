@@ -3,11 +3,12 @@
 
     roleTag: 'select.role',
 
-    roles: {authors: "Member", owners: "Owner"},
+    roles: {},
 
     initialize: function (options) {
+        this.roles = app.lang.getAppListStrings('ibm-connections_member_role');
         this.events['change ' + this.roleTag] = 'changeRole';
-        this._super('initialize',[options] );
+        this._super('initialize', [options]);
     },
 
     _render: function () {
@@ -25,30 +26,36 @@
                     plugin.searchmore = true;
                     plugin.container.css('width', '80%');
                 }
-
             });
         }
     },
 
     format: function (value) {
-        value = value || [];
+        if (this.model.isNew() && (_.isEmpty(value) || this.model.get(this.name) != value)) {
+            //load the default value
+            if (_.isEmpty(value)) {
+                value = [
+                    {role: this.getDefaultRole() }
+                ];
+                this._currentIndex = 0;
+                this.model.set(this.name, value);
+                this.model.setDefaultAttribute(this.name, value);
+            } else {
+                this.model.set(this.name, value);
+                this.model.removeDefaultAttribute(this.name)
+            }
+        }
+
         value = app.utils.deepCopy(value);
-        /*if (!_.isArray(value)) {
-            value = [
-                {
-                    name: value
-                }
-            ];
-        }*/
 
         // Place the add button as needed
-        if (_.isArray(value)/* && value.length > 0 */) {
+        if (_.isArray(value)) {
             _.each(value, function (member) {
                 delete member.remove_button;
                 delete member.add_button;
             });
             if (!value[this._currentIndex]) {
-                value[this._currentIndex] = {role: _.first(_.keys(this.roles))   };
+                value[this._currentIndex] = {role: this.getDefaultRole() };
             }
             value[value.length - 1].add_button = true;
 
@@ -58,7 +65,6 @@
                     member.remove_button = true;
                 }
             });
-
         }
         return value;
     },
@@ -67,6 +73,10 @@
         var $el = $(evt.currentTarget), index = $el.data('index');
         this.value[index]['role'] = $el.val();
         this._updateAndTriggerChange(this.value);
+    },
+
+    getDefaultRole: function () {
+        return _.first(_.keys(this.roles));
     }
 
 })

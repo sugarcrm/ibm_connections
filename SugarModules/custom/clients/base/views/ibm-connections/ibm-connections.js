@@ -152,15 +152,6 @@
                 });
 
             }, this);
-
-
-            _.each(this.fields, function(fld){
-                if ('community_id' != fld.name){
-                    fld.model = this.communityModel;
-                    fld.model.on("error:validation:" + fld.name, fld.handleValidationError, fld);
-                }
-            }, this);
-
         }
 
         this._super('initDashlet', []);
@@ -418,17 +409,20 @@
                     model.set('url', pictureUrl);
                 }, this);
             }
-
         }
         this._super('_renderHtml');
 
-        if (!this.meta.config && 'ibm_connectionsTasks' == this.collection.module) {
-            _.each(this.collection.models, function (model) {
-                var statusView = this.getSubView('task-status', model.id);
-                statusView.model = model;
-                this.$el.find('[iid=' + model.id + '] .status').append(statusView.el);
-                statusView.render();
-            }, this);
+        if (this.meta.config) {
+            this.bindCommunityFlds2Model();
+        } else {
+            if ('ibm_connectionsTasks' == this.collection.module) {
+                _.each(this.collection.models, function (model) {
+                    var statusView = this.getSubView('task-status', model.id);
+                    statusView.model = model;
+                    this.$el.find('[iid=' + model.id + '] .status').append(statusView.el);
+                    statusView.render();
+                }, this);
+            }
         }
 
     },
@@ -505,27 +499,70 @@
         });
     },
 
+    /**
+     * Adding community
+     */
     addCommunity: function () {
-        debugger;
         var self = this;
-
-        _.each(this.fields, function (fld) {
-            if ('community_id' != fld.name) {
-                var val = fld.value;
-                /*if ('enum' == fld.type){
-                 val = _.first(val)
-                 }*/
-                self.communityModel.set(fld.name, val);
-            }
-        });
 
         var flds = this.getFields('ibm_connectionsCommunity');
         this.communityModel.doValidate(flds, function (isValid) {
             if (isValid) {
-                debugger;
-                self.communityModel.save();
+
+                app.alert.show('ibmconn-creating',
+                    {level: 'process',
+                        title: app.lang.getAppString('LBL_SAVING'),
+                        autoClose: false});
+
+                self.communityModel.save({}, {
+                    success: function(community){
+
+                        self.communityOptions[community.get('id')] = community.get('name');
+                        self.getField('community_id').items = self.communityOptions;
+                        self.settings.set('community_id', community.get('id'));
+                        self.getField('community_id').render();
+                        self.communityModel.clear();
+                        /*_.each(self.getCommunityFields(), function (fld) {
+                         fld.render();
+                         });*/
+
+                        app.alert.dismiss('ibmconn-creating');
+                        app.alert.show('create-success', {
+                            level: 'success',
+                            messages: app.lang.getAppString('LBL_RECORD_SAVED'),
+                            autoClose: true,
+                            autoCloseDelay: 10000,
+                            onLinkClick: function() {
+                                app.alert.dismiss('create-success');
+                            }
+                        });
+
+                    }
+                });
             }
         });
+    },
 
+    /**
+     * Function return list of fields for creation community
+     */
+    getCommunityFields: function () {
+        if (_.isEmpty(this.fields)) {
+            return app.logger.error("Empty fields list");
+        }
+        return _.filter(this.fields, function (fld) {
+            return -1 == _.indexOf(['community_id', 'title'], fld.name)
+        });
+    },
+
+    /**
+     * Binding community fields to community model
+     */
+    bindCommunityFlds2Model:function(){
+        _.each(this.getCommunityFields(), function (fld) {
+            fld.model = this.communityModel;
+            fld.model.on("error:validation:" + fld.name, fld.handleValidationError, fld);
+            fld.bindDataChange();
+        }, this);
     }
 })

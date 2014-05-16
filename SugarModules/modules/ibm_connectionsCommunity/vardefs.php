@@ -32,14 +32,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $fields =
     array(
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+            'source' => 'non-db',
+        ),        
         'community_id' => array(
             'name' => 'community_id',
             'type' => 'varchar',
-            'source' => 'non-db',
-        ),
-        'members' => array(
-            'name' => 'members',
-            'type' => 'array',
             'source' => 'non-db',
         ),
         'files' => array(
@@ -52,19 +52,31 @@ $fields =
             'type' => 'array',
             'source' => 'non-db',
         ),
-        'id' => array(
-            'name' => 'id',
-            'type' => 'id',
-            'source' => 'non-db',
-        ),
         'name' => array(
             'name' => 'name',
             'type' => 'varchar',
             'source' => 'non-db',
             'unified_search' => true,
         ),
+        'url' => array(
+            'name' => 'url',
+            'type' => 'varchar',
+            'source' => 'non-db',
+            'unified_search' => true,
+        ),
+        'access' => array(
+            'name' => 'access',
+            'type' => 'enum',
+            'source' => 'non-db',
+            'unified_search' => true,
+        ),
         'logo' => array(
             'name' => 'logo',
+            'type' => 'varchar',
+            'source' => 'non-db',
+        ),
+        'tags' => array(
+            'name' => 'tags',
             'type' => 'varchar',
             'source' => 'non-db',
         ),
@@ -76,11 +88,6 @@ $fields =
         'member_count' => array(
             'name' => 'member_count',
             'type' => 'int',
-            'source' => 'non-db',
-        ),
-        'type' => array(
-            'name' => 'type',
-            'type' => 'varchar',
             'source' => 'non-db',
         ),
         'type' => array(
@@ -118,7 +125,6 @@ $fields =
             'type' => 'varchar',
             'source' => 'non-db',
         ),
-
         'members' =>
             array (
                 'name' => 'members',

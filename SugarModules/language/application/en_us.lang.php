@@ -72,3 +72,11 @@ $app_strings['LBL_IBM-CONNECTIONS_SELECT_FILE_LABEL'] = 'Select File';
 
 
 $app_strings['LBL_IBM-CONNECTIONS_CONNECT'] = 'Connect to IBM connections';
+
+$app_list_strings['ibm-connections_access'] = array(
+    'public' => 'Public',
+    'publicInviteOnly' => 'Moderated',
+    'private' => 'Restricted',
+);
+
+$app_list_strings['ibm-connections_member_role'] = array('authors' => 'Member', 'owners' => 'Owner');

@@ -141,11 +141,8 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                     'name' => 'access',
                     'label' => 'Access',
                     'type' => 'enum',
-                    'options' => array(
-                        'public' => 'Public',
-                        'publicInviteOnly' => 'Moderated',
-                        'private' => 'Restricted',
-                    ),
+                    'required' => true,
+                    'options' => 'ibm-connections_access',
                 ),
                 array(
                     'type' => 'memberset',
