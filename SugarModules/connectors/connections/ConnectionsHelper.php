@@ -327,7 +327,10 @@ class ConnectionsHelper
     private function getMembersArray($response)
     {
         $entries = $response->entry;
-        $communityId = $this->getCommunityId();
+        $qr = array();
+        parse_str (parse_url((string)$response->id, PHP_URL_QUERY),  $qr);
+        $communityId = $qr['communityUuid'];
+        
         $res = array();
         if (!empty($entries)) {
             foreach ($entries as $entry) {
