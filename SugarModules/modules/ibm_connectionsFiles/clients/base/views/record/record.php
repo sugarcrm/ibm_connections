@@ -28,7 +28,11 @@ $viewdefs['ibm_connectionsFiles']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                     'readonly'      => true,
                 ),
-                'name',
+                array(
+                    'type' => 'file',
+                    'name' => 'filename',
+                    'label' => 'LBL_IBM-CONNECTIONS_SELECT_FILE_LABEL',
+                ),
                 array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',
@@ -51,11 +55,7 @@ $viewdefs['ibm_connectionsFiles']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array(
-                    'type' => 'file',
-                    'name' => 'filename',
-                    'label' => 'LBL_IBM-CONNECTIONS_SELECT_FILE_LABEL',
-                ),
+
             ),
         )
     ),
