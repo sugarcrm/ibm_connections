@@ -349,7 +349,7 @@
         if ('ibm_connectionsMembers' == delModel.module && 'owner' == delModel.get('role')) {
             app.alert.show('upload_error', {
                 level: 'error',
-                messages: 'You cannot unlink community owner',
+                messages: app.lang.get('LBL_IBM-CONNECTIONS_CANNOT_UNLINK_COMMUNITY_OWNER'),
                 autoClose: false
             });
             return;

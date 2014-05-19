@@ -89,11 +89,6 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
     ),
-    'dueDate' => array(
-        'name' => 'author_name',
-        'type' => 'varchar',
-        'source' => 'non-db',
-    ),
     'completion' => array(
         'name' => 'author_name',
         'type' => 'varchar',
@@ -118,6 +113,7 @@ $fields = array(
         'name' => 'duedate',
         'type' => 'date',
         'source' => 'non-db',
+        'vname' => 'LBL_IBM-CONNECTIONS_DUEDATE',
     ),
 );
 

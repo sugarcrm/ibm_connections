@@ -54,23 +54,17 @@ $viewdefs['ibm_connectionsTodos']['base']['view']['record'] = array(
                 array(
                     'type' => 'enum',
                     'name' => 'assigned_user_id',
-                    'label' => 'Assigned To',
+                    'label' => 'LBL_ASSIGNED_TO',
                     'options' => array('' => ''),
                 ),
                 array(
                     'type' => 'enum',
                     'name' => 'task_id',
-                    'label' => 'Activity',
+                    'label' => 'LBL_IBM-CONNECTIONS_ACTIVITY',
                     'options' => array('' => ''),
                 ),
-                'duedate',
-                /*                'website',
-                                'industry',
-                                'parent_name',
-                                'account_type',
-                                'assigned_user_name',
-                                'phone_office',
-                           */ ),
+                'duedate' 
+            ),
         )
     ),
 );

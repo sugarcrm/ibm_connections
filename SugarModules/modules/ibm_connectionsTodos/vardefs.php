@@ -91,6 +91,7 @@ $fields = array(
         'type' => 'varchar',
         'source' => 'non-db',
         'type' => 'date',
+        'vname' => 'LBL_IBM-CONNECTIONS_DUEDATE',
     ),
 
 );

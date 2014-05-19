@@ -80,3 +80,9 @@ $app_list_strings['ibm-connections_access'] = array(
 );
 
 $app_list_strings['ibm-connections_member_role'] = array('authors' => 'Member', 'owners' => 'Owner');
+
+
+$app_strings['LBL_IBM-CONNECTIONS_ACTIVITY'] = 'Activity';
+$app_strings['LBL_IBM-CONNECTIONS_DUEDATE'] = 'Due date';
+
+$app_strings['LBL_IBM-CONNECTIONS_CANNOT_UNLINK_COMMUNITY_OWNER'] = 'You cannot unlink community owner';
