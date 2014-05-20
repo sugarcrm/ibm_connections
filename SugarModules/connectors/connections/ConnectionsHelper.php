@@ -473,7 +473,8 @@ class ConnectionsHelper
     {
         global $timedate;
         if (!empty($dueDate)) {
-            $dueDate = $timedate->asDbDate($timedate->fromUserDate($dueDate));
+            $dueDate = $timedate->fromDbType($dueDate, 'date');
+            $dueDate = $timedate->asIsoDate($dueDate);
         }
         $tag_str = str_replace(' ', ',', $tags);
         if (!empty($tag_str)) {
@@ -541,7 +542,8 @@ class ConnectionsHelper
     {
         global $timedate;
         if (!empty($dueDate)) {
-            $dueDate = $timedate->asDbDate($timedate->fromUserDate($dueDate));
+            $dueDate = $timedate->fromDbType($dueDate, 'date');
+            $dueDate = $timedate->asIsoDate($dueDate);
         }
         $tag_str = str_replace(' ', ',', $tags);
         if (!empty($tag_str)) {
