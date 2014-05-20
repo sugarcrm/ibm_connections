@@ -52,7 +52,8 @@ class ibm_connectionsMembers extends SugarBean
     public function save()
     {
         $this->id = $this->member_id;
-
+        $this->role = $this->role ? $this->role : 'member';
+        
         require_once('custom/include/externalAPI/Connections/ExtAPIConnections.php');
         $connectionsApi = new ExtAPIConnections();
         $eapmBean = EAPM::getLoginInfo('Connections');
@@ -60,6 +61,6 @@ class ibm_connectionsMembers extends SugarBean
             $connectionsApi->loadEAPM($eapmBean);
         }
 
-        $connectionsApi->addMemberToCommunity($this->member_id, $this->community_id, 'member');
+        $connectionsApi->addMemberToCommunity($this->member_id, $this->community_id, $this->role);
     }
 } 

@@ -38,6 +38,13 @@ $viewdefs['ibm_connectionsMembers']['base']['view']['record'] = array(
                     'imgUrl' => ConnectionsHelper::URL_USER_AVATAR
                 ),
                 array(
+                    'type' => 'enum',
+                    'name' => 'role',
+                    'options' => 'ibm-connections_member_role',
+                    'enum_width' => '20%',
+                    'label' => 'LBL_IBM-CONNECTIONS_ROLE'
+                ),
+                array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
@@ -53,18 +60,6 @@ $viewdefs['ibm_connectionsMembers']['base']['view']['record'] = array(
             )
         ),
 
-        /*array(
-            'name' => 'panel_body',
-            'label' => 'LBL_PANEL_BODY',
-            'columns' => 2,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'fields' => array(
-                array(
-                    'type' => 'file',
-                    'name' => 'filename',
-                ),
-            ),
-        )*/
+
     ),
 );
