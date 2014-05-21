@@ -16,47 +16,39 @@
 
 <div class="tab-pane active">
     {{#if collection.length}}
-    <ul class="unstyled listed" data-action="pagination-body">
+    <ul class="unstyled listed accordion" data-action="pagination-body" id="{{this.cid}}" >
         {{#each collection.models}}
-        <li iid="{{getFieldValue this "id"}}" >
-        <div class="pull-right actions">
-            {{#if attributes.total_todos}}
-            <div style="display: inline-block; margin-right: 10px;">
-                {{str 'LBL_IBM-CONNECTIONS_LIST_TASKS' this.module}}: {{attributes.completed_todos}} /
-                {{attributes.total_todos}}
+        <li class="accordion-group" iid="{{getFieldValue this "id"}}" >
+            <div class="pull-right actions">
+                <div class="status" style="display: inline-block;" ></div>
+
+                {{#each ../../row_actions}}
+                    {{field ../../../this model=../this}}
+                {{/each}}
             </div>
 
-            <!--div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;" >
-                <div class="bar" style="width: 60%;"></div>
-            </div -->
+            <p>
+                <a href="{{getFieldValue this "url"}}" target="_blank" class="pull-left avatar42" data-title="{{getFieldValue this "name"}}">
+                    <img src="{{getFieldValue this "picture"}}" alt="{{getFieldValue this "name"}}">
+                </a>
+                <a href="{{getFieldValue this "url"}}" target="_blank" >{{getFieldValue this "name"}}</a>
+            </p>
 
-            <div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;">
-                <div class="bar" style="width: {{attributes.completion}}%;"></div>
-            </div>
-            {{/if}}
 
-            {{#each ../../row_actions}}
-            {{field ../../../this model=../this}}
-            {{/each}}
-        </div>
+            <div style="clear: both;"></div>
+            <div id="{{getFieldValue this "id"}}" data-module="{{this.module}}" class="collapse" style="height: 0px;"></div>
 
-        <p>
-            <a href="{{getFieldValue this "url"}}" target="_blank" class="pull-left avatar42" data-title="{{getFieldValue this "name"}}">
-            <img src="{{getFieldValue this "picture"}}" alt="{{getFieldValue this "name"}}">
-            </a>
-            <a href="{{getFieldValue this "url"}}" target="_blank" >{{getFieldValue this "name"}}</a>
-        </p>
-
-        <div style="clear: both;"></div>
         </li>
         {{/each}}
         {{#notEq ../collection.next_offset "-1"}}
-            <li><a class="more" data-action="show-more">{{str "LBL_SHOW_MORE_MODULE" this.module}}</a></li>
-        {{/notEq}}    
+            <li>
+                <a class="more" data-action="show-more">{{str "LBL_SHOW_MORE_MODULE" this.module}}</a>
+            </li>
+        {{/notEq}}
     </ul>
     {{else}}
-    <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str
+        <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str
         "LBL_LOADING" this.module}}{{/if}}
-    </div>
+        </div>
     {{/if}}
 </div>

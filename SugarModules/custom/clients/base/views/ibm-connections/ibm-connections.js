@@ -36,7 +36,35 @@
                 module: 'ibm_connectionsTasks'
             },
             cache: {}
+        },
+        'member-todos': {
+            meta: {
+                name: 'ibm-connections-records',
+                module: 'ibm_connectionsTaskNodes'
+            },
+            cache: {}
+        },
+        'member-status': {
+            meta: {
+                name: 'ibm-connections-status',
+                module: 'ibm_connectionsMembers'
+            },
+            cache: {}
         }
+    },
+
+    accordionOpts: {
+        'ibm_connectionsMembers': {
+            filterFld: 'assigned_user_id',
+            view: 'member-todos',
+            statusView: 'member-status'
+        },
+        'ibm_connectionsTasks': {
+            filterFld: 'task_id',
+            view: 'task-nodes',
+            statusView: 'task-status'
+        }
+
     },
 
     plugins: ['Dashlet', 'ToggleVisibility', 'Tooltip'],
@@ -59,7 +87,8 @@
 
 
         this.$el.on('show', _.bind(function (ev) {
-            this.openTaskNodes($(ev.target).attr('id'));
+            var $el = $(ev.target);
+            this.openTaskNodes($el.data('module'), $el.attr('id'));
         }, this));
         this.on('button:delete_item:click', this.deleteModel, this);
         this.context.on('tasknodes:remove tasknodes:change:completed tasknodes:reset', this.recalcTask, this);
@@ -76,9 +105,10 @@
     },
 
     recalcTask: function () {
-        var task_id = this.settings.get('task_id'),
-            view = this.getSubView('task-nodes', task_id),
-            task = this.collection.get(task_id);
+        var module =  this.collection.module, opt = this.accordionOpts[module];
+        var iid = this.settings.get(opt.filterFld),
+            view = this.getSubView(opt.view, iid),
+            parent = this.collection.get(iid);
 
         var val = _.reduce(view.collection.models, function (memo, model) {
 
@@ -91,8 +121,8 @@
             }
             return memo;
         }, {total_todos: 0, completed_todos: 0, completion: 0});
-        task.set(val);
-        this.getSubView('task-status', task.id).render();
+        parent.set(val);
+        this.getSubView(opt.statusView, parent.id).render();
     },
 
     dropAttachment: function (event) {
@@ -210,22 +240,36 @@
         ];
     },
 
-    openTaskNodes: function (task_id, force) {
-        this.settings.set('task_id', task_id);
-        var taskNodeView = this.getSubView('task-nodes', task_id);
-        this.$el.find('#' + task_id).append(taskNodeView.el);
-        taskNodeView.loadData({task_id: task_id});
+    openTaskNodes: function (module, iid, force) {
+
+        var opt = this.accordionOpts[module], fld = opt.filterFld, filter, filterOpt={};
+
+        filterOpt[fld]=iid;
+        filter = [filterOpt];
+
+        if ('ibm_connectionsMembers' == module){
+            filter.push({community_id:this.settings.get('community_id')}) ;
+        }
+
+        this.settings.set(fld, iid);
+        var taskNodeView = this.getSubView(opt.view, iid);
+        this.$el.find('#' + iid).append(taskNodeView.el);
+        taskNodeView.loadData({filter:filter});
+        taskNodeView.parentModule = module;
         taskNodeView.render();
 
         if (force) {
-            $('#' + task_id).collapse('show');
+            $('#' + iid).collapse('show');
         }
     },
 
     getSubView: function (name, id) {
         if (!this.subView[name]['cache'][id]) {
-            var meta = _.extend(this.subView[name]['meta'], {context: this.context, layout: this});
-            this.subView[name]['cache'][id] = app.view.createView(meta);
+            var meta = _.extend(this.subView[name]['meta'], {context: this.context, layout: this}),
+                view = app.view.createView(meta);
+
+            view.parentCid = this.cid;
+            this.subView[name]['cache'][id] = view;
         }
         return this.subView[name]['cache'][id];
     },
@@ -415,9 +459,10 @@
         if (this.meta.config) {
             this.bindCommunityFlds2Model();
         } else {
-            if ('ibm_connectionsTasks' == this.collection.module) {
+            if (!_.isUndefined(this.accordionOpts[this.collection.module])) {
                 _.each(this.collection.models, function (model) {
-                    var statusView = this.getSubView('task-status', model.id);
+                    var viewName = this.accordionOpts[model.module]['statusView'],
+                        statusView = this.getSubView(viewName, model.id);
                     statusView.model = model;
                     this.$el.find('[iid=' + model.id + '] .status').append(statusView.el);
                     statusView.render();
@@ -442,10 +487,13 @@
 
         options.complete = _.wrap(options.complete, function (func) {
             func();
-            var task_id = this.settings.get('task_id');
-            if (!_.isEmpty(task_id)) {
-                this.$el.find('#' + task_id).collapse('show');
-            }
+            _.each(self.accordionOpts, function(opt){
+                var iid = self.settings.get(opt.filterFld);
+                if (!_.isEmpty(iid)) {
+                    this.$el.find('#' + iid).collapse('show');
+                }
+            });
+
             app.alert.dismiss('ibm-connections');
         });
 

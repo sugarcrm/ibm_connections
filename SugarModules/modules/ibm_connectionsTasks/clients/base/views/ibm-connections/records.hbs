@@ -6,10 +6,10 @@
                     <div>
                         <div class="pull-right  actions ">
                             <div class="status" style="display: inline-block;" ></div>
-                            {{#each ../row_actions}}
-                                {{field ../../this model=../this}}
-                            {{/each}}
-                        </div>
+                                {{#each ../row_actions}}
+                                    {{field ../../this model=../this}}
+                                {{/each}}
+                            </div>
                         <p style="padding-left:0" >
                             <a data-toggle="collapse" data-parent="#{{../this.cid}}" href="#{{getFieldValue this "id"}}">
                                 {{getFieldValue this "name"}}
@@ -20,7 +20,7 @@
                             {{/if}}
                         </p>
                     </div>
-                    <div id="{{getFieldValue this "id"}}" class="collapse" style="height: 0px;"></div>
+                    <div id="{{getFieldValue this "id"}}" data-module="{{this.module}}" class="collapse" style="height: 0px;"></div>
                 </li>
             {{/each}}
             {{#notEq ../collection.next_offset "-1"}}

@@ -51,10 +51,7 @@
     loadData: function (options) {
         options = options || {}
         this._super('loadData', [options]);
-
-        this.collection.filterDef = [
-            {task_id: options.task_id}
-        ];
+        this.collection.filterDef = app.utils.deepCopy(options.filter);
         var self = this;
         this.collection.fetch({
             success: function () {
