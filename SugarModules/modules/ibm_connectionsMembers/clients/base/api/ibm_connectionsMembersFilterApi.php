@@ -91,44 +91,20 @@ class ibm_connectionsMembersFilterApi extends ibm_connectionsFilesFilterApi
      */
     protected function buildMembersTodosMap($communityId, $entries)
     {
-        $activities = $this->helper->getActivitiesList($communityId, $searchText = '', 1, self::MAX_PAGE_SIZE );
-        $membersToDos = array();
-        foreach ($activities['entries'] as $activity) {
-            $activityDetails = $this->helper->getActivity($activity['id']);
-            if (is_array($activityDetails) && sizeof($activityDetails) > 0) {
-                foreach ($activityDetails as $node) {
-                    if ($node['node_type'] == 'todo') {
-                        if (!isset($membersToDos[$node['assignedTo']['id']])) {
-                            $membersToDos[$node['assignedTo']['id']] = array(
-                                'total' => 0,
-                                'completed' => 0,
-                                'completion' => 0
-                            );
-                        }
-                        $membersToDos[$node['assignedTo']['id']]['total']++;
-                        if ($node['completed']) {
-                            $membersToDos[$node['assignedTo']['id']]['completed']++;
-                        }
-                    }
+        foreach ($entries as $k => $entry) {
+            $todos = $this->helper->getCommunityTodos($communityId, $entry['id']);
+            $completedTodos = 0;
+            $totalTodos = count($todos);
+            foreach($todos as $todo){
+                if ($todo['completed']){
+                    $completedTodos++;
                 }
             }
+            $entries[$k]['total_todos'] = $totalTodos;
+            $entries[$k]['completed_todos'] = $completedTodos;
+            $entries[$k]['completion'] = ($totalTodos > 0) ? round($completedTodos / $totalTodos * 100) : 0;
         }
 
-        foreach ($entries as $k => $entry) {
-            if (isset($membersToDos[$entry['id']])) {
-                $totalTodos = $membersToDos[$entry['id']]['total'];
-                $completedTodos = $membersToDos[$entry['id']]['completed'];
-                $completion = ($totalTodos > 0) ? round($completedTodos / $totalTodos * 100) : 0;
-
-                $entries[$k]['total_todos'] = $totalTodos;
-                $entries[$k]['completed_todos'] = $completedTodos;
-                $entries[$k]['completion'] = $completion;
-            } else {
-                $entries[$k]['total_todos'] = 0;
-                $entries[$k]['completed_todos'] = 0;
-                $entries[$k]['completion'] = 0;
-            }
-        }
         return $entries;
     }
 

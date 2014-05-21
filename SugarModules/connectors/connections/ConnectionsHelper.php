@@ -13,9 +13,13 @@ class ConnectionsHelper
     public $language;
     private $view;
 
+    const MAX_PAGE_SIZE = 1500;
+
     const URL_USER_PROFILE = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid={0}';
     const URL_USER_AVATAR = 'https://greenhouse.lotus.com/profiles/photo.do?userid={0}';
     const URL_COMMUNITY_IMAGE = 'https://greenhouse.lotus.com/communities/service/html/image?communityUuid={0}';
+
+    const NAME_SEPARATOR = ' :: ';
 
     public function __construct()
     {
@@ -330,7 +334,7 @@ class ConnectionsHelper
         $qr = array();
         parse_str (parse_url((string)$response->id, PHP_URL_QUERY),  $qr);
         $communityId = $qr['communityUuid'];
-        
+
         $res = array();
         if (!empty($entries)) {
             foreach ($entries as $entry) {
@@ -1420,7 +1424,9 @@ class ConnectionsHelper
                         $returnData[] = $this->getEntryView($entry);
                         break;
                     case 'section':
-                        $returnData[] = $this->getSectionView($entry);
+                        $section = $this->getSectionView($entry);
+                        $returnData = array_merge($returnData, $section['content']);
+
                         break;
                 }
             }
@@ -1428,12 +1434,12 @@ class ConnectionsHelper
         return $returnData;
     }
 
-    private function getToDoView($entry)
+    private function getToDoView($entry, $namePrefix = '')
     {
         $arr = array();
         $arr['id'] = $entry->getId();
         $arr['node_type'] = $entry->getType();
-        $arr['title'] = $entry->getTitle();
+        $arr['name'] = $namePrefix.$entry->getTitle();
         $arr['parent_id'] = $this->activity_id;
         $arr['duedate'] = $entry->getDueDate();
         $nodes = $entry->listNodes();
@@ -1454,10 +1460,22 @@ class ConnectionsHelper
         $arr['hasAttachments'] = (count($entry->getAttachments()) > 0) ? true : false;
         $arr['hasTodo'] = $has_todo;
         $arr['hasComment'] = $has_comment;
-        $arr['contributor'] = $entry->getContributor();
+
         $arr['updated'] = $this->formateDate($entry->getFormattedUpdatedDate());
         $arr['completed'] = $entry->getCompleted();
-        $arr['assignedTo'] = $entry->getAssignee();
+
+
+
+        $contributor = $entry->getContributor();
+        $arr['contributor_id'] = $contributor['id'];
+        $arr['contributor_name'] = $contributor['name'];
+        $arr['contributor_status'] = $contributor['status'];
+        $arr['contributor_email'] = $contributor['email'];
+
+        $assignedTo = $entry->getAssignee();
+        $arr['assigned_user_id'] = $assignedTo['id'];
+        $arr['assigned_user_name'] = $assignedTo['name'];
+        $arr['assigned_user_url'] = string_format(self::URL_USER_PROFILE, array($assignedTo['id']));
 
         return $arr;
     }
@@ -1495,12 +1513,12 @@ class ConnectionsHelper
         return $this->view->activityToDoModal($arr);
     }
 
-    private function getEntryView($entry)
+    private function getEntryView($entry, $namePrefix = '')
     {
         $arr = array();
         $arr['id'] = $entry->getId();
         $arr['node_type'] = $entry->getType();
-        $arr['title'] = $entry->getTitle();
+        $arr['name'] = $namePrefix.$entry->getTitle();
         $arr['parent_id'] = $this->activity_id;
         $nodes = $entry->listNodes();
         $has_todo = false;
@@ -1563,7 +1581,7 @@ class ConnectionsHelper
         $arr = array();
         $arr['id'] = $entry->getId();
         $arr['node_type'] = $entry->getType();
-        $arr['title'] = $entry->getTitle();
+        $arr['name'] = $entry->getTitle();
         $arr['parent_id'] = $this->activity_id;
         $arr['content'] = array();
         $nodes = $entry->listNodes();
@@ -1571,10 +1589,10 @@ class ConnectionsHelper
         foreach ($nodes as $node) {
             $node_type = $node->getType();
             if ($node_type == "todo") {
-                $arr['content'][] = $this->getToDoView($node);
+                $arr['content'][] = $this->getToDoView($node, $arr['name'].self::NAME_SEPARATOR);
             } else {
                 if ($node_type == "entry") {
-                    $arr['content'][] = $this->getEntryView($node);
+                    $arr['content'][] = $this->getEntryView($node, $arr['name'].self::NAME_SEPARATOR);
                 }
             }
         }
@@ -1915,6 +1933,47 @@ class ConnectionsHelper
         $tags = explode(",", $tags);
         $communityId = $this->apiClass->createCommunity($name, $description, $access, $tags, '');
         return $communityId;
+    }
+
+    public function  getCommunityTodos($communityId, $assigned_user_id = null)
+    {
+        static $nodes = array();
+
+        if (!isset($nodes[$communityId])){
+            $nodes[$communityId] = $this->getCommunityTodosReq($communityId);
+        }
+
+
+        if (empty($assigned_user_id)){
+            $out = $nodes[$communityId];
+        }else{
+            $out = array();
+            foreach ($nodes[$communityId] as $node){
+                if ($assigned_user_id == $node['assigned_user_id']){
+                    $out[] = $node;
+                }
+            }
+        }
+
+        return $out;
+    }
+
+    protected function getCommunityTodosReq($communityId)
+    {
+        $todos = array();
+        $activities = $this->getActivitiesList($communityId, $searchText = '', 1, self::MAX_PAGE_SIZE );
+        foreach ($activities['entries'] as $activity) {
+            $activityDetails = $this->getActivity($activity['id']);
+            if (is_array($activityDetails) && sizeof($activityDetails) > 0) {
+                foreach($activityDetails as $todo){
+                    if ('todo' == $todo['node_type']){
+                        $todos[] = $todo;
+                    }
+                }
+            }
+        }
+
+        return $todos;
     }
 
 }

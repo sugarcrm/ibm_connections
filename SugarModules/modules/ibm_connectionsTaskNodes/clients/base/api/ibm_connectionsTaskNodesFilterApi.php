@@ -32,7 +32,6 @@ require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/
 
 class ibm_connectionsTaskNodesFilterApi extends ibm_connectionsFilesFilterApi
 {
-    const NAME_SEPARATOR = ' :: ';
 
     public function registerApiRest()
     {
@@ -52,51 +51,18 @@ class ibm_connectionsTaskNodesFilterApi extends ibm_connectionsFilesFilterApi
     public function filterList(ServiceBase $api, array $args)
     {
         $filter = $this->reformatFilter($args['filter']);
-        $beans = $this->buildBeansList($filter['task_id']);
-
-        $data = array(
-            'next_offset' => -1,
-            'records' => $this->formatBeans($api, $args, $beans)
-        );
-        return $data;
-    }
-
-    private function buildBeansList($id)
-    {
         $helper = new ConnectionsHelper();
-        $returnData = $helper->getActivity($id);
 
-        $beans = array();
-        foreach ($returnData as $item) {
-            if (is_array($item['content']) && sizeof($item['content']) > 0) {
-                foreach ($item['content'] as $subItem) {
-                    $subItem['title'] = $item['title'] . self::NAME_SEPARATOR . $subItem['title'];
-                    $beans[] = $this->buildBean($subItem);
-                }
-            }else{
-                $beans[] = $this->buildBean($item);
-            }
+        if (isset($filter['task_id'])){
+            $nodes = $helper->getActivity($filter['task_id']);
+        }elseif(isset($filter['community_id']) && isset($filter['assigned_user_id']) ){
+            $nodes = $helper->getCommunityTodos($filter['community_id'], $filter['assigned_user_id']);
+        }elseif(isset($filter['community_id'])  ){
+            $nodes = $helper->getCommunityTodos($filter['community_id']);
+        }else{
+            throw new SugarApiExceptionRequestMethodFailure('ERROR_UNSUPPORTED_ARGUMENTS');
         }
-        return $beans;
+
+        return $this->formatResult($api, $args,array('entries' => $nodes), new ibm_connectionsTaskNodes());
     }
-
-    private function buildBean($data)
-    {
-        $data['name'] = $data['title'];
-        $data['contributor_id'] = $data['contributor']['id'];
-        $data['contributor_name'] = $data['contributor']['name'];
-        $data['contributor_status'] = $data['contributor']['status'];
-        $data['contributor_email'] = $data['contributor']['email'];
-
-        $data['assigned_user_id'] = $data['assignedTo']['id'];
-        $data['assigned_user_name'] = $data['assignedTo']['name'];
-        $data['assigned_user_url'] = string_format(ConnectionsHelper::URL_USER_PROFILE, array($data['assignedTo']['id']));
-
-        $data['url'] = $data['webEditUrl'];
-
-        $bean = new ibm_connectionsTaskNodes();
-        $bean->fromArray($data);
-        return $bean;
-    }
-
 }
