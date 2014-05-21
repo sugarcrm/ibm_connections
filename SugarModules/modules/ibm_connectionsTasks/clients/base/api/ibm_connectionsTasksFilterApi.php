@@ -50,7 +50,7 @@ class ibm_connectionsTasksFilterApi extends ibm_connectionsFilesFilterApi
 
     public function filterList(ServiceBase $api, array $args)
     {
-        $bean = BeanFactory::newBean('ibm_connectionsMembers');
+        $bean = BeanFactory::newBean('ibm_connectionsTasks');
 
         if (empty($args['fields'])){
             $args['fields'] = implode(',', array_keys($bean->field_defs));
