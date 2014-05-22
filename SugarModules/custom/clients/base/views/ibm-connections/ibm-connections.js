@@ -327,13 +327,17 @@
                     return;
                 }
                 if (-1 != _.indexOf(['ibm_connectionsTodos', 'ibm_connectionsEntries'], model.module)) {
-                    var task_id = model.get('task_id');
-                    self.unsetSubView('task-nodes', task_id);
+                    var opt = self.accordionOpts[self.collection.module], iid = model.get(opt.filterFld);
+                    self.unsetSubView(opt.view, iid);
                     self.render();
-                    self.$el.find('#' + task_id).collapse('show');
-                    self.refreshTabsForModule('ibm_connectionsMembers');
+                    self.$el.find('#' + iid).collapse('show');
+                    if ('ibm_connectionsTodos' == model.module && 'ibm_connectionsMembers' != self.collection.module ){
+                        self.refreshTabsForModule('ibm_connectionsMembers');
+                    }
                 } else {
-                    self.settings.unset('task_id');
+                    _.each(self.accordionOpts, function(opt){
+                        self.settings.unset(opt.filterFld);
+                    });
                     self.refreshTabsForModule(model.module);
                 }
             }
@@ -490,7 +494,7 @@
             _.each(self.accordionOpts, function(opt){
                 var iid = self.settings.get(opt.filterFld);
                 if (!_.isEmpty(iid)) {
-                    this.$el.find('#' + iid).collapse('show');
+                    self.$el.find('#' + iid).collapse('show');
                 }
             });
 
