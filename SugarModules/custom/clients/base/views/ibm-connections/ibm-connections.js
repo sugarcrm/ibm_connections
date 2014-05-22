@@ -197,6 +197,10 @@
                 });
 
             }, this);
+
+            if ('Home' != this.context.parent.get('module') && 'record' == this.context.parent.get('layout')) {
+                this.communityModel.set('name', this.context.parent.get('model').get('name'));
+            }            
         }
 
         this._super('initDashlet', []);
