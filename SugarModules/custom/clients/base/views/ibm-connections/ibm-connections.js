@@ -101,7 +101,22 @@
                 "</span>";
             return new Handlebars.SafeString(wrapper);
         });
+        
+        Handlebars.registerHelper('fileSizeFormat', function (size) {
+            var round = 0, sizes = ['B', 'KB', 'MB', 'GB'], size_index = 0;
+            size = size || 0;
 
+            while (size > 1024 && size_index < sizes.length - 1) {
+                size_index++;
+                size /= 1024;
+            }
+            if (size_index >= 2){
+                round = 2;
+            }
+            size = size.toFixed(round);
+
+            return size + sizes[size_index];
+        });
     },
 
     recalcTask: function () {

@@ -39,7 +39,7 @@
 
                     <a target="_blank" href="{{getFieldValue this "view_link"}}">{{str 'LBL_IBM-CONNECTIONS_LIST_FILE_VIEW' this.module}}</a>
                     {{str 'LBL_IBM-CONNECTIONS_LIST_VERSION' this.module}}: {{getFieldValue this "version" "No version"}}
-                    {{str 'LBL_IBM-CONNECTIONS_LIST_FILE_SIZE' this.module}}: {{getFieldValue this "fileSize" "0"}}
+                    {{str 'LBL_IBM-CONNECTIONS_LIST_FILE_SIZE' this.module}}: {{fileSizeFormat attributes.fileSize}}
                 </div>
             </li>
         {{/each}}
