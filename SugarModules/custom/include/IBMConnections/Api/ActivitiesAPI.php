@@ -523,6 +523,22 @@ class ActivitiesAPI extends AbstractConnectionsAPI
         $this->httpClient = $this->getHttpClient();
         $newEntry = IBMEditableAtomEntry::createEmptyEditableEntry();
         $newEntry->addCategory('todo', 'http://www.ibm.com/xmlns/prod/sn/type', 'To Do');
+
+        $todoEntry = $this->getActivityNode($id);
+        $nodeList = $todoEntry->getAtom()->xquery("./snx:assignedto");
+        if($nodeList->length > 0) {
+            $node = $nodeList->item(0);
+            $assignedTo = array(
+                "name" => $node->attributes->getNamedItem("name")->textContent,
+                "id" => $node->attributes->getNamedItem("userid")->textContent,
+                "email" => $node->textContent
+            );
+            $assignedElt = $newEntry->getDom()->createElement('snx:assignedto');
+            $assignedElt->setAttribute('name', $assignedTo['name']);
+            $assignedElt->setAttribute('userid', $assignedTo['id']);
+            $newEntry->getEntryNode()->appendChild($assignedElt);
+        }
+
         if ($completed) {
             $newEntry->addCategory('completed', 'http://www.ibm.com/xmlns/prod/sn/flags', 'Completed');
         }

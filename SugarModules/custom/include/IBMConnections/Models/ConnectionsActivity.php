@@ -266,4 +266,9 @@ class ConnectionsActivity extends ConnectionsModel
                 $GLOBALS['log']->fatal("Unrecognized Activity node type: " . $type['term']);
         }
     }
+
+    public function getAtom()
+    {
+        return $this->atom;
+    }
 }
