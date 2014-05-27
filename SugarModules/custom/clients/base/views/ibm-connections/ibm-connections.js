@@ -74,7 +74,9 @@
      */
     initialize: function (options) {
 
-        this.events['click [name=community_add]'] = 'addCommunity';
+        this.events = _.extend({}, this.events, {
+            'click [name=community_add]': 'addCommunity'
+        });
 
         this.initCustomBeans();
         options.meta = options.meta || {};
