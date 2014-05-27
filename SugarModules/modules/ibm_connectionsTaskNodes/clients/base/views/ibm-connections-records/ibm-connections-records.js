@@ -10,13 +10,13 @@
 
             model.save({}, {success: function () {
                 self.render();
-                self.context.trigger('tasknodes:change:completed');
+                self.layout.$el.trigger('tasknodes:change:completed');
                 app.alert.dismiss('ibm-tasknodes-save');
             }});
         })
 
         collection.on("reset", function () {
-            self.context.trigger('tasknodes:reset');
+            self.layout.$el.trigger('tasknodes:reset');
         });
 
         options.collection = collection;
@@ -41,7 +41,7 @@
                 delModel.destroy({success: function () {
                     self.collection.remove(delModel);
                     self.render();
-                    self.context.trigger('tasknodes:remove');
+                    self.layout.$el.trigger('tasknodes:remove');
                     app.alert.dismiss('ibm-tasknodes-del');
                 }});
             }

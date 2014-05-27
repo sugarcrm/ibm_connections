@@ -69,13 +69,22 @@
 
     plugins: ['Dashlet', 'ToggleVisibility', 'Tooltip'],
 
+    reloadMap: {'ibm_connectionsMembers': 'ibm_connectionsTasks',
+        'ibm_connectionsTasks': 'ibm_connectionsMembers'},
     /**
      * {@inheritDoc}
      */
     initialize: function (options) {
 
         this.events = _.extend({}, this.events, {
-            'click [name=community_add]': 'addCommunity'
+            'click [name=community_add]': 'addCommunity',
+            'show': _.bind(function (ev) {
+                var $el = $(ev.target);
+                this.openTaskNodes($el.data('module'), $el.attr('id'));
+            }, this),
+            'tasknodes:remove': 'recalcTaskUpdate',
+            'tasknodes:change:completed': 'recalcTaskUpdate',
+            'tasknodes:reset': 'recalcTask',
         });
 
         this.initCustomBeans();
@@ -85,16 +94,6 @@
         this._super('initialize', [options]);
         this.tbodyTag = 'ul[data-action="pagination-body"]';
 
-        //this.on('click [data-event="button:link_member2task"]', this.linkMember2task, this);
-
-
-        this.$el.on('show', _.bind(function (ev) {
-            var $el = $(ev.target);
-            this.openTaskNodes($el.data('module'), $el.attr('id'));
-        }, this));
-        this.on('button:delete_item:click', this.deleteModel, this);
-        this.context.on('tasknodes:remove tasknodes:change:completed tasknodes:reset', this.recalcTask, this);
-
         Handlebars.registerHelper('dateFormat', function (dateString) {
             var formattedDateString = app.date.format(new Date(dateString), app.user.getPreference('datepref'));
 
@@ -103,7 +102,7 @@
                 "</span>";
             return new Handlebars.SafeString(wrapper);
         });
-        
+
         Handlebars.registerHelper('fileSizeFormat', function (size) {
             var round = 0, sizes = ['B', 'KB', 'MB', 'GB'], size_index = 0;
             size = size || 0;
@@ -119,6 +118,11 @@
 
             return size + sizes[size_index];
         });
+    },
+
+    recalcTaskUpdate: function(){
+        this.recalcTask();
+        this.refreshTabsForModule(this.reloadMap[this.collection.module]);
     },
 
     recalcTask: function () {
@@ -202,7 +206,7 @@
 
             if ('Home' != this.context.parent.get('module') && 'record' == this.context.parent.get('layout')) {
                 this.communityModel.set('name', this.context.parent.get('model').get('name'));
-            }            
+            }
         }
 
         this._super('initDashlet', []);
@@ -352,8 +356,8 @@
                     self.unsetSubView(opt.view, iid);
                     self.render();
                     self.$el.find('#' + iid).collapse('show');
-                    if ('ibm_connectionsTodos' == model.module && 'ibm_connectionsMembers' != self.collection.module ){
-                        self.refreshTabsForModule('ibm_connectionsMembers');
+                    if ('ibm_connectionsTodos' == model.module){
+                        self.refreshTabsForModule(self.reloadMap[self.collection.module]);
                     }
                 } else {
                     _.each(self.accordionOpts, function(opt){
