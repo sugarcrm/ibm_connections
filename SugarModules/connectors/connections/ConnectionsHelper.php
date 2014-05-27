@@ -1775,7 +1775,7 @@ class ConnectionsHelper
         echo json_encode(array('id' => $this->activityId, 'completion' => $this_activity->getCompletion()));
     }
 
-    public function getActivitiesList($communityId, $searchText = '', $page = 1, $limit = 5, $fields)
+    public function getActivitiesList($communityId, $searchText = '', $page = 1, $limit = 5, $fields = array())
     {
 
         if (!$this->apiClass->isActivitiesActivated($communityId)) {
