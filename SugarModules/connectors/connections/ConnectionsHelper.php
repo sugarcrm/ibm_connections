@@ -622,12 +622,9 @@ class ConnectionsHelper
         $this->apiClass->deleteFile($fileId);
     }
 
-    public function deleteCommunity()
+    public function deleteCommunity($id)
     {
-        $res = $this->apiClass->deleteCommunity($this->community_id);
-        ob_clean();
-        echo json_encode(array('deleted' => $res));
-
+        return $this->apiClass->deleteCommunity($id);
     }
 
     public function markToDoCompleted()
