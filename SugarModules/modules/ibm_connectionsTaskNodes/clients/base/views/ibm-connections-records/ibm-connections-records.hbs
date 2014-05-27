@@ -17,10 +17,12 @@
                 {{#eq attributes.node_type "entry"}}
                     <i class="icon-file-alt"></i>
                 {{/eq}}
-                {{getFieldValue this "name"}}
+
+                <a href="{{getFieldValue this "url"}}" target="_blank" >{{getFieldValue this "name"}}</a>
 
                 {{#notEq  'ibm_connectionsMembers' ../this.parentModule}}
                     {{#if attributes.assigned_user_name }}
+                        {{str "LBL_ASSIGNED_TO" this.module}}:
                         <a target="_blank" href="{{getFieldValue this "assigned_user_url"}}">{{getFieldValue this "assigned_user_name"}}</a>
                     {{/if}}
                 {{/notEq}}

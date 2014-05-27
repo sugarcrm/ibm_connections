@@ -1444,6 +1444,9 @@ class ConnectionsHelper
         $arr['name'] = $namePrefix.$entry->getTitle();
         $arr['parent_id'] = $this->activity_id;
         $arr['duedate'] = $entry->getDueDate();
+        $url = $entry->getLinkAlt();
+        $arr['url'] = $url['href'];
+
         $nodes = $entry->listNodes();
         $has_todo = false;
         $has_comment = false;
@@ -1542,6 +1545,8 @@ class ConnectionsHelper
         $arr['hasComment'] = $has_comment;
         $arr['contributor'] = $entry->getContributor();
         $arr['updated'] = $this->formateDate($entry->getFormattedUpdatedDate());
+        $url = $entry->getLinkAlt();
+        $arr['url'] = $url['href'];
 
         return $arr;
 

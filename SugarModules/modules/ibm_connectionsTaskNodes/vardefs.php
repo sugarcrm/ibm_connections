@@ -94,6 +94,12 @@ $fields = array(
         'source' => 'non-db',
         'type' => 'date',
     ),
+    'url' => array(
+        'name' => 'url',
+        'type' => 'varchar',
+        'source' => 'non-db',
+        'unified_search' => true,
+    ),
 );
 
  
