@@ -79,4 +79,10 @@ class ibm_connectionsCommunity extends SugarBean
         }
     }
 
+    public function mark_deleted($id)
+    {
+        $helper = new ConnectionsHelper();
+        $helper->deleteCommunity($id);
+    }
+
 }
