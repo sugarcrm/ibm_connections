@@ -286,8 +286,8 @@ class CommunitiesAPI extends AbstractConnectionsAPI
         }
         if ($search != null) {
             $this->getHttpClient()->setParameterGet("search", $search);
-        } else {
-            $sortBy = "lastmod";
+        } elseif ( is_null($sortBy) ) {
+            $sortBy = "title";
         }
 
         if ($pageSize != null) {

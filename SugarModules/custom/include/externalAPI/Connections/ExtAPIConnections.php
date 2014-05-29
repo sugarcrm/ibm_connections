@@ -493,11 +493,11 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
         $searchText = str_ireplace(" ", "+", $searchText);
         $api = $this->api->getCommunitiesAPI();
         if ($type == 'MyCommunities') {
-            $reply = $api->listMyCommunities($searchText, null, null, null, CommunitiesAPI::MAX_PAGE_SIZE, $page);
+            $reply = $api->listMyCommunities($searchText, null, 'title', 'asc', CommunitiesAPI::MAX_PAGE_SIZE, $page);
         }
 
         if ($type == 'PublicCommunities') {
-            $reply = $api->listAllCommunities($searchText, null, null, null, CommunitiesAPI::MAX_PAGE_SIZE, $page);
+            $reply = $api->listAllCommunities($searchText, null, 'title', 'asc', CommunitiesAPI::MAX_PAGE_SIZE, $page);
         }
         //var_dump($api->getLastResultMetadata());
         return $reply;
