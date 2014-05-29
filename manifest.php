@@ -158,6 +158,10 @@ $installdefs = array (
       'from' => '<basepath>/SugarModules/custom',
       'to' => 'custom',
     ),
+    array (
+      'from' => '<basepath>/SugarModules/tests',
+      'to' => 'tests',
+    ),
   ),
   'language' => 
   array (
