@@ -32,13 +32,26 @@ $app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_TITLE'] = "Select Connections F
 $app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_KEY'] = "";
 $app_strings['LBL_SELECT_CONNECTIONS_FILE_BUTTON_LABEL'] = "Select Connections File";
 
-$app_list_strings['moduleList']['ibm_connectionsCommunity'] = 'IBM connections Community';
-$app_list_strings['moduleList']['ibm_connectionsMembers'] = 'IBM connections Community members';
-$app_list_strings['moduleList']['ibm_connectionsFiles'] = 'IBM connections Community Files';
-$app_list_strings['moduleList']['ibm_connectionsTasks'] = 'IBM connections Community tasks';
-$app_list_strings['moduleList']['ibm_connectionsTaskNodes'] = 'IBM connections Community task nodes';
-$app_list_strings['moduleList']['ibm_connectionsEntries'] = 'IBM connections Community Entries';
-$app_list_strings['moduleList']['ibm_connectionsTodos'] = 'IBM connections Community todos';
+$app_list_strings['moduleList']['ibm_connectionsCommunity'] = 'Communities';
+$app_list_strings['moduleListSingular']['ibm_connectionsCommunity'] = 'Community';
+
+$app_list_strings['moduleList']['ibm_connectionsMembers'] = 'Members';
+$app_list_strings['moduleListSingular']['ibm_connectionsMembers'] = 'Member';
+
+$app_list_strings['moduleList']['ibm_connectionsFiles'] = 'Files';
+$app_list_strings['moduleListSingular']['ibm_connectionsFiles'] = 'File';
+
+$app_list_strings['moduleList']['ibm_connectionsTasks'] = 'Tasks';
+$app_list_strings['moduleListSingular']['ibm_connectionsTasks'] = 'Task';
+
+$app_list_strings['moduleList']['ibm_connectionsTaskNodes'] = 'Task nodes';
+$app_list_strings['moduleListSingular']['ibm_connectionsTaskNodes'] = 'Task node';
+
+$app_list_strings['moduleList']['ibm_connectionsEntries'] = 'Entries';
+$app_list_strings['moduleListSingular']['ibm_connectionsEntries'] = 'Entrty';
+
+$app_list_strings['moduleList']['ibm_connectionsTodos'] = 'Todos';
+$app_list_strings['moduleListSingular']['ibm_connectionsTodos'] = 'Todo';
 
 
 $app_strings['LBL_IBM-CONNECTIONS_DASHLET'] = 'IBM connections';
