@@ -87,11 +87,11 @@ class ConnectionsAPI extends AbstractConnectionsAPI
 
 
 	/**
-	 * @var ActivitiesAPI
+	 * @var IBMConnectionsActivitiesAPI
 	 */
 	public function getActivitiesAPI() {
 		if(!$this->activities) {
-			$this->activities = new ActivitiesAPI($this->getHttpClient());
+			$this->activities = new IBMConnectionsActivitiesAPI($this->getHttpClient());
 		}
 		return $this->activities;
 	}

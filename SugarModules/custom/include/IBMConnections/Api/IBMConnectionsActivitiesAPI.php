@@ -17,7 +17,7 @@
 require_once 'custom/include/IBMConnections/Api/AbstractConnectionsAPI.php';
 require_once 'custom/include/IBMConnections/Api/CommunitiesAPI.php';
 require_once 'custom/include/IBMConnections/FeedApi/IBMAtomFeed.php';
-require_once 'custom/include/IBMConnections/Models/ConnectionsActivities.php';
+require_once 'custom/include/IBMConnections/Models/IBMConnectionsActivitiesAPI.php';
 require_once 'custom/include/IBMConnections/Models/ConnectionsActivity.php';
 require_once 'custom/include/IBMConnections/Models/ConnectionsActivityNode.php';
 require_once 'custom/include/IBMConnections/Models/ConnectionsActivityEntry.php';
@@ -32,7 +32,7 @@ require_once 'custom/include/IBMConnections/Models/ConnectionsHistoryEntry.php';
  * @author Mario Casciaro
  *
  */
-class ActivitiesAPI extends AbstractConnectionsAPI
+class IBMConnectionsActivitiesAPI extends AbstractConnectionsAPI
 {
     /**
      *
