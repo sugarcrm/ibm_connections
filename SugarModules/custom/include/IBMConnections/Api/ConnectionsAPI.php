@@ -18,7 +18,7 @@
 require_once 'custom/include/IBMConnections/Api/AbstractConnectionsAPI.php';
 require_once 'custom/include/IBMConnections/FeedApi/IBMAtomFeed.php';
 require_once 'custom/include/IBMConnections/Api/CommunitiesAPI.php';
-require_once 'custom/include/IBMConnections/Api/ActivitiesAPI.php';
+require_once 'custom/include/IBMConnections/Api/IBMConnectionsActivitiesAPI.php';
 require_once('custom/include/IBMConnections/Api/FilesAPI.php');
 require_once('custom/include/IBMConnections/Api/ProfilesAPI.php');
 require_once('custom/include/IBMConnections/Api/WikiAPI.php');
