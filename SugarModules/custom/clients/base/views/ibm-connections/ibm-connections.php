@@ -48,14 +48,6 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                 'no_default_action' => true,
                 'icon' => 'icon-plus',
                 'buttons' => array(
-                    /*array(
-                        'type' => 'dashletaction',
-                        'action' => 'rk',
-                        'params' => array(
-                            'module' => 'ibm_connectionsTasks',
-                        ),
-                        'label' => 'rk',
-                    ),*/
                     array(
                         'type' => 'dashletaction',
                         'action' => 'addItem',
@@ -127,8 +119,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                 array(
                     'type' => 'title',
                     'name' => 'title',
-                    'default_value' => 'Or create new',
-                    'value' => 'Or create new',
+                    'default_value' => translate('LBL_IBM-CONNECTIONS_COMMUNITY_OR_CREATE_NEW'),
                     'span' => 12
                 ),
                 array(
@@ -139,7 +130,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                 ),
                 array(
                     'name' => 'access',
-                    'label' => 'Access',
+                    'label' => 'LBL_IBM-CONNECTIONS_COMMUNITY_ACCESS',
                     'type' => 'enum',
                     'required' => true,
                     'options' => 'ibm-connections_access',
@@ -147,13 +138,13 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                 array(
                     'type' => 'memberset',
                     'name' => 'members',
-                    'label' => 'Add member',
+                    'label' => 'LBL_IBM-CONNECTIONS_COMMUNITY_ADD_MEMBER',
                     'module' => 'ibm_connectionsMembers',
                     'span'  => 12
                 ),
                 array(
                     'name' => 'tags',
-                    'label' => 'Tags',
+                    'label' => 'LBL_IBM-CONNECTIONS_COMMUNITY_TAGS',
                     'type' => 'text',
                 ),
                 array(
@@ -166,7 +157,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                 array(
                     'type' => 'button',
                     'name' => 'community_add',
-                    'label' => 'Add',
+                    'label' => 'LBL_CREATE_BUTTON_LABEL',
                     'primary' => true,
                     'dismiss_label' => true
                 ),
@@ -199,20 +190,6 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                             'name' => 'edit_button',
                             'label' => 'LBL_IBM-CONNECTIONS_BTN_ADD_TODO',
                         ),
-                        /*
-                                                array(
-                                                    'type' => 'dashletaction',
-                                                    'name' => 'edit_button',
-                                                    'label' => 'View Tasks',
-                                                    'action' => 'showMemberTasks',
-                                                ),
-                                                array(
-                                                    'type' => 'dashletaction',
-                                                    'name' => 'edit_button',
-                                                    'label' => 'Profile',
-                                                    'action' => 'showMemberProfile',
-                                                ),
-                        */
                         array(
                             'type' => 'dashletaction',
                             'name' => 'edit_button',

@@ -63,6 +63,10 @@ $app_strings['LBL_IBM-CONNECTIONS_ADD_FILE'] = 'Add File';
 $app_strings['LBL_IBM-CONNECTIONS_ADD_MEMBER'] = 'Add Member';
 
 $app_strings['LBL_IBM-CONNECTIONS_SELECT_COMMUNITY'] = 'Select community';
+$app_strings['LBL_IBM-CONNECTIONS_COMMUNITY_TAGS'] = 'Tags';
+$app_strings['LBL_IBM-CONNECTIONS_COMMUNITY_ADD_MEMBER'] = 'Add member';
+$app_strings['LBL_IBM-CONNECTIONS_COMMUNITY_ACCESS'] = 'Access';
+$app_strings['LBL_IBM-CONNECTIONS_COMMUNITY_OR_CREATE_NEW'] = 'Or create new';
 
 $app_strings['LBL_IBM-CONNECTIONS_TAB_MEMBER_SINGULAR'] = 'Member';
 $app_strings['LBL_IBM-CONNECTIONS_TAB_MEMBER_PLURAL'] = 'Team';
@@ -100,3 +104,4 @@ $app_strings['LBL_IBM-CONNECTIONS_DUEDATE'] = 'Due date';
 $app_strings['LBL_IBM-CONNECTIONS_ROLE'] = 'Role';
 
 $app_strings['LBL_IBM-CONNECTIONS_CANNOT_UNLINK_COMMUNITY_OWNER'] = 'You cannot unlink community owner';
+
