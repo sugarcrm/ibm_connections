@@ -7,6 +7,7 @@
 
     initialize: function (options) {
         this.roles = app.lang.getAppListStrings('ibm-connections_member_role');
+        this.events = _.extend({}, this.events);
         this.events['change ' + this.roleTag] = 'changeRole';
         this._super('initialize', [options]);
     },
