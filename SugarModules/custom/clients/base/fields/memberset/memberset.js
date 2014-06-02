@@ -13,6 +13,7 @@
     },
 
     _render: function () {
+        var self = this;
         this._super('_render');
         if (this.tplName === 'edit') {
             // Role drop down initialization
@@ -26,6 +27,13 @@
                 if (!_.isUndefined(plugin)) {
                     plugin.searchmore = true;
                     plugin.container.css('width', '80%');
+                    if (self.def.imgUrl) {
+                        plugin.opts.formatResult = function (state) {
+                            if (!state.id) return state.text; // optgroup
+                            var url = app.utils.formatString(self.def.imgUrl, [state.id]);
+                            return "<img style='height: 28px; margin-right:10px; ' src='" + url + "'/>" + state.text;
+                        };
+                    }
                 }
             });
         }

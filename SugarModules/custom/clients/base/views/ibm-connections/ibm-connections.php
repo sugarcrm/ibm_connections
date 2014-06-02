@@ -140,7 +140,8 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                     'name' => 'members',
                     'label' => 'LBL_IBM-CONNECTIONS_COMMUNITY_ADD_MEMBER',
                     'module' => 'ibm_connectionsMembers',
-                    'span'  => 12
+                    'span'  => 12,
+                    'imgUrl' => ConnectionsHelper::URL_USER_AVATAR
                 ),
                 array(
                     'name' => 'tags',
