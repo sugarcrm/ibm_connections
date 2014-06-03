@@ -11,13 +11,9 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 /**
- * History dashlet takes advantage of the tabbed dashlet abstraction by using
- * its metadata driven capabilities to configure its tabs in order to display
- * historic information about specific modules.
- *
- * @class View.Views.BaseHistoryView
- * @alias SUGAR.App.view.views.BaseHistoryView
- * @extends View.Views.BaseTabbedDashletView
+ * @class View.Views.BaseIbmConnectionsView
+ * @alias SUGAR.App.view.views.BaseIbmConnectionsView
+ * @extends View.Views.BaseIbmConnectionsView
  */
 ({
     extendsFrom: 'TabbedDashletView',
@@ -94,30 +90,8 @@
         this._super('initialize', [options]);
         this.tbodyTag = 'ul[data-action="pagination-body"]';
 
-        Handlebars.registerHelper('dateFormat', function (dateString) {
-            var formattedDateString = app.date.format(new Date(dateString), app.user.getPreference('datepref'));
-
-            var wrapper = "<span class=\"relativetime\" " + " >" +
-                formattedDateString +
-                "</span>";
-            return new Handlebars.SafeString(wrapper);
-        });
-
-        Handlebars.registerHelper('fileSizeFormat', function (size) {
-            var round = 0, sizes = ['B', 'KB', 'MB', 'GB'], size_index = 0;
-            size = size || 0;
-
-            while (size > 1024 && size_index < sizes.length - 1) {
-                size_index++;
-                size /= 1024;
-            }
-            if (size_index >= 2){
-                round = 2;
-            }
-            size = size.toFixed(round);
-
-            return size + sizes[size_index];
-        });
+        Handlebars.registerHelper('dateFormat', this.hbsHelpers.dateFormat);
+        Handlebars.registerHelper('fileSizeFormat', this.hbsHelpers.fileSizeFormat);
     },
 
     recalcTaskUpdate: function(){
@@ -369,35 +343,6 @@
         );
     },
 
-    addLink: function (event, params) {
-        /*
-         var id = this._getIId(event);
-         var str = "addLink\n"+"community_id="+this.settings.get('community_id')+"\n"
-         +"module="+params.module+"\n"
-         +"link="+params.link+"\n"
-         +"iid="+id+"\n";
-         alert(str);
-         */
-
-        var self = this;
-        var model = app.data.createBean("ibm_connectionsTasks", {community_id: this.settings.get('community_id') })
-        app.drawer.open({
-            layout: 'create-actions',
-            context: {
-                create: true,
-                module: 'ibm_connectionsTasks',
-                model: model
-                /*prepopulate: {
-                 related: this.model,
-                 to_addresses: [{bean: this.model}],
-                 community_id:this.settings.get('community_id')
-                 }*/
-            }
-        }, function (model) {
-
-        });
-    },
-
     showMemberTasks: function (event) {
         var id = this._getIId(event);
         var str = "showMemberTasks\n"
@@ -641,5 +586,32 @@
             fld.model.on("error:validation:" + fld.name, fld.handleValidationError, fld);
             fld.bindDataChange();
         }, this);
+    },
+
+    hbsHelpers:{
+        dateFormat: function (dateString) {
+            var formattedDateString = app.date.format(new Date(dateString), app.user.getPreference('datepref'));
+
+            var wrapper = "<span class=\"relativetime\" " + " >" +
+                formattedDateString +
+                "</span>";
+            return new Handlebars.SafeString(wrapper);
+        },
+
+        fileSizeFormat: function (size) {
+            var round = 0, sizes = ['B', 'KB', 'MB', 'GB'], size_index = 0;
+            size = size || 0;
+
+            while (size > 1024 && size_index < sizes.length - 1) {
+                size_index++;
+                size /= 1024;
+            }
+            if (size_index >= 2){
+                round = 2;
+            }
+            size = size.toFixed(round);
+
+            return size + sizes[size_index];
+        }
     }
 })
