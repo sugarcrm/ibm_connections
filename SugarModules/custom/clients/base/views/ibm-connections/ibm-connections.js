@@ -121,6 +121,11 @@
     },
 
     dropAttachment: function (event) {
+        app.alert.show('ibmconn-uploading',
+            {level: 'process',
+                title: app.lang.getAppString('LBL_UPLOADING'),
+                autoClose: false});
+
         var files = event.originalEvent.dataTransfer.files, uploadedCnt = 0, self = this;
         for (var i = 0; i < files.length; i++) {
             var formData = new FormData();
@@ -145,12 +150,6 @@
                 }
             });
         }
-
-        app.alert.show('ibmconn-uploading',
-            {level: 'process',
-                title: app.lang.getAppString('LBL_UPLOADING'),
-                autoClose: false});
-
         event.stopPropagation();
         event.preventDefault();
     },
