@@ -57,6 +57,7 @@ class ibm_connectionsTasksFilterApi extends ibm_connectionsFilesFilterApi
         }
 
         $helper = new ConnectionsHelper();
+        $this->checkLogin($helper);
         $filter = $this->reformatFilter($args['filter']);
         $options = $this->parseArguments($api, $args, $bean);
         $page = $this->pageNum($options['offset'], $options['limit']);

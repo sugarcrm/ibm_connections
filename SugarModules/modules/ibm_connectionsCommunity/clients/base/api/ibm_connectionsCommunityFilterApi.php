@@ -60,6 +60,7 @@ class ibm_connectionsCommunityFilterApi extends ibm_connectionsFilesFilterApi
     public function filterList(ServiceBase $api, array $args)
     {
         $helper = new ConnectionsHelper();
+        $this->checkLogin($helper);
         $res = $helper->apiClass->checkLogin();
         if (!$res['success']) {
             throw new SugarApiExceptionRequestMethodFailure('ERROR_NEED_AUTHORIZE');

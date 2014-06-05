@@ -53,6 +53,7 @@ class ibm_connectionsFilesFilterApi extends FilterApi
     public function filterList(ServiceBase $api, array $args)
     {
         $helper = new ConnectionsHelper();
+        $this->checkLogin($helper);
         $filter = $this->reformatFilter($args['filter']);
         $options = $this->parseArguments($api, $args);
         $page = $this->pageNum($options['offset'], $options['limit']);
@@ -104,4 +105,21 @@ class ibm_connectionsFilesFilterApi extends FilterApi
         return $out;
     }
 
+    /**
+     * Checking connectivity
+     *
+     * @param ConnectionsHelper $helper
+     * @throws SugarApiExceptionRequestMethodFailure
+     */
+    protected function checkLogin(ConnectionsHelper $helper){
+        if ( !isset($helper->apiClass->eapmBean) || $helper->apiClass->eapmBean->validated==0 ){
+            throw new SugarApiExceptionRequestMethodFailure('ERROR_NEED_AUTHORIZE');
+        }
+
+        $res = $helper->apiClass->checkLogin();
+        if (!$res['success']){
+            throw new SugarApiExceptionRequestMethodFailure('ERROR_CANNOT_CONNECT');
+        }
+    }
+    
 } 

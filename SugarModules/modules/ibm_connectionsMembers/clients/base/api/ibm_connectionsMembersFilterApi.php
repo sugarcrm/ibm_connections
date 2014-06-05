@@ -57,7 +57,8 @@ class ibm_connectionsMembersFilterApi extends ibm_connectionsFilesFilterApi
     public function filterList(ServiceBase $api, array $args)
     {
         $this->helper = new ConnectionsHelper();
-
+        $this->checkLogin($this->helper);
+        
         $bean = BeanFactory::newBean('ibm_connectionsMembers');
 
         if (empty($args['fields'])){
