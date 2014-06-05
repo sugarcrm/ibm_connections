@@ -90,8 +90,23 @@
         this._super('initialize', [options]);
         this.tbodyTag = 'ul[data-action="pagination-body"]';
 
+        if (this.meta.config) {
+            this.communityModel = app.data.createBean('ibm_connectionsCommunity');
+            this.populateCommunityName();
+            this.getCommunities();
+        }
+
         Handlebars.registerHelper('dateFormat', this.hbsHelpers.dateFormat);
         Handlebars.registerHelper('fileSizeFormat', this.hbsHelpers.fileSizeFormat);
+    },
+
+    /**
+     * Populating community name on configuration dashlet
+     */
+    populateCommunityName: function () {
+        if ('Home' != this.context.parent.get('module') && 'record' == this.context.parent.get('layout')) {
+            this.communityModel.set('name', this.context.parent.get('model').get('name'));
+        }
     },
 
     recalcTaskUpdate: function(){
@@ -154,20 +169,32 @@
         event.preventDefault();
     },
 
-    initDashlet: function () {
-        var self = this;
-        if (this.meta.config) {
-            var communityCollect = app.data.createBeanCollection("ibm_connectionsCommunity", null, {});
-            communityCollect.on('reset', this.fillCommunities, this);
-            communityCollect.fetch({
-                fields: ['id', 'name'],
-                error: function () {
-                    self.template = app.template.get(self.name + '.ibm-connections-need-configure');
-                    self._render();
-                }
-            });
+    /**
+     * Hannling server errors
+     */
+    handleServerError: function (error) {
+        debugger;
+        var tplMap = {ERROR_NEED_AUTHORIZE: 'ibm-connections-need-configure',
+            ERROR_CANNOT_CONNECT: 'error'};
 
-            this.communityModel = app.data.createBean('ibm_connectionsCommunity');
+        this.template = app.template.get(this.name + '.' + tplMap[error.message]);
+        this._render();
+    },
+
+    _initEvents: function () {
+        // drag and drop for upload files
+        this.$el.on('dragenter', function () { return false; });
+        this.$el.on('dragover', function () { return false; });
+        this.$el.on('dragleave', function (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            return false;
+        });
+        this.$el.on('drop', _.bind(this.dropAttachment, this));
+
+
+        // Error validation on create community 
+        if (this.meta.config) {
             this.communityModel.on("error:validation", function(){
                 app.alert.show('invalid-data', {
                     level: 'error',
@@ -176,35 +203,30 @@
                 });
 
             }, this);
-
-            if ('Home' != this.context.parent.get('module') && 'record' == this.context.parent.get('layout')) {
-                this.communityModel.set('name', this.context.parent.get('model').get('name'));
-            }
         }
 
-        this._super('initDashlet', []);
-
-        this.$el.on('dragenter', function (event) {
-//            self.$(event.currentTarget).addClass("dragdrop");
-            return false;
-        });
-
-        this.$el.on('dragover', function (event) {
-            return false;
-        });
-
-        this.$el.on('dragleave', function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-//            self.$(event.currentTarget).removeClass("dragdrop");
-            return false;
-        });
-
-        this.$el.on('drop', _.bind(this.dropAttachment, this));
-
+        return this._super('_initEvents', []);
     },
 
-    fillCommunities: function (communityCollect) {
+    /**
+     * Makes a fetch community follection to get all communites
+     */
+    getCommunities: function()
+    {
+        var communityCollect = app.data.createBeanCollection("ibm_connectionsCommunity", null, {});
+        communityCollect.on('reset', this.parseCommunities, this);
+        communityCollect.fetch({
+            fields: ['id', 'name'],
+            error: _.bind(this.handleServerError, this)
+        });
+    },
+
+    /**
+     * Parses items passed back from collection into enum options
+     *
+     * @param {collect}
+     */
+    parseCommunities: function (communityCollect) {
 
         this.communityOptions = {};
         var communityField = _.find(this.fields, function (field) {
@@ -216,8 +238,8 @@
         }, this);
 
         if (communityField) {
-            // set the initial saved_report_id to the first report in the list
-            // if there are reports to show and we have not already saved this
+            // set the initial community_id to the first community in the list
+            // if there are communites to show and we have not already saved this
             // dashlet yet with a community ID
             if (communityCollect.models && !this.settings.has('community_id')) {
                 this.settings.set({
@@ -587,6 +609,31 @@
         }, this);
     },
 
+    /**
+     * {@inheritDoc}
+     *
+     * Added support error reporting
+     *
+     */
+    _createCollection: function (tab) {
+        var self = this, collection = this._super('_createCollection', [tab]);
+        collection.fetch = (function (old) {
+            return function (opts) {
+                opts = _.extend({}, opts, {
+                    error: _.bind(self.handleServerError, self)
+                });
+
+                var res = old.apply(this, [opts]);
+                return res;
+            }
+        })(collection.fetch);
+
+        return collection;
+    },
+
+    /**
+     * Handlebars helpers
+     */
     hbsHelpers:{
         dateFormat: function (dateString) {
             var formattedDateString = app.date.format(new Date(dateString), app.user.getPreference('datepref'));
