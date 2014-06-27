@@ -212,7 +212,20 @@ class ConnectionsFile extends ConnectionsModel
 		}
 		return $stringOfTags;
 	}
-     
+
+    /**
+     * Return community id of file
+     * 
+     * @return String
+     */
+    public function getCommunityId()
+    {
+        $link = $this->getViewLink();
+        $queryStr = parse_url($link, PHP_URL_QUERY);
+        parse_str($queryStr, $output);
+
+        return $output['communityUuid'];
+    }    
    
 	/**
 	 * 65

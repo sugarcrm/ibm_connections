@@ -32,10 +32,9 @@ $manifest = array (
   array (
     'acceptable_sugar_versions' => 
     array (
-      0 => '6\.4\.*',
-      1 => '6\.5\.*',
-      2 => '6\.6\.*',
-      3 => '6\.7\.*',
+      '7.0.x',
+      '7.1.x',
+      '7.2.x',
     ),
   ),
   1 => 
@@ -71,6 +70,48 @@ $installdefs = array (
       'path' => 'modules/ibm_connections/ibm_connections.php',
       'tab' => false,
     ),
+      array(
+          'module' => 'ibm_connectionsCommunity',
+          'class' => 'ibm_connectionsCommunity',
+          'path' => 'modules/ibm_connectionsCommunity/ibm_connectionsCommunity.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsMembers',
+          'class' => 'ibm_connectionsMembers',
+          'path' => 'modules/ibm_connectionsMembers/ibm_connectionsMembers.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsFiles',
+          'class' => 'ibm_connectionsFiles',
+          'path' => 'modules/ibm_connectionsFiles/ibm_connectionsFiles.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsTasks',
+          'class' => 'ibm_connectionsTasks',
+          'path' => 'modules/ibm_connectionsTasks/ibm_connectionsTasks.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsTaskNodes',
+          'class' => 'ibm_connectionsTaskNodes',
+          'path' => 'modules/ibm_connectionsTaskNodes/ibm_connectionsTaskNodes.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsEntries',
+          'class' => 'ibm_connectionsEntries',
+          'path' => 'modules/ibm_connectionsEntries/ibm_connectionsEntries.php',
+          'tab' => false,
+      ),
+      array(
+          'module' => 'ibm_connectionsTodos',
+          'class' => 'ibm_connectionsTodos',
+          'path' => 'modules/ibm_connectionsTodos/ibm_connectionsTodos.php',
+          'tab' => false,
+      ),
   ),
   'layoutdefs' => 
   array (
@@ -117,6 +158,10 @@ $installdefs = array (
     array (
       'from' => '<basepath>/SugarModules/custom',
       'to' => 'custom',
+    ),
+    array (
+      'from' => '<basepath>/SugarModules/tests',
+      'to' => 'tests',
     ),
   ),
   'language' => 

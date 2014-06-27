@@ -510,6 +510,23 @@ class ConnectionsViewer
 						</tr>";
 
 	}
+
+    public function getFilePicture($name)
+    {
+        $icon_name = "undefined";
+        $type = get_file_extension($name);
+        if (!empty($type)) {
+            foreach ($this->type_image as $key => $val){
+                if ( strpos($val,' '. $type .' ') !== false){
+                    $icon_name = $key;
+                    break;
+                }
+            }
+        }
+
+        return "{$this->img_url}/file_types/{$icon_name}.PNG";
+    }    
+    
 	
 	public function activity($arr)
 	{

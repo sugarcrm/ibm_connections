@@ -1,4 +1,5 @@
 task :package do
+  `find . -name ".DS_Store" -exec rm '{}' \\;`
   `zip -r sugarcrm_connector_for_ibm_connections_v2_social.zip icons/ scripts/ SugarModules/ LICENSE.txt manifest.php`
 end
 

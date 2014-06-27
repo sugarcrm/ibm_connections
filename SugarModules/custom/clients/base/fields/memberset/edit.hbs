@@ -1,0 +1,45 @@
+{{!
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
+
+}}
+{{#each value}}
+    <div class="control-group">
+        <div class="controls controls-three btn-fit">
+            
+            <input type="hidden" name="{{../name}}" style="width: 80%;" class="select2 inherit-width" value="{{name}}" data-id="{{id}}" data-index="{{@index}}">
+
+            {{!-- <input type="hidden" class="role" value="{{role_tit}}" data-id="{{role}}" data-index="{{@index}}" style = "margin-left: 8px;" > --}}
+            
+                {{!--  inherit-width --}}
+            <select class="role"  data-index="{{@index}}" style = "margin-left: 8px;">
+    {{#each ../roles}}
+        <option value="{{@key}}" {{#eq ../role @key}} selected="selected" {{/eq}}>{{this}}</option>
+    {{!--   <option value="authors" {{#eq role 'authors'}} selected="selected" {{/eq}}>Member</option>
+            <option value="owners" {{#eq role 'owners'}} selected="selected" {{/eq}} >Owner</option>
+        --}}
+    {{/each}}        
+            </select>
+
+            
+        {{#if remove_button}}
+            <button type="button" class="btn second" name="remove" data-index="{{@index}}" rel="tooltip" title="{{str "LBL_TEAM_REMOVE"}}"><i class="icon-minus"></i></button>
+        {{/if}}
+        {{#if add_button}}
+            <button type="button" class="btn first" name="add" data-index="{{@index}}" rel="tooltip" title="{{str "LBL_TEAM_ADD"}}"><i class="icon-plus"></i></button>
+        {{/if}}
+                
+        </div>
+    </div>
+{{/each}}
+{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}

@@ -1,0 +1,70 @@
+{{!
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
+
+}}
+<div class="tab-pane active">
+    {{#if collection.length}}
+    <ul class="unstyled listed" data-action="pagination-body">
+        {{#eq this.module "ibm_connectionsMembers"}}
+            <div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;" >
+                <div class="bar" style="width: 60%;"></div>
+            </div>
+        {{/eq}}
+
+
+
+        {{#each collection.models}}
+        <li iid="{{getFieldValue this "id"}}" >
+            <div class="pull-right  actions ">
+                {{#eq this.module "ibm_connectionsMembers"}}
+                    <div style="display: inline-block; margin-right: 10px;">
+                        Tasks: {{getFieldValue this "completed_todos"}} / {{getFieldValue this "total_todos"}}
+                    </div>
+
+                    <div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;" >
+                        <div class="bar" style="width: {{getFieldValue this "completion"}}%;"></div>
+                    </div>
+                {{/eq}}
+
+                {{#each ../../row_actions}}
+                    {{field ../../../this model=../this}}
+                {{/each}}
+            </div>
+
+            <p {{#eq this.module "ibm_connectionsTasks"}} style="padding-left:0" {{/eq}} >
+                {{#notEq this.module "ibm_connectionsTasks"}}
+                <a href="{{getFieldValue this "url"}}" class="pull-left avatar42" data-title="{{getFieldValue this "name"}}">
+                    <img src="{{getFieldValue this "picture"}}" alt="{{getFieldValue this "name"}}">
+                    </a>
+                {{/notEq}}
+                <a href="{{getFieldValue this "url"}}">{{getFieldValue this "name"}}</a>
+            </p>
+                <div class="details">
+                    {{#eq this.module "ibm_connectionsFiles"}}
+                    Version: {{getFieldValue this "version" "No version"}}
+                    Size: {{getFieldValue this "fileSize" "0"}}
+                    {{/eq}}
+                &nbsp;
+                </div>
+
+                {{!-- <div class="details">
+                     {{relativeTime attributes.record_date class="date"}}
+                 </div> --}}
+            </li>
+        {{/each}}
+    </ul>
+    {{else}}
+        <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</div>
+    {{/if}}
+</div>
