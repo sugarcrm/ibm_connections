@@ -69,7 +69,9 @@ class ibm_connectionsFiles extends SugarBean
         if (empty($this->name)){
             $this->name = $fileInfo['name'];
         }
-        $id = $helper->uploadNewFile($this->community_id, $this->name, $fileInfo, 'private');
+
+        //TODO - determine community access level and set that access level to file also.
+        $id = $helper->uploadNewFile($this->community_id, $this->name, $fileInfo, 'public');
 
         require_once 'include/upload_file.php';
         $upload = new UploadFile('filename');

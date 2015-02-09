@@ -25,7 +25,7 @@
             this.$(this.fieldTag).each(function (index, el) {
                 var plugin = $(el).data("select2");
                 if (!_.isUndefined(plugin)) {
-                    plugin.searchmore = true;
+                    plugin.searchmore = false;
                     plugin.container.css('width', '80%');
                     if (self.def.imgUrl) {
                         plugin.opts.formatResult = function (state) {

@@ -162,7 +162,7 @@ class FilesAPI extends AbstractConnectionsAPI
             'persistent' => true,
             'adapter' => 'Zend_Http_Client_Adapter_Curl',
             'curloptions' => $curlOpts,
-            'ssltransport' => 'sslv3',
+            'ssltransport' => 'ssl',
             'strictredirects' => true,
             'maxredirects' => 0
         );

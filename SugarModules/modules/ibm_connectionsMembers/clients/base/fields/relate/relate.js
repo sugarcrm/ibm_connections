@@ -4,7 +4,7 @@
 
         if (plugin) {
             if (this.def.hideMore) {
-                plugin.searchmore = true;
+                plugin.searchmore = false;
             }
             if (this.def.imgUrl) {
                 plugin.opts.formatResult = function (state) {
