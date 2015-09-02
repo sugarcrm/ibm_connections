@@ -655,7 +655,7 @@
             if (size_index >= 2){
                 round = 2;
             }
-            size = size.toFixed(round);
+            size = parseInt(size).toFixed(round);
 
             return size + sizes[size_index];
         }

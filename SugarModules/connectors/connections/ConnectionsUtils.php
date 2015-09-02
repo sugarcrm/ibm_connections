@@ -92,6 +92,13 @@ class ConnectionsUtils{
 
 	  return strtr($string, $parameters);
 	}
+
+	static function getConfigProperties(){
+		include('custom/modules/Connectors/connectors/sources/ext/eapm/connections/config.php');
+		$properties = $config['properties'];
+
+		return $properties;
+	}
 	
 }
 

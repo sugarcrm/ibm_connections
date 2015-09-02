@@ -3,9 +3,6 @@
         var self = this, res = this._super('_render', []), plugin = this.$(this.fieldTag).data('select2');
 
         if (plugin) {
-            if (this.def.hideMore) {
-                plugin.searchmore = false;
-            }
             if (this.def.imgUrl) {
                 plugin.opts.formatResult = function (state) {
                     if (!state.id) return state.text; // optgroup

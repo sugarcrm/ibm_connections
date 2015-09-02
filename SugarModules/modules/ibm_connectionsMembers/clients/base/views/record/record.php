@@ -12,8 +12,6 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-require_once 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/ConnectionsHelper.php';
-
 $viewdefs['ibm_connectionsMembers']['base']['view']['record'] = array(
     'panels' => array(
         array(
@@ -35,7 +33,7 @@ $viewdefs['ibm_connectionsMembers']['base']['view']['record'] = array(
                     'id_name' => 'member_id',
                     'module' => 'ibm_connectionsMembers',
                     'hideMore' => true,
-                    'imgUrl' => ConnectionsHelper::URL_USER_AVATAR
+                    'imgUrl' => ConnectionsHelper::getUrl("user_avatar")
                 ),
                 array(
                     'type' => 'enum',

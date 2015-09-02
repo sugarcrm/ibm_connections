@@ -113,7 +113,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                     'label' => 'LBL_IBM-CONNECTIONS_SELECT_COMMUNITY',
                     'type' => 'imgenum',
                     'options' => array('' => ''),
-                    'imgUrl' => ConnectionsHelper::URL_COMMUNITY_IMAGE,
+                    'imgUrl' => ConnectionsHelper::getUrl('community_image'),
                     'span'  => 12
                 ),
                 array(
@@ -141,7 +141,7 @@ $viewdefs['base']['view']['ibm-connections'] = array(
                     'label' => 'LBL_IBM-CONNECTIONS_COMMUNITY_ADD_MEMBER',
                     'module' => 'ibm_connectionsMembers',
                     'span'  => 12,
-                    'imgUrl' => ConnectionsHelper::URL_USER_AVATAR
+                    'imgUrl' => ConnectionsHelper::getUrl('user_avatar')
                 ),
                 array(
                     'name' => 'tags',
