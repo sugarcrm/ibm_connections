@@ -2,7 +2,7 @@
 	<form action="index.php" method="POST" name="CreateFile" id="CreateFile" enctype="multipart/form-data">
 	<input type='hidden' name='module' value='Connectors' />
 	<input type='hidden' name='action' value='Connections' />
-	<input type='hidden' name='method' value='uploadNewFile' />
+	<input type='hidden' name='method' value='bwcUploadFile' />
 	<input type='hidden' name='to_pdf' value='1' />
 	<input type='hidden' name='parent_type' value='{$parent_type}' />
 	<input type='hidden' name='parent_id' value='{$parent_id}' />

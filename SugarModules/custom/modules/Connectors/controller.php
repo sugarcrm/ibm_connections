@@ -84,6 +84,9 @@ class CustomConnectorsController extends ConnectorsController {
 				case 'replyDiscussion':
 					$connectionsHelper->replyDiscussion();
 					break;
+				case 'bwcUploadFile':
+					$connectionsHelper->bwcUploadFile();
+					break;
 				case 'uploadNewFile':
 					$connectionsHelper->uploadNewFile();
 					break;

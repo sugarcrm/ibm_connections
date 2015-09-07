@@ -47,7 +47,9 @@ abstract class AbstractConnectionsAPI extends ExternalAPIBase// implements WebDo
     public function __construct($httpClient)
     {
         require('custom/modules/Connectors/connectors/sources/ext/eapm/connections/config.php');
-        $this->url = $config['properties']['company_url'];
+
+        $url = parse_url($config['properties']['company_url']);
+        $this->url = "https://".$url['host'] ."/";
         $eapmBean = EAPM::getLoginInfo('Connections');
         $this->loadEAPM($eapmBean);
         if (empty($httpClient))

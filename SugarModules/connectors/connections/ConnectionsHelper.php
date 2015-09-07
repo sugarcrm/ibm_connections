@@ -1,6 +1,7 @@
 <?php
 
 require_once('ConnectionsUtils.php');
+require_once('modules/ibm_connectionsFiles/clients/base/api/ibm_connectionsFilesApi.php');
 
 class ConnectionsHelper
 {
@@ -172,7 +173,7 @@ class ConnectionsHelper
             $isCommunityOwner = false;
             $parentId = $community->getParentCommunityId();
             if (empty($parentId)) {
-                $members_list = $this->getCommunityMemberArray();
+                $members_list = $this->getCommunityMemberArray($communityId, null);
                 foreach ($members_list as $member) {
                     if ($this->apiClass->api_data['userId'] == $member['member_id']) {
                         if ($member['member_role'] == 'owner') {
@@ -353,15 +354,13 @@ class ConnectionsHelper
 
     public function getCommunityId()
     {
-        return $this->communityId;
-        /*
+//        return $this->communityId;
         if (isset($this->parent_id) && !empty($this->parent_id)) {
             $connections = new ibm_connections();
             $connections->retrieve_by_string_fields(array('parent_id' => $this->parent_id));
 
             return $connections->community_id;
         }
-        */
     }
 
     private function getMembersArray($response)
@@ -412,7 +411,13 @@ class ConnectionsHelper
 
         try {
             $community_list = $this->getCommunityList($this->community, $page_number, $search_text);
-            echo $community_list;
+
+            $tpl = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/Communities.tpl';
+            $smarty = new Sugar_Smarty();
+            $smarty->assign('communities', $community_list);
+
+            echo $smarty->fetch($tpl);
+
 
         } catch (Exception $e) {
             $tplName = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/tpls/ConnectionsError.tpl';
@@ -745,6 +750,18 @@ class ConnectionsHelper
 
     }
 
+    public function bwcUploadFile(){
+
+        if (empty($_FILES['file_el']) || $_FILES['file_el']['error'] > 0) return;
+        $fileToUpload = $_FILES['file_el']['tmp_name'];
+        $mimeType = $_FILES['file_el']['type'];
+
+        $reply = $this->apiClass->uploadFile($fileToUpload, $this->file_name, $mimeType,$this->visibility);
+        if (!empty($reply->docId)){
+            $this->apiClass->shareMyFileWithCommunity($this->getCommunityId(), $reply->docId);
+        }
+    }
+
 
     public function uploadNewFile($community_id, $name, $fileInfo, $visibility)
     {
@@ -950,10 +967,16 @@ class ConnectionsHelper
         $smarty->assign('message', $message);
         $profile_body = $smarty->fetch($tplName);
 
+        $files =  $this->getFilesList($communityId, $this->search_text, $this->page_number);
 
-        $list = $this->getFilesList($communityId, $this->search_text, $this->page_number);
+        $list = "";
+
+        foreach($files['entries'] as $file){
+            $list .= $this->view->fileSection($file);
+        }
+
         $tab = 'file';
-        $reply = $this->display($tab, 2, '', $profile_body);
+        $reply = $this->display($tab, 2, $list, $profile_body);
         ob_clean();
         echo json_encode(array('frame' => $reply, 'content' => $list, 'container_id' => $tab . '_list'));
 
@@ -1937,17 +1960,14 @@ class ConnectionsHelper
         global $beanList, $current_user;
         $communityId = $this->getCommunityId();
         $members_list = $this->getCommunityMemberArray($communityId, '');
-        $this->isCommunityOwner = false;
-        foreach ($members_list as $member) {
-            if ($this->apiClass->api_data['userId'] == $member['member_id']) {
-                if ($member['member_role'] == 'owner') {
+        $list = '';
+        foreach ($members_list['entries'] as $member) {
+            if ($this->apiClass->api_data['userId'] == $member['id']) {
+                if ($member['role'] == 'owner') {
                     $this->isCommunityOwner = true;
                 }
-                break;
             }
-        }
-        $list = '';
-        foreach ($members_list as $member) {
+
             $list .= $this->view->member($member, $this->isCommunityOwner);
         }
         $tab = 'members';

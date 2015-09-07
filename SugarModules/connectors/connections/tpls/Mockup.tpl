@@ -37,24 +37,24 @@
 				<div class='before-nav'>
 				<!--	<input type="button" value="{$language.LBL_OVERVIEW_TAB}" class='ibm_tabs' onclick='loadTabData("Overview", 1, "");' id = 'ibm_Overview_tab' /> -->
 					<input type="button" value="{$language.LBL_MEMBERS_TAB}" class='ibm_tabs' onclick='loadTabData("Members", 1, "");' id = 'ibm_Members_tab' />
-					<input type="button" value="{$language.LBL_UPDATES_TAB}" class='ibm_tabs' onclick='loadTabData("Updates", 1, "");'  id = 'ibm_Updates_tab' />
+					{*<input type="button" value="{$language.LBL_UPDATES_TAB}" class='ibm_tabs' onclick='loadTabData("Updates", 1, "");'  id = 'ibm_Updates_tab' />*}
 					<input type="button" value="{$language.LBL_ACTIVITIES_TAB}" class='ibm_tabs' onclick='loadTabData("Activities", 1,"");'  id = 'ibm_Activities_tab' />
 					<input type="button" value="{$language.LBL_FILES_TAB}" class='ibm_tabs' onclick='loadTabData("Files", 1, "");'  id = 'ibm_Files_tab' />
-					<input type="button" value="{$language.LBL_DISCUSSIONS_TAB}" class='ibm_tabs' onclick='loadTabData("Discussions", 1, "");'  id = 'ibm_Discussions_tab' />
+					{*<input type="button" value="{$language.LBL_DISCUSSIONS_TAB}" class='ibm_tabs' onclick='loadTabData("Discussions", 1, "");'  id = 'ibm_Discussions_tab' />*}
 				</div>
 				
-					<nav class='ibm-actions-nav nav-issets'>	
-						<ul >
-							<li class='more-isset'>	
-								<ul>
-									<li><input type="button" value="{$language.LBL_BOOKMARKS_TAB}" class='ibm_tabs' onclick='loadTabData("Bookmarks", 1, "");'  id = 'ibm_Bookmarks_tab' /></li>
-									<li><input type="button" value="{$language.LBL_BLOG_TAB}" class='ibm_tabs' onclick='loadTabData("Blog", 1, "");'  id = 'ibm_Blog_tab' /></li>
-									<li><input type="button" value="{$language.LBL_WIKI_TAB}" class='ibm_tabs' onclick='loadTabData("Wiki", 1, "");'  id = 'ibm_Wiki_tab'/></li>
-									<li><input type="button" value="{$language.LBL_SUBCOMMUNITIES_TAB}" class='ibm_tabs' onclick='loadTabData("Subcommunities", 1, "");'  id = 'ibm_Subcommunities_tab'/></li>
-								</ul>
-							</li>
-						</ul>
-					</nav>
+					{*<nav class='ibm-actions-nav nav-issets'>	*}
+						{*<ul >*}
+							{*<li class='more-isset'>	*}
+								{*<ul>*}
+									{*<li><input type="button" value="{$language.LBL_BOOKMARKS_TAB}" class='ibm_tabs' onclick='loadTabData("Bookmarks", 1, "");'  id = 'ibm_Bookmarks_tab' /></li>*}
+									{*<li><input type="button" value="{$language.LBL_BLOG_TAB}" class='ibm_tabs' onclick='loadTabData("Blog", 1, "");'  id = 'ibm_Blog_tab' /></li>*}
+									{*<li><input type="button" value="{$language.LBL_WIKI_TAB}" class='ibm_tabs' onclick='loadTabData("Wiki", 1, "");'  id = 'ibm_Wiki_tab'/></li>*}
+									{*<li><input type="button" value="{$language.LBL_SUBCOMMUNITIES_TAB}" class='ibm_tabs' onclick='loadTabData("Subcommunities", 1, "");'  id = 'ibm_Subcommunities_tab'/></li>*}
+								{*</ul>*}
+							{*</li>*}
+						{*</ul>*}
+					{*</nav>*}
 					<br style="clear: both;">
 
 				</div>
