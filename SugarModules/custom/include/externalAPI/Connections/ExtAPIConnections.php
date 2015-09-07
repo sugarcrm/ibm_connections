@@ -159,7 +159,6 @@ class ExtAPIConnections extends ExternalAPIBase implements WebDocument
         }
         try {
             $reply = $this->makeRequest('profiles/atom/profileService.do', 'GET', false);
-            //$reply = $this->makeRequest('files/basic/cmis/my/servicedoc','GET',false);
             if ($reply['success'] !== true) {
                 $GLOBALS['log']->debug(__FILE__ . '(' . __LINE__ . '): Bad reply: ' . print_r($reply, true));
                 return $reply;

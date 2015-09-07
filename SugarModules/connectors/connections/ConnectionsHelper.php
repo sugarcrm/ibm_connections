@@ -1,5 +1,7 @@
 <?php
 
+require_once('ConnectionsUtils.php');
+
 class ConnectionsHelper
 {
     public $apiClass;
@@ -13,12 +15,11 @@ class ConnectionsHelper
     public $language;
     private $view;
 
+    public static $url_user_profile = "profiles/html/profileView.do?userid={0}";
+    public static $url_user_avatar = "profiles/photo.do?userid={0}";
+    public static $url_community_image = "communities/service/html/image?communityUuid={0}";
+
     const MAX_PAGE_SIZE = 1500;
-
-    const URL_USER_PROFILE = 'https://greenhouse.lotus.com/profiles/html/profileView.do?userid={0}';
-    const URL_USER_AVATAR = 'https://greenhouse.lotus.com/profiles/photo.do?userid={0}';
-    const URL_COMMUNITY_IMAGE = 'https://greenhouse.lotus.com/communities/service/html/image?communityUuid={0}';
-
     const NAME_SEPARATOR = ' :: ';
 
     public function __construct()
@@ -46,7 +47,42 @@ class ConnectionsHelper
         $this->view->img_url = 'custom/modules/Connectors/connectors/sources/ext/eapm/connections/images';
         $this->view->language = $this->language;
         $this->view->connection_url = $this->apiClass->url;
+
+
     }
+
+    static function getUrl($type){
+        $properties = ConnectionsUtils::getConfigProperties();
+
+        switch ($type){
+            case "user_profile":
+                $url = self::buildUrl(self::$url_user_profile);
+                break;
+            case "user_avatar":
+                $url = self::buildUrl(self::$url_user_avatar);
+                break;
+            case "community_image":
+                $url = self::buildUrl(self::$url_community_image);
+                break;
+            default:
+                break;
+        }
+
+        return $url;
+    }
+
+    static function buildUrl($part){
+        $properties = ConnectionsUtils::getConfigProperties();
+        $companyUrl = parse_url($properties['company_url']);
+
+        //converty all schemes to https
+        $companyUrl['scheme'] = "https";
+        $url = $companyUrl['scheme']."://".$companyUrl['host']."/" . $part;
+
+        return $url;
+    }
+
+
 
     static function getEAPM()
     {
@@ -347,8 +383,8 @@ class ConnectionsHelper
                     'email' => $member_email,
                     'role' => $member_role,
                     'community_id' => $communityId,
-                    'picture' => string_format(ConnectionsHelper::URL_USER_AVATAR, array($member_id)),
-                    'url' => string_format(ConnectionsHelper::URL_USER_PROFILE, array($member_id))
+                    'picture' => string_format(ConnectionsHelper::getUrl('user_avatar'), array($member_id)),
+                    'url' => string_format(ConnectionsHelper::getUrl('user_profile'), array($member_id))
                 );
             }
         }
@@ -1477,7 +1513,7 @@ class ConnectionsHelper
         $assignedTo = $entry->getAssignee();
         $arr['assigned_user_id'] = $assignedTo['id'];
         $arr['assigned_user_name'] = $assignedTo['name'];
-        $arr['assigned_user_url'] = string_format(self::URL_USER_PROFILE, array($assignedTo['id']));
+        $arr['assigned_user_url'] = string_format(self::getUrl('user_profile'), array($assignedTo['id']));
 
         return $arr;
     }
