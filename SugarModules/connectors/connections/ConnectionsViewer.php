@@ -473,8 +473,8 @@ class ConnectionsViewer
 	public function fileSection($arr)
 	{
 	
-				$download_link = "index.php?module=Connectors&action=Connections&method=downloadFile&documentId={$arr['id']}&documentName=".htmlspecialchars($arr['title'], ENT_QUOTES)."&documentSize={$arr['fileSize']}";
-				$title = $arr['title'];
+				$download_link = "index.php?module=Connectors&action=Connections&method=downloadFile&documentId={$arr['id']}&documentName=".htmlspecialchars($arr['name'], ENT_QUOTES)."&documentSize={$arr['fileSize']}";
+				$title = $arr['name'];
 				$pos = strrpos($title, "."); 
 				if ($pos !== false) {
 					$type = substr($title,$pos + 1);
@@ -494,17 +494,14 @@ class ConnectionsViewer
 							<td>
 									<div class='item-img'><a href=\"{$download_link}\"><img src='{$this->img_url}/file_types/{$icon_name}.PNG' /></a></div>
 									<div class='item-label'>
-									<a href='{$download_link}'><b>{$arr['title']}</b></a>
+									<a href='{$download_link}'><b>{$arr['name']}</b></a>
 								&nbsp;<img src='{$this->img_url}/icons/{$arr['visibility']}.PNG' title='{$arr['visibility']}'/><br/>
 								<span id='like_{$arr['id']}'>{$arr['recomendationsCount']} </span>
-								<a href='#' onclick='likeFile(\"{$arr['author']['id']}\",\"{$arr['id']}\");return false;'>{$this->language['LBL_LIKE']}</a> 
+								<a href='#' onclick='likeFile(\"{$arr['author_id']}\",\"{$arr['id']}\");return false;'>{$this->language['LBL_LIKE']}</a>
 								<span id='comment_{$arr['id']}'>{$arr['commentsCount']} </span>
-								<a href='#' onclick='createIBMElement(\"CommentFile\", \"&ibm_user_id={$arr['author']['id']}&ibm_doc_id={$arr['id']}\"); return false;'>{$this->language['LBL_COMMENT']}</a> 
-								{$this->getBusinesscard($arr['author'])}
-								{$this->language['LBL_UPLOADED']} {$arr['uploaded']} | 
-								version {$arr['version']}| {$tags}
-								{$arr['downloadsCount']} <img src='{$this->img_url}/icons/downloads.PNG'></img>  | 
-								<a href='{$arr['viewLink']}' target='_blank'>{$this->language['LBL_VIEW']}</a> | <a href='#' onclick='deleteFile(\"{$arr['id']}\");return false;'>{$this->language['LBL_DELETE']}</a>
+								<a href='#' onclick='createIBMElement(\"CommentFile\", \"&ibm_user_id={$arr['author_id']}&ibm_doc_id={$arr['id']}\"); return false;'>{$this->language['LBL_COMMENT']}</a>
+								<img src='{$this->img_url}/icons/downloads.PNG'></img>  |
+								<a href='{$arr['view_link']}' target='_blank'>{$this->language['LBL_VIEW']}</a> | <a href='#' onclick='deleteFile(\"{$arr['id']}\");return false;'>{$this->language['LBL_DELETE']}</a>
 								</div>
 							</td>
 						</tr>";
@@ -579,16 +576,16 @@ class ConnectionsViewer
 	
 	public function member($arr, $isCommunityOwner = false)
 	{
-		$info = array('id' => $arr['member_id'] ,'name' => $arr['member_name']);
+		$info = array('id' => $arr['id'] ,'name' => $arr['name']);
 		$view = "<div id='ibm_member_{$arr['member_id']}' class='ibm-member'>
 						<div>
-						<img src='{$this->connection_url}/profiles/photo.do?userid={$arr['member_id']}' width='48px' height='48px' style='vertical-align:top;' >
+						<img src='{$this->connection_url}/profiles/photo.do?userid={$arr['id']}' width='48px' height='48px' style='vertical-align:top;' >
 						</div>
 						<div>
 						{$this->getBusinesscard($info)}
 					 	<br /> " . $this->language['LBL_MEMBER_ROLE_'. strtoupper($arr['member_role'])];
 		if ($isCommunityOwner) {
-			$view .= "	<br /> <a href='#'onclick=\"return removeMember('{$arr['member_id']}');\">" . $this->language['LBL_REMOVE'] ."</a>";
+			$view .= "	<br /> <a href='#'onclick=\"return removeMember('{$arr['id']}');\">" . $this->language['LBL_REMOVE'] ."</a>";
 		}
 		$view .= "
 					 	</div>
