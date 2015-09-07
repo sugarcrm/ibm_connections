@@ -68,6 +68,11 @@ class ibm_connectionsMembersFilterApi extends ibm_connectionsFilesFilterApi
         $page = $this->pageNum($options['offset'], $options['limit']);
 
         $filter = $this->reformatFilter($args['filter']);
+
+        if(empty($filter['community_id'])){
+            throw new SugarApiException("ERROR_NO_COMMUNITY", null, null, 404);
+        }
+
         $entries = $this->helper->getCommunityMemberArray(
             $filter['community_id'],
             $filter['name']['$starts'],

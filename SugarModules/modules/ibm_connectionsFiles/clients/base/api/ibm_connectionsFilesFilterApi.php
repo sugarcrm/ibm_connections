@@ -55,6 +55,10 @@ class ibm_connectionsFilesFilterApi extends FilterApi
         $helper = new ConnectionsHelper();
         $this->checkLogin($helper);
         $filter = $this->reformatFilter($args['filter']);
+
+        if(empty($filter['community_id'])){
+            throw new SugarApiException("ERROR_NO_COMMUNITY", null, null, 404);
+        }
         $options = $this->parseArguments($api, $args);
         $page = $this->pageNum($options['offset'], $options['limit']);
         $entries = $helper->getFilesList($filter['community_id'], '', $page, $options['limit']);
@@ -113,12 +117,13 @@ class ibm_connectionsFilesFilterApi extends FilterApi
      */
     protected function checkLogin(ConnectionsHelper $helper){
         if ( !isset($helper->apiClass->eapmBean) || $helper->apiClass->eapmBean->validated==0 ){
-            throw new SugarApiExceptionRequestMethodFailure('ERROR_NEED_AUTHORIZE');
+//            throw new SugarApiExceptionRequestMethodFailure('ERROR_NEED_AUTHORIZE');
+            throw new SugarApiExceptionNotFound("ERROR_NEED_AUTHORIZE");
         }
 
         $res = $helper->apiClass->checkLogin();
         if (!$res['success']){
-            throw new SugarApiExceptionRequestMethodFailure('ERROR_CANNOT_CONNECT');
+            throw new SugarApiExceptionNotFound("ERROR_CANNOT_CONNECT");
         }
     }
     

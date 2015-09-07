@@ -59,6 +59,11 @@ class ibm_connectionsTasksFilterApi extends ibm_connectionsFilesFilterApi
         $helper = new ConnectionsHelper();
         $this->checkLogin($helper);
         $filter = $this->reformatFilter($args['filter']);
+
+        if(empty($filter['community_id'])){
+            throw new SugarApiException("ERROR_NO_COMMUNITY", null, null, 404);
+        }
+
         $options = $this->parseArguments($api, $args, $bean);
         $page = $this->pageNum($options['offset'], $options['limit']);
         $entries = $helper->getActivitiesList($filter['community_id'], '',$page, $options['limit'], $options['select']);

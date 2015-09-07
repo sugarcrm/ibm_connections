@@ -53,6 +53,10 @@ class ibm_connectionsTaskNodesFilterApi extends ibm_connectionsFilesFilterApi
         $filter = $this->reformatFilter($args['filter']);
         $helper = new ConnectionsHelper();
 
+        if(empty($filter['community_id'])){
+            throw new SugarApiException("ERROR_NO_COMMUNITY", null, null, 404);
+        }
+
         if (isset($filter['task_id'])){
             $nodes = $helper->getActivity($filter['task_id']);
         }elseif(isset($filter['community_id']) && isset($filter['assigned_user_id']) ){

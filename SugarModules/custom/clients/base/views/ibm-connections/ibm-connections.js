@@ -96,8 +96,61 @@
             this.getCommunities();
         }
 
+        this.ibmConnectionModel = app.data.createBean("ibm_connections");
+
         Handlebars.registerHelper('dateFormat', this.hbsHelpers.dateFormat);
         Handlebars.registerHelper('fileSizeFormat', this.hbsHelpers.fileSizeFormat);
+    },
+
+
+    initDashlet: function(){
+        this._super('initDashlet');
+        //this.dashModel.addValidationTask('check_community', _.bind(this._doCommunitySave, this));
+        this.dashModel.on('validation:success', _.bind(this._doCommunitySave, this));
+    },
+
+    loadData: function(){
+        var self = this;
+
+        var args = {
+            'filter' : [
+                {"parent_type":this.module},
+                {"parent_id":this.model.get('id')}
+            ]
+        };
+
+        app.api.call("read", app.api.buildURL('ibm_connections', null, null, args), null, {
+            success: function(data){
+                if(data.records.length > 0) {
+                    self.ibmConnectionModel = app.data.createBean("ibm_connections", data.records[0]);
+                    self.settings.set({"community_id" : self.ibmConnectionModel.get('community_id')})
+                }
+                self._super('loadData');
+            }
+        })
+    },
+
+    //_doCommunitySave: function(fields, errors, callback){
+    _doCommunitySave: function () {
+        this.ibmConnectionModel.set({
+            "community_id": this.dashModel.get('community_id'),
+            "parent_type": this.module,
+            "parent_id": this.model.get('id')
+        });
+
+        //we delete the community id from dashlet settings because we don't need it - we are using the community id from ibm_connections table
+        delete this.dashModel.attributes.community_id;
+
+        this.ibmConnectionModel.save(null,
+            {
+                success: function () {
+                    //callback(null, fields, errors);
+                },
+                error: function () {
+                    //errors['community_id'] = errors['community_id'] || {};
+                }
+            }
+        );
     },
 
     /**
@@ -173,9 +226,10 @@
      * Hannling server errors
      */
     handleServerError: function (error) {
-        debugger;
+        //debugger;
         var tplMap = {ERROR_NEED_AUTHORIZE: 'ibm-connections-need-configure',
-            ERROR_CANNOT_CONNECT: 'error'};
+                    ERROR_CANNOT_CONNECT: 'error',
+                    ERROR_NO_COMMUNITY: 'error_no_community'};
 
         this.template = app.template.get(this.name + '.' + tplMap[error.message]);
         this._render();

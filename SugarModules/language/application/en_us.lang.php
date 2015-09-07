@@ -88,8 +88,9 @@ $app_strings['LBL_IBM-CONNECTIONS_LIST_VERSION'] = 'Version';
 $app_strings['LBL_IBM-CONNECTIONS_SELECT_FILE_LABEL'] = 'Select File';
 
 
-$app_strings['LBL_IBM-CONNECTIONS_CONNECT'] = 'Connect to IBM connections';
-$app_strings['ERR_IBM-CONNECTIONS_CANNOT_CONNECT'] = 'Can not connect to connect to IBM connections';
+$app_strings['LBL_IBM-CONNECTIONS_CONNECT'] = 'Please connect to IBM connections';
+$app_strings['ERR_IBM-CONNECTIONS_CANNOT_CONNECT'] = 'Can not connect to IBM connections';
+$app_strings['ERR_IBM-CONNECTIONS_NO_COMMUNITY'] = 'There is no community assigned to this record. Please select a community';
 
 $app_list_strings['ibm-connections_access'] = array(
     'public' => 'Public',
