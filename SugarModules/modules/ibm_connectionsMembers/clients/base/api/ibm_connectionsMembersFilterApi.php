@@ -69,7 +69,7 @@ class ibm_connectionsMembersFilterApi extends ibm_connectionsFilesFilterApi
 
         $filter = $this->reformatFilter($args['filter']);
 
-        if(empty($filter['community_id'])){
+        if(empty($filter['community_id']) && empty($filter['name'])){
             throw new SugarApiException("ERROR_NO_COMMUNITY", null, null, 404);
         }
 
