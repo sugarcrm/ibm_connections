@@ -39,7 +39,7 @@ $viewdefs['ibm_connectionsMembers']['base']['view']['record'] = array(
                     'type' => 'enum',
                     'name' => 'role',
                     'options' => 'ibm-connections_member_role',
-                    'enum_width' => '20%',
+                    'enum_width' => '150px',
                     'label' => 'LBL_IBM-CONNECTIONS_ROLE'
                 ),
                 array(
